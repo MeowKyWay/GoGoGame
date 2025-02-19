@@ -6,10 +6,14 @@ import {
 import { PublicUser, User, UsersService } from 'src/users/users.service';
 import { verify } from 'argon2';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async registerUser(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.usersService.findByEmail(createUserDto.email);
@@ -28,5 +32,12 @@ export class AuthService {
       return result;
     }
     throw new UnauthorizedException('Invalid credentials');
+  }
+
+  login(user: PublicUser) {
+    const payload = { username: user.email, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }
