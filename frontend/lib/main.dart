@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gogogame_frontend/page/login_page.dart';
+import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
+import 'package:gogogame_frontend/pages/auth/login_page.dart';
+import 'package:gogogame_frontend/pages/home_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ProviderScope(
-      child: MaterialApp(
-        title: 'Login Page',
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: LoginPage(),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool isAuthenticated = ref.watch(authStateProvider);
+    return MaterialApp(
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: isAuthenticated ? const HomePage() : const LoginPage(),
     );
   }
 }
