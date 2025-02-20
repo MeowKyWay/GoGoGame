@@ -16,17 +16,16 @@ export class AuthService {
   ) {}
 
   async registerUser(createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.usersService.findByEmail(createUserDto.email);
+    const user = await this.usersService.findByName(createUserDto.name);
     if (user) throw new ConflictException('User already exists!');
     return this.usersService.create(createUserDto);
   }
 
-  async validateUser(email: string, password: string): Promise<PublicUser> {
-    const user = (await this.usersService.findByEmail(email)) as User;
+  async validateUser(name: string, password: string): Promise<PublicUser> {
+    const user = (await this.usersService.findByName(name)) as User;
     if (user && (await verify(user.password, password))) {
       const result = {
         id: user.id,
-        email: user.email,
         name: user.name,
       } as PublicUser;
       return result;
@@ -35,7 +34,7 @@ export class AuthService {
   }
 
   login(user: PublicUser) {
-    const payload = { username: user.email, sub: user.id };
+    const payload = { username: user.name, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

@@ -5,8 +5,7 @@ import { hash } from 'argon2';
 
 export type User = {
   id: number;
-  email: string;
-  name: string | null;
+  name: string;
   password: string;
   hashedRefreshToken: string | null;
 };
@@ -28,10 +27,10 @@ export class UsersService {
     });
   }
 
-  async findByEmail(email: string): Promise<User | undefined> {
+  async findByName(name: string): Promise<User | undefined> {
     const user = await this.prisma.user.findUnique({
       where: {
-        email,
+        name,
       },
     });
     if (!user) {
@@ -39,7 +38,6 @@ export class UsersService {
     }
     return {
       id: user.id,
-      email: user.email,
       name: user.name,
       password: user.password,
       hashedRefreshToken: user.hashedRefreshToken,
