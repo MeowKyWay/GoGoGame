@@ -1,0 +1,117 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
+import 'package:gogogame_frontend/core/extensions/text_extension.dart';
+import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
+
+class LoginForm extends ConsumerStatefulWidget {
+  const LoginForm({super.key});
+
+  @override
+  ConsumerState<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends ConsumerState<LoginForm> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _isObscure = true;
+  bool _isFilled = false;
+
+  void _onSubmit() async {
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Processing Data')));
+    try {
+      ref
+          .read(authStateProvider.notifier)
+          .login(name: username, password: password);
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      flex: 1,
+      child: Form(
+        onChanged: () {
+          if (_usernameController.text.isNotEmpty &&
+              _passwordController.text.isNotEmpty) {
+            setState(() {
+              _isFilled = true;
+            });
+            return;
+          }
+          if (_isFilled) {
+            setState(() {
+              _isFilled = false;
+            });
+          }
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 16,
+          children: [
+            TextFormField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                hintText: 'Username',
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            TextFormField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                hintText: 'Password',
+                prefixIcon: Icon(Icons.lock),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isObscure = !_isObscure;
+                    });
+                  },
+                  icon: Icon(
+                    _isObscure ? Icons.visibility : Icons.visibility_off,
+                  ),
+                ),
+              ),
+              obscureText: _isObscure,
+            ),
+            TextButton(
+              onPressed: () {
+                throw UnimplementedError();
+              },
+              child: Text(
+                'Forgot Password?',
+              ).withColor(context.colorScheme.onSecondary),
+            ),
+            AnimatedContainer(
+              height: _isFilled ? 56 : 0,
+              duration: const Duration(milliseconds: 100),
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                opacity: _isFilled ? 1 : 0,
+                child: FilledButton(
+                  onPressed: _onSubmit,
+                  style: ButtonStyle(
+                    minimumSize: WidgetStateProperty.all(
+                      Size(double.infinity, 56),
+                    ),
+                  ),
+                  child: Text('Login', style: context.textTheme.labelLarge),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

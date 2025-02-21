@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/themes/app_theme.dart';
-import 'package:gogogame_frontend/pages/auth/login_page.dart';
+import 'package:gogogame_frontend/pages/auth/login_page/login_page.dart';
 import 'package:gogogame_frontend/pages/home_page.dart';
 
 void main() {
