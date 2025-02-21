@@ -76,6 +76,8 @@ class AppTheme {
   }
 
   static TextTheme textTheme = TextTheme(
+    headlineLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+
     labelLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
     labelSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
   );
