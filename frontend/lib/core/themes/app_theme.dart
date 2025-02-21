@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gogogame_frontend/core/extensions/color_extension.dart';
 import 'package:gogogame_frontend/core/themes/dark_color_scheme.dart';
 
 class AppTheme {
@@ -31,17 +32,32 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(colorScheme.secondary),
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return colorScheme.secondary.dimmed;
+            }
+            return colorScheme.secondary;
+          }),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
-          foregroundColor: WidgetStateProperty.all(colorScheme.onPrimary),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return colorScheme.onPrimary.dimmed;
+            }
+            return colorScheme.onPrimary;
+          }),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           textStyle: WidgetStateProperty.all(textTheme.labelSmall),
-          foregroundColor: WidgetStateProperty.all(colorScheme.onPrimary),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return colorScheme.onPrimary.dimmed;
+            }
+            return colorScheme.onPrimary;
+          }),
           backgroundColor: WidgetStateProperty.all(Colors.transparent),
           splashFactory: NoSplash.splashFactory,
           overlayColor: WidgetStateProperty.all(Colors.transparent),
