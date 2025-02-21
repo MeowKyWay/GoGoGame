@@ -35,11 +35,12 @@ class AppTheme {
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
-          foregroundColor: WidgetStateProperty.all(colorScheme.onSecondary),
+          foregroundColor: WidgetStateProperty.all(colorScheme.onPrimary),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
+          textStyle: WidgetStateProperty.all(textTheme.labelSmall),
           foregroundColor: WidgetStateProperty.all(colorScheme.onPrimary),
           backgroundColor: WidgetStateProperty.all(Colors.transparent),
           splashFactory: NoSplash.splashFactory,
@@ -69,6 +70,13 @@ class AppTheme {
         hintStyle: TextStyle(color: colorScheme.onTertiary),
         prefixIconColor: colorScheme.onTertiary,
       ),
+      colorScheme: colorScheme,
+      textTheme: textTheme,
     );
   }
+
+  static TextTheme textTheme = TextTheme(
+    labelLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+    labelSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+  );
 }
