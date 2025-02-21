@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
+import 'package:gogogame_frontend/core/themes/app_theme.dart';
 import 'package:gogogame_frontend/pages/auth/login_page.dart';
 import 'package:gogogame_frontend/pages/home_page.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     bool isAuthenticated = ref.watch(authStateProvider);
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: AppTheme.darkTheme,
       home: isAuthenticated ? const HomePage() : const LoginPage(),
     );
   }

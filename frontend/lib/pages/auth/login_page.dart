@@ -37,7 +37,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ],
               ),
             ),
-            ElevatedButton(
+            FilledButton(
               onPressed: () async {
                 final username = _usernameController.text;
                 final password = _passwordController.text;
