@@ -13,6 +13,8 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
+  bool _isTyping = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,11 +34,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: [
-            Flexible(flex: 1, child: Center(child: Text('logo'))),
-            TextDivider(text: 'log in'),
-            LoginForm(),
-            Gap(56),
+            if (!_isTyping) ...[
+              Flexible(flex: 1, child: Center(child: Text('logo'))),
+              TextDivider(text: 'log in'),
+            ],
+            LoginForm(
+              isTyping: _isTyping,
+              onTyping: (isTyping) {
+                setState(() {
+                  _isTyping = isTyping;
+                });
+              },
+            ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: _isTyping ? 0 : 56,
+            ),
           ],
         ),
       ),

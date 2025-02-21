@@ -7,7 +7,10 @@ import 'package:gogogame_frontend/core/extensions/text_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 
 class LoginForm extends ConsumerStatefulWidget {
-  const LoginForm({super.key});
+  final bool isTyping;
+  final Function(bool) onTyping;
+
+  const LoginForm({super.key, required this.isTyping, required this.onTyping});
 
   @override
   ConsumerState<LoginForm> createState() => _LoginFormState();
@@ -16,6 +19,9 @@ class LoginForm extends ConsumerStatefulWidget {
 class _LoginFormState extends ConsumerState<LoginForm> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  final FocusNode _usernameFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
 
   bool _isObscure = true;
   bool _isFilled = false;
@@ -32,6 +38,34 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           .login(name: username, password: password);
     } catch (e) {
       log(e.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameFocus.addListener(_onFocusChange);
+    _passwordFocus.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _usernameFocus.dispose();
+    _passwordFocus.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (_usernameFocus.hasFocus || _passwordFocus.hasFocus) {
+      if (!widget.isTyping) {
+        widget.onTyping(true);
+      }
+      return;
+    }
+    if (widget.isTyping) {
+      widget.onTyping(false);
     }
   }
 
@@ -60,6 +94,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           spacing: 16,
           children: [
             TextFormField(
+              focusNode: _usernameFocus,
               controller: _usernameController,
               decoration: const InputDecoration(
                 hintText: 'Username',
@@ -67,6 +102,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               ),
             ),
             TextFormField(
+              focusNode: _passwordFocus,
               controller: _passwordController,
               decoration: InputDecoration(
                 hintText: 'Password',
