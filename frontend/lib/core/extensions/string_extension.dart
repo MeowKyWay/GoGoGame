@@ -1,4 +1,4 @@
-extension StringExtensiom on String {
+extension StringExtension on String {
   /// Check if the string is a valid email
   bool isEmail() {
     final emailRegex = RegExp(
