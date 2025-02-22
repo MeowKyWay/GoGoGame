@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gogogame_frontend/core/extensions/color_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/themes/app_theme.dart';
 import 'package:gogogame_frontend/pages/auth/login_page/login_page.dart';
 import 'package:gogogame_frontend/pages/home_page.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));
@@ -28,7 +31,18 @@ class MyApp extends ConsumerWidget {
         GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       ],
     );
-    return MaterialApp.router(theme: AppTheme.darkTheme, routerConfig: router);
+    return GlobalLoaderOverlay(
+      overlayWidgetBuilder: (progress) {
+        return Center(
+          child: SpinKitFoldingCube(color: Colors.white, size: 50.0),
+        );
+      },
+      overlayColor: Colors.white.withOpa(0.1),
+      child: MaterialApp.router(
+        theme: AppTheme.darkTheme,
+        routerConfig: router,
+      ),
+    );
   }
 }
 

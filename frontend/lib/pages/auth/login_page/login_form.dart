@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/extensions/text_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class LoginForm extends ConsumerStatefulWidget {
   final bool isTyping;
@@ -26,16 +27,20 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   bool _isObscure = true;
   bool _isFilled = false;
 
-  void _onSubmit() async {
+  void _onSubmit(BuildContext context) async {
     final username = _usernameController.text;
     final password = _passwordController.text;
     try {
-      ref
+      context.loaderOverlay.show();
+      await Future.delayed(const Duration(seconds: 3));
+      await ref
           .read(authStateProvider.notifier)
           .login(username: username, password: password);
+      if (!context.mounted) return;
     } catch (e) {
       log(e.toString());
     }
+    context.loaderOverlay.hide();
   }
 
   @override
@@ -132,7 +137,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 duration: const Duration(milliseconds: 300),
                 opacity: _isFilled ? 1 : 0,
                 child: FilledButton(
-                  onPressed: _onSubmit,
+                  onPressed: () => _onSubmit(context),
                   style: ButtonStyle(
                     minimumSize: WidgetStateProperty.all(
                       Size(double.infinity, 56),
