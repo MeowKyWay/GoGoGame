@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/themes/app_theme.dart';
 import 'package:gogogame_frontend/pages/auth/login_page/login_page.dart';
@@ -15,10 +16,26 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool isAuthenticated = ref.watch(authStateProvider);
-    return MaterialApp(
-      theme: AppTheme.darkTheme,
-      home: isAuthenticated ? const HomePage() : const LoginPage(),
+
+    final router = GoRouter(
+      refreshListenable: ListenableAuth(ref),
+      redirect: (context, state) {
+        if (!isAuthenticated) return '/login';
+        return '/';
+      },
+      routes: [
+        GoRoute(path: '/', builder: (context, state) => const HomePage()),
+        GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      ],
     );
+    return MaterialApp.router(theme: AppTheme.darkTheme, routerConfig: router);
+  }
+}
+
+class ListenableAuth extends ChangeNotifier {
+  final WidgetRef ref;
+  ListenableAuth(this.ref) {
+    ref.listen(authStateProvider, (previous, next) => notifyListeners());
   }
 }
 
