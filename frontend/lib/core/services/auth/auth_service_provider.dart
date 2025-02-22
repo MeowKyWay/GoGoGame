@@ -51,10 +51,12 @@ class AuthNotifier extends StateNotifier<bool> {
   }
 
   Future<void> register({
+    required String email,
     required String username,
     required String password,
   }) async {
     final res = await _apiService.postRequest('auth/signup', {
+      'email': email,
       'username': username,
       'password': password,
     });
@@ -64,7 +66,7 @@ class AuthNotifier extends StateNotifier<bool> {
       await _authService.saveToken(body['access_token']);
       state = true;
     } else {
-      throw Exception('Register failed');
+      throw Exception(body['message']);
     }
   }
 
