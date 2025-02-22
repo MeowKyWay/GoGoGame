@@ -26,7 +26,7 @@ class ValidatingTextFormField extends StatelessWidget {
       controller: controller,
       onChanged: onChanged,
       decoration: InputDecoration(
-        prefixIcon: Icon(prefixIcon),
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
         hintText: hintText,
         suffixIcon:
             isLoading
