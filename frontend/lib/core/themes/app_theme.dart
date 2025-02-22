@@ -95,6 +95,11 @@ class AppTheme {
     headlineLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
 
     labelLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+    labelMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
     labelSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+
+    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
   );
 }
