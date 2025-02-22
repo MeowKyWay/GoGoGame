@@ -31,9 +31,12 @@ class AuthNotifier extends StateNotifier<bool> {
     state = await _authService.isAuthenticated();
   }
 
-  Future<void> login({required String name, required String password}) async {
+  Future<void> login({
+    required String username,
+    required String password,
+  }) async {
     final res = await _apiService.postRequest('auth/signin', {
-      'name': name,
+      'username': username,
       'password': password,
     });
 
@@ -44,6 +47,24 @@ class AuthNotifier extends StateNotifier<bool> {
       state = true;
     } else {
       throw Exception('Login failed');
+    }
+  }
+
+  Future<void> register({
+    required String username,
+    required String password,
+  }) async {
+    final res = await _apiService.postRequest('auth/signup', {
+      'username': username,
+      'password': password,
+    });
+
+    final body = jsonDecode(res.body);
+    if (body['access_token'] != null) {
+      await _authService.saveToken(body['access_token']);
+      state = true;
+    } else {
+      throw Exception('Register failed');
     }
   }
 
