@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gap/gap.dart';
+import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/pages/auth/login_page/login_form.dart';
-import 'package:gogogame_frontend/pages/auth/register_pages/register_page.dart';
+import 'package:gogogame_frontend/pages/auth/register_pages/register_step_1.dart';
 import 'package:gogogame_frontend/widget/text_divider.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -23,9 +23,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const RegisterPage()),
-              );
+              context.push(RegisterStep1());
             },
             child: Text('Sign Up'),
           ),
