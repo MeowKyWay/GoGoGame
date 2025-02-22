@@ -35,7 +35,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     try {
       ref
           .read(authStateProvider.notifier)
-          .login(name: username, password: password);
+          .login(username: username, password: password);
     } catch (e) {
       log(e.toString());
     }
