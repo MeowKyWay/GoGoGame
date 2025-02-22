@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/extensions/text_extension.dart';
+import 'package:gogogame_frontend/core/extensions/text_style_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
@@ -27,6 +28,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   bool _isObscure = true;
   bool _isFilled = false;
 
+  String errorMessages = '';
+
   void _onSubmit(BuildContext context) async {
     final username = _usernameController.text;
     final password = _passwordController.text;
@@ -37,8 +40,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           .read(authStateProvider.notifier)
           .login(username: username, password: password);
       if (!context.mounted) return;
-    } catch (e) {
+    } on Exception catch (e) {
       log(e.toString());
+      setState(() {
+        errorMessages = e.toString();
+      });
     }
     context.loaderOverlay.hide();
   }
@@ -147,6 +153,13 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 ),
               ),
             ),
+            if (errorMessages.isNotEmpty)
+              Text(
+                errorMessages,
+                style: context.textTheme.labelSmall?.withColor(
+                  context.colorScheme.error,
+                ),
+              ),
           ],
         ),
       ),
