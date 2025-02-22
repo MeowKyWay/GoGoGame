@@ -29,9 +29,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   void _onSubmit() async {
     final username = _usernameController.text;
     final password = _passwordController.text;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Processing Data')));
     try {
       ref
           .read(authStateProvider.notifier)
