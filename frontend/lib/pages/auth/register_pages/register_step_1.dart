@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
+import 'package:gogogame_frontend/core/extensions/string_extension.dart';
 import 'package:gogogame_frontend/core/extensions/text_style_extension.dart';
 import 'package:gogogame_frontend/core/services/api/api_service.dart';
 import 'package:gogogame_frontend/pages/auth/register_pages/register_step_2.dart';
+import 'package:gogogame_frontend/widget/validating_text_form_field.dart';
 
 class RegisterStep1 extends ConsumerStatefulWidget {
   const RegisterStep1({super.key});
@@ -16,26 +18,43 @@ class RegisterStep1 extends ConsumerStatefulWidget {
 }
 
 class _RegisterStep1State extends ConsumerState<RegisterStep1> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   bool _isFilled = false;
   bool? _isUnique;
+  bool? _isEmail;
   Timer? _debounce;
+  bool _isChecking = false;
 
   void _onChanged(String value) {
     _debounce?.cancel();
-    _debounce = Timer(const Duration(seconds: 1), () {
-      ref
-          .read(apiServiceProvider)
-          .getRequest('users/check-username/$value')
-          .then((res) {
-            bool isUnique = res.body == 'false';
-            if (_isUnique != isUnique) {
-              setState(() {
-                _isUnique = isUnique;
-              });
-            }
-          });
+    if (!_isChecking || _isEmail != null) {
+      setState(() {
+        _isChecking = true;
+        _isEmail = null;
+      });
+    }
+    _debounce = Timer(const Duration(seconds: 2), () {
+      if (value.isEmail()) {
+        setState(() {
+          _isEmail = true;
+        });
+      } else {
+        setState(() {
+          _isChecking = false;
+          _isEmail = false;
+        });
+        return;
+      }
+      ref.read(apiServiceProvider).getRequest('users/check-email/$value').then((
+        res,
+      ) {
+        bool isUnique = res.body == 'false';
+        setState(() {
+          _isChecking = false;
+          _isUnique = isUnique;
+        });
+      });
     });
     if (_isFilled != value.isNotEmpty || _isUnique != null) {
       setState(() {
@@ -53,26 +72,26 @@ class _RegisterStep1State extends ConsumerState<RegisterStep1> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           children: [
-            Text(
-              'What is your username?',
-              style: context.textTheme.headlineLarge,
-            ),
+            Text('What is your email?', style: context.textTheme.headlineLarge),
             Gap(32),
-            TextField(
-              controller: _usernameController,
+            ValidatingTextFormField(
+              controller: _emailController,
               onChanged: _onChanged,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.person),
-                hintText: 'Username',
-              ),
+              hintText: 'Email',
+              prefixIcon: Icons.email,
+              isLoading: _isChecking,
+              isValid: _isUnique == true && _isEmail == true,
+              isInvalid: _isUnique == false || _isEmail == false,
             ),
-            if (_isUnique != null && !_isUnique!)
+            if ((_isUnique != null && !_isUnique!) || _isEmail == false)
               SizedBox(
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'This username is already taken',
+                    _isUnique == false
+                        ? 'Email is already taken'
+                        : 'Invalid email',
                     style: context.textTheme.labelSmall?.withColor(
                       context.colorScheme.error,
                     ),
@@ -85,10 +104,10 @@ class _RegisterStep1State extends ConsumerState<RegisterStep1> {
                 minimumSize: WidgetStateProperty.all(Size(double.infinity, 56)),
               ),
               onPressed:
-                  _isFilled && _isUnique == true
+                  _isFilled && _isUnique == true && _isEmail == true
                       ? () {
                         context.push(
-                          RegisterStep2(username: _usernameController.text),
+                          RegisterStep2(username: _emailController.text),
                         );
                       }
                       : null,

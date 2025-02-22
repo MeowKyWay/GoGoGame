@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
-import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
+import 'package:gogogame_frontend/pages/auth/register_pages/register_step_3.dart';
 
 class RegisterStep2 extends ConsumerStatefulWidget {
   final String username;
@@ -64,15 +64,15 @@ class _RegisterStep1State extends ConsumerState<RegisterStep2> {
               onPressed:
                   _isFilled
                       ? () {
-                        ref
-                            .read(authStateProvider.notifier)
-                            .register(
-                              username: widget.username,
-                              password: _passwordController.text,
-                            );
+                        context.push(
+                          RegisterStep3(
+                            email: widget.username,
+                            password: _passwordController.text,
+                          ),
+                        );
                       }
                       : null,
-              child: const Text('Create Account'),
+              child: const Text('Continue'),
             ),
             Gap(24),
             SafeArea(child: Container()),
