@@ -15,10 +15,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async registerUser(createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.usersService.findByUsername(createUserDto.username);
+  async registerUser(
+    createUserDto: CreateUserDto,
+  ): Promise<{ access_token: string }> {
+    let user = await this.usersService.findByUsername(createUserDto.username);
     if (user) throw new ConflictException('User already exists!');
-    return this.usersService.create(createUserDto);
+    user = await this.usersService.create(createUserDto);
+
+    return this.login(user);
   }
 
   async validateUser(name: string, password: string): Promise<PublicUser> {
@@ -33,7 +37,7 @@ export class AuthService {
     throw new UnauthorizedException('Invalid credentials');
   }
 
-  login(user: PublicUser) {
+  login(user: PublicUser): { access_token: string } {
     const payload = { username: user.username, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
