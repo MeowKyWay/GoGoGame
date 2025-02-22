@@ -9,4 +9,9 @@ export class UsersController {
   async checkUsername(@Param('username') username: string) {
     return (await this.usersService.findByUsername(username)) !== undefined;
   }
+
+  @Get('check-email/:email')
+  async checkEmail(@Param('email') email: string) {
+    return (await this.usersService.findByEmail(email)) !== undefined;
+  }
 }
