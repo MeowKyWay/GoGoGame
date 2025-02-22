@@ -43,4 +43,45 @@ export class UsersService {
       hashedRefreshToken: user.hashedRefreshToken,
     };
   }
+
+  async findByEmail(email: string): Promise<User | undefined> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      return undefined;
+    }
+    return {
+      id: user.id,
+      username: user.username,
+      password: user.password,
+      hashedRefreshToken: user.hashedRefreshToken,
+    };
+  }
+
+  async findByUsernameField(username: string): Promise<User | undefined> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          {
+            username,
+          },
+          {
+            email: username,
+          },
+        ],
+      },
+    });
+    if (!user) {
+      return undefined;
+    }
+    return {
+      id: user.id,
+      username: user.username,
+      password: user.password,
+      hashedRefreshToken: user.hashedRefreshToken,
+    };
+  }
 }

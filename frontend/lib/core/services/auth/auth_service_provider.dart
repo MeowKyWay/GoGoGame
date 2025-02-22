@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gogogame_frontend/core/exceptions/auth_exception.dart';
 import 'package:gogogame_frontend/core/services/api/api_service.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service.dart';
 
@@ -47,7 +46,7 @@ class AuthNotifier extends StateNotifier<bool> {
       log(body['access_token']);
       state = true;
     } else {
-      throw UnauthorizedException();
+      throw Exception(body['message']);
     }
   }
 

@@ -19,14 +19,18 @@ export class AuthService {
     createUserDto: CreateUserDto,
   ): Promise<{ access_token: string }> {
     let user = await this.usersService.findByUsername(createUserDto.username);
-    if (user) throw new ConflictException('User already exists!');
+    if (user) throw new ConflictException('Username already exists!');
+    user = await this.usersService.findByEmail(createUserDto.email);
+    if (user) throw new ConflictException('Email already exists!');
     user = await this.usersService.create(createUserDto);
 
     return this.login(user);
   }
 
-  async validateUser(name: string, password: string): Promise<PublicUser> {
-    const user = (await this.usersService.findByUsername(name)) as User;
+  async validateUser(username: string, password: string): Promise<PublicUser> {
+    const user = (await this.usersService.findByUsernameField(
+      username,
+    )) as User;
     if (user && (await verify(user.password, password))) {
       const result = {
         id: user.id,
