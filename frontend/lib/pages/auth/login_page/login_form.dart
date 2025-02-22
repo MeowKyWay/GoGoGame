@@ -105,7 +105,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               focusNode: _usernameFocus,
               controller: _usernameController,
               decoration: const InputDecoration(
-                hintText: 'Username',
+                hintText: 'Email or Username',
                 prefixIcon: Icon(Icons.person),
               ),
             ),
