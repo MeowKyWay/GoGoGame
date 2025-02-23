@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:gogogame_frontend/pages/home/play_page/play_page.dart';
 
 class HomeScaffold extends StatefulWidget {
   const HomeScaffold({super.key});
@@ -26,7 +27,10 @@ class _HomeScaffoldState extends State<HomeScaffold> {
         currentIndex: _currentIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.play_circle), label: 'Play'),
-          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Store'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag),
+            label: 'Store',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'More'),
         ],
       ),
@@ -34,12 +38,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: <Widget>[
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[Text('Welcome to GoGoGame!')],
-            ),
-          ),
+          PlayPage(),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
