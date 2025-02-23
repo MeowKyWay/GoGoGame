@@ -6,7 +6,8 @@ import 'package:gogogame_frontend/core/extensions/color_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/themes/app_theme.dart';
 import 'package:gogogame_frontend/pages/auth/login_page/login_page.dart';
-import 'package:gogogame_frontend/pages/home_page.dart';
+import 'package:gogogame_frontend/pages/home/home_scaffold.dart';
+import 'package:gogogame_frontend/pages/home/play_page/play_page.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 void main() {
@@ -27,7 +28,7 @@ class MyApp extends ConsumerWidget {
         return '/';
       },
       routes: [
-        GoRoute(path: '/', builder: (context, state) => const HomePage()),
+        GoRoute(path: '/', builder: (context, state) => const HomeScaffold()),
         GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       ],
     );
