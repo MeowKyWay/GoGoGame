@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/api/api_service.dart';
@@ -43,7 +42,6 @@ class AuthNotifier extends StateNotifier<bool> {
     final body = jsonDecode(res.body);
     if (body['access_token'] != null) {
       await _authService.saveToken(body['access_token']);
-      log(body['access_token']);
       state = true;
     } else {
       throw Exception(body['message']);

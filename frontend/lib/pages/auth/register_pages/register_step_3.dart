@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +46,6 @@ class _RegisterStep3State extends ConsumerState<RegisterStep3> {
             .read(apiServiceProvider)
             .getRequest('users/check-username/$value')
             .then((res) {
-              log(res.body);
               bool isUnique = res.body != 'true';
               _errorMessage = isUnique ? '' : 'Username is already taken';
             });

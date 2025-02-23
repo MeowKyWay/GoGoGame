@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
@@ -35,13 +33,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     final password = _passwordController.text;
     try {
       context.loaderOverlay.show();
-      await Future.delayed(const Duration(seconds: 3));
       await ref
           .read(authStateProvider.notifier)
           .login(username: username, password: password);
       if (!context.mounted) return;
     } on Exception catch (e) {
-      log(e.toString());
       setState(() {
         errorMessages = e.toString();
       });
