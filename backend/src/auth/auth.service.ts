@@ -47,4 +47,16 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async validateToken(token: string): Promise<PublicUser> {
+    const payload = this.jwtService.verify<{
+      sub: number;
+    }>(token);
+    const user = await this.usersService.findById(payload.sub);
+    if (!user) throw new UnauthorizedException('Invalid token');
+    return {
+      id: user.id,
+      username: user.username,
+    } as PublicUser;
+  }
 }
