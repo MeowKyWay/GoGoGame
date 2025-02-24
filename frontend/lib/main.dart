@@ -27,7 +27,7 @@ class MyApp extends ConsumerWidget {
         return '/';
       },
       routes: [
-        GoRoute(path: '/', builder: (context, state) => const HomeScaffold()),
+        GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
         GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       ],
     );
