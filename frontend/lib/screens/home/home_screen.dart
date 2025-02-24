@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:gogogame_frontend/pages/home/play_page/play_page.dart';
+import 'package:gogogame_frontend/screens/home/home_page/home_page.dart';
 
 class HomeScaffold extends StatefulWidget {
   const HomeScaffold({super.key});
@@ -38,7 +37,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: <Widget>[
-          PlayPage(),
+          HomePage(),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

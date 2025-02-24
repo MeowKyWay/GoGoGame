@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
-import 'package:gogogame_frontend/pages/auth/register_pages/register_step_3.dart';
+import 'package:gogogame_frontend/screens/auth/register_screens/register_step_3.dart';
 
 class RegisterStep2 extends ConsumerStatefulWidget {
   final String username;

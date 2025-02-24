@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:gogogame_frontend/core/extensions/color_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/themes/app_theme.dart';
-import 'package:gogogame_frontend/pages/auth/login_page/login_page.dart';
-import 'package:gogogame_frontend/pages/home/home_scaffold.dart';
+import 'package:gogogame_frontend/screens/auth/login_screen/login_screen.dart';
+import 'package:gogogame_frontend/screens/home/home_screen.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 void main() {

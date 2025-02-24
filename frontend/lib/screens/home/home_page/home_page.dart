@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/widget/text_divider.dart';
 
-class PlayPage extends ConsumerWidget {
-  const PlayPage({super.key});
+class HomePage extends ConsumerWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,17 +27,7 @@ class PlayPage extends ConsumerWidget {
                     onPressed: () {
                       throw UnimplementedError();
                     },
-                    child: Text('Ranked'),
-                  ),
-                ),
-                SizedBox(
-                  height: 56,
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: () {
-                      throw UnimplementedError();
-                    },
-                    child: Text('Unrated'),
+                    child: Text('Play'),
                   ),
                 ),
               ],

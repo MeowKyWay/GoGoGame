@@ -7,7 +7,7 @@ import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/extensions/string_extension.dart';
 import 'package:gogogame_frontend/core/extensions/text_style_extension.dart';
 import 'package:gogogame_frontend/core/services/api/api_service.dart';
-import 'package:gogogame_frontend/pages/auth/register_pages/register_step_2.dart';
+import 'package:gogogame_frontend/screens/auth/register_screens/register_step_2.dart';
 import 'package:gogogame_frontend/widget/validating_text_form_field.dart';
 
 class RegisterStep1 extends ConsumerStatefulWidget {
