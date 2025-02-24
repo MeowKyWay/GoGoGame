@@ -5,8 +5,8 @@ import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart'
 import 'package:http/http.dart' as http;
 import '../auth/auth_service.dart'; // For JWT storage
 
-final apiServiceProvider = Provider(
-  (ref) => ApiService(authService: ref.read(authServiceProvider)),
+final apiService = Provider(
+  (ref) => ApiService(authService: ref.read(authService)),
 );
 
 class ApiService {

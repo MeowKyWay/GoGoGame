@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/api/api_service.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service.dart';
 
-final authServiceProvider = Provider((ref) => AuthService());
+final authService = Provider((ref) => AuthService());
 
-final authStateProvider = StateNotifierProvider<AuthNotifier, bool>((ref) {
+final authState = StateNotifierProvider<AuthNotifier, bool>((ref) {
   return AuthNotifier(
-    authService: ref.read(authServiceProvider),
-    apiService: ref.read(apiServiceProvider),
+    authService: ref.read(authService),
+    apiService: ref.read(apiService),
   );
 });
 

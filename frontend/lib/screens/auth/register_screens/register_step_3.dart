@@ -41,9 +41,7 @@ class _RegisterStep3State extends ConsumerState<RegisterStep3> {
       } else if (!value.isLenght(maxLength: 20)) {
         _errorMessage = 'Too long';
       } else if (value.isUsername()) {
-        ref.read(authStateProvider.notifier).checkUsername(value).then((
-          result,
-        ) {
+        ref.read(authState.notifier).checkUsername(value).then((result) {
           _errorMessage = result ? '' : 'Username is already taken';
         });
       } else {
@@ -105,7 +103,7 @@ class _RegisterStep3State extends ConsumerState<RegisterStep3> {
                       ? () async {
                         context.loaderOverlay.show();
                         ref
-                            .read(authStateProvider.notifier)
+                            .read(authState.notifier)
                             .register(
                               email: widget.email,
                               username: _usernameController.text,

@@ -34,7 +34,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     try {
       context.loaderOverlay.show();
       await ref
-          .read(authStateProvider.notifier)
+          .read(authState.notifier)
           .login(username: username, password: password);
       if (!context.mounted) return;
     } on Exception catch (e) {

@@ -46,7 +46,7 @@ class _RegisterStep1State extends ConsumerState<RegisterStep1> {
         });
         return;
       }
-      ref.read(authStateProvider.notifier).checkEmail(value).then((result) {
+      ref.read(authState.notifier).checkEmail(value).then((result) {
         setState(() {
           _isChecking = false;
           _isUnique = result;

@@ -18,7 +18,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool isAuthenticated = ref.watch(authStateProvider);
+    bool isAuthenticated = ref.watch(authState);
 
     final router = GoRouter(
       refreshListenable: ListenableAuth(ref),
@@ -49,6 +49,6 @@ class MyApp extends ConsumerWidget {
 class ListenableAuth extends ChangeNotifier {
   final WidgetRef ref;
   ListenableAuth(this.ref) {
-    ref.listen(authStateProvider, (previous, next) => notifyListeners());
+    ref.listen(authState, (previous, next) => notifyListeners());
   }
 }
