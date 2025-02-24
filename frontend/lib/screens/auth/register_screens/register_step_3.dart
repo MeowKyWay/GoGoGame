@@ -6,7 +6,6 @@ import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/extensions/string_extension.dart';
 import 'package:gogogame_frontend/core/extensions/text_extension.dart';
-import 'package:gogogame_frontend/core/services/api/api_service.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/widget/validating_text_form_field.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -42,13 +41,11 @@ class _RegisterStep3State extends ConsumerState<RegisterStep3> {
       } else if (!value.isLenght(maxLength: 20)) {
         _errorMessage = 'Too long';
       } else if (value.isUsername()) {
-        ref
-            .read(apiServiceProvider)
-            .getRequest('users/check-username/$value')
-            .then((res) {
-              bool isUnique = res.body != 'true';
-              _errorMessage = isUnique ? '' : 'Username is already taken';
-            });
+        ref.read(authStateProvider.notifier).checkUsername(value).then((
+          result,
+        ) {
+          _errorMessage = result ? '' : 'Username is already taken';
+        });
       } else {
         _errorMessage = 'Only letters, numbers and underscores are allowed';
       }

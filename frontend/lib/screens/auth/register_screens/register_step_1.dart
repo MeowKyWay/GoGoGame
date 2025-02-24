@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/extensions/string_extension.dart';
 import 'package:gogogame_frontend/core/extensions/text_style_extension.dart';
-import 'package:gogogame_frontend/core/services/api/api_service.dart';
+import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/screens/auth/register_screens/register_step_2.dart';
 import 'package:gogogame_frontend/widget/validating_text_form_field.dart';
 
@@ -46,13 +46,10 @@ class _RegisterStep1State extends ConsumerState<RegisterStep1> {
         });
         return;
       }
-      ref.read(apiServiceProvider).getRequest('users/check-email/$value').then((
-        res,
-      ) {
-        bool isUnique = res.body == 'false';
+      ref.read(authStateProvider.notifier).checkEmail(value).then((result) {
         setState(() {
           _isChecking = false;
-          _isUnique = isUnique;
+          _isUnique = result;
         });
       });
     });

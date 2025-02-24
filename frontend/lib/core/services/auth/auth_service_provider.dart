@@ -72,4 +72,16 @@ class AuthNotifier extends StateNotifier<bool> {
     await _authService.logout();
     state = false;
   }
+
+  Future<bool> checkEmail(String email) async {
+    final res = await _apiService.getRequest('users/check-email/$email');
+    final body = jsonDecode(res.body);
+    return body == false;
+  }
+
+  Future<bool> checkUsername(String username) async {
+    final res = await _apiService.getRequest('users/check-username/$username');
+    final body = jsonDecode(res.body);
+    return body == false;
+  }
 }
