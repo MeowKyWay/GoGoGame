@@ -5,12 +5,14 @@ class SelectButton<T> extends StatelessWidget {
   final List<T> items;
   final T? value;
   final void Function(T?) onChanged;
+  final Icon? prefixIcon;
 
   const SelectButton({
     super.key,
     required this.items,
     required this.value,
     required this.onChanged,
+    this.prefixIcon,
   });
 
   @override
@@ -21,8 +23,8 @@ class SelectButton<T> extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       alignment: Alignment.center,
-      child: DropdownButton<T>(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: DropdownButtonFormField<T>(
+        decoration: InputDecoration(prefixIcon: prefixIcon),
         isExpanded: true,
         items:
             items
@@ -33,7 +35,6 @@ class SelectButton<T> extends StatelessWidget {
                 .toList(),
         onChanged: onChanged,
         value: value,
-        underline: Container(),
         borderRadius: BorderRadius.circular(8),
       ),
     );
