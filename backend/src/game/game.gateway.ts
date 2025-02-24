@@ -1,31 +1,50 @@
 import {
   WebSocketGateway,
   SubscribeMessage,
-  MessageBody,
   ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { MatchmakingService } from './match-making/match-making.service';
+import { ConnectedPlayer } from './types/connected-player.type';
+import { AuthService } from 'src/auth/auth.service';
+import { PublicUser } from 'src/users/users.service';
 // import { GameService } from './game.service';
 
 @WebSocketGateway(3001)
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(/*private readonly gameService: GameService*/) {}
+  constructor(
+    private readonly matchmakingService: MatchmakingService,
+    private readonly authService: AuthService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
 
-  private activeSockets: Record<string, Socket> = {}; // Store active connections
+  private activeSockets: Record<string, ConnectedPlayer> = {}; // Store active connections
 
   onModuleInit() {
     this.server.on('connection', (socket) => this.handleConnection(socket));
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
+    const token = client.handshake.headers?.authorization?.split(' ')[1];
+    if (!token) throw new Error('No token provided');
+
+    let user: PublicUser;
+    try {
+      user = await this.authService.validateToken(token);
+    } catch {
+      throw new Error('Invalid token');
+    }
+
     console.log(`Client connected: ${client.id}`);
-    this.activeSockets[client.id] = client;
+    this.activeSockets[client.id] = {
+      socket: client,
+      user: user,
+    };
   }
 
   handleDisconnect(client: Socket) {
@@ -33,17 +52,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     delete this.activeSockets[client.id];
   }
 
-  @SubscribeMessage('move')
-  handleMove(
-    @MessageBody() move: { gameId: string; x: number; y: number },
-    @ConnectedSocket() client: Socket,
-  ) {
-    console.log(`Received move: Game ${move.gameId} - (${move.x}, ${move.y})`);
-
-    // Save move to PostgreSQL
-    // await this.gameService.saveMove(move);
-
-    // Notify all players
-    this.server.emit(`game-${move.gameId}`, move);
+  @SubscribeMessage('joinQueue')
+  handleJoinQueue(@ConnectedSocket() client: Socket) {
+    this.matchmakingService.addToQueue(this.activeSockets[client.id]);
   }
 }
