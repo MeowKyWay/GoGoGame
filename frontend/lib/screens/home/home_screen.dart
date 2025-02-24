@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:gogogame_frontend/screens/home/home_page/home_page.dart';
+import 'package:gogogame_frontend/screens/home/more_page/more_page.dart';
+import 'package:gogogame_frontend/screens/home/store_page/store_page.dart';
 
-class HomeScaffold extends StatefulWidget {
-  const HomeScaffold({super.key});
+abstract class AppHomePage extends Widget {
+  const AppHomePage({super.key});
 
-  @override
-  State<HomeScaffold> createState() => _HomeScaffoldState();
+  Widget get title => const Text('Home');
 }
 
-class _HomeScaffoldState extends State<HomeScaffold> {
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentIndex = 0;
+
+  final List<AppHomePage> _pages = [HomePage(), StorePage(), MorePage()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('GoGoGame')),
+      appBar: AppBar(title: _pages[_currentIndex].title),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) {
           setState(() {
@@ -36,21 +46,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          HomePage(),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[Text('Store')],
-            ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[Text('More')],
-            ),
-          ),
-        ],
+        children: _pages,
       ),
     );
   }
