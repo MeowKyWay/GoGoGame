@@ -24,8 +24,14 @@ class SelectButton<T> extends StatelessWidget {
       ),
       alignment: Alignment.center,
       child: DropdownButtonFormField<T>(
-        decoration: InputDecoration(prefixIcon: prefixIcon),
+        decoration: InputDecoration(
+          prefixIcon: prefixIcon,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent, width: 2),
+          ),
+        ),
         isExpanded: true,
+        dropdownColor: context.colorScheme.tertiary,
         items:
             items
                 .map(
