@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/board_size_type.dart';
@@ -24,35 +26,15 @@ class GameScreen extends ConsumerStatefulWidget {
 class _GamePageState extends ConsumerState<GameScreen> {
   late GameService game;
 
-  @override
-  void initState() {
-    super.initState();
-
-    game = ref.read(gameService);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.loaderOverlay.show();
-      await game.connect();
-      await game.joinQueue(
-        widget.boardSize.value,
-        widget.timeControl.initialTime,
-        widget.timeControl.increment,
-      );
-      if (mounted) context.loaderOverlay.hide();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    game.dispose();
+  void _onCellTap(Offset offset) {
+    log('Cell tapped at $offset');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Game')),
-      body: Center(child: GameBoard(size: widget.boardSize.value)),
+      body: GameBoard(size: widget.boardSize.value, onCellTap: _onCellTap),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colorScheme.outline,
         items: [
@@ -67,5 +49,30 @@ class _GamePageState extends ConsumerState<GameScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    return;
+    game = ref.read(gameService);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // context.loaderOverlay.show();
+      await game.connect();
+      await game.joinQueue(
+        widget.boardSize.value,
+        widget.timeControl.initialTime,
+        widget.timeControl.increment,
+      );
+      // if (mounted) context.loaderOverlay.hide();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    return;
+    game.dispose();
   }
 }

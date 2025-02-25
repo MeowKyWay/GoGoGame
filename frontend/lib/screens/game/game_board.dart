@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
@@ -5,8 +7,9 @@ import 'package:gogogame_frontend/core/themes/game_theme.dart';
 
 class GameBoard extends ConsumerWidget {
   final int size; // 9, 13, or 19
+  final Function(Offset) onCellTap;
 
-  const GameBoard({super.key, required this.size});
+  const GameBoard({super.key, required this.size, required this.onCellTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,7 +21,6 @@ class GameBoard extends ConsumerWidget {
         child: FittedBox(
           // Ensures board scales down if needed
           child: Container(
-            padding: const EdgeInsets.all(GameConstant.cellSize),
             decoration: BoxDecoration(
               color:
                   boardTheme.boardImage == null ? boardTheme.boardColor : null,
@@ -30,10 +32,29 @@ class GameBoard extends ConsumerWidget {
                       )
                       : null,
             ),
-            child: SizedBox(
-              width: (size - 1) * GameConstant.cellSize,
-              height: (size - 1) * GameConstant.cellSize,
-              child: CustomPaint(painter: GoBoardPainter(size, boardTheme)),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(GameConstant.cellSize / 2),
+                  child: SizedBox(
+                    width: (size - 1) * GameConstant.cellSize,
+                    height: (size - 1) * GameConstant.cellSize,
+                    child: CustomPaint(
+                      painter: GoBoardPainter(size, boardTheme),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: GestureDetector(
+                    onTapUp: (details) {
+                      log(
+                        'Cell tapped at ${details.localPosition - Offset(GameConstant.cellSize / 2, GameConstant.cellSize / 2)}',
+                      );
+                    },
+                    child: Container(color: Colors.transparent),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
