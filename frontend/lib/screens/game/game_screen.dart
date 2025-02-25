@@ -1,12 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/board_size_type.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
-import 'package:gogogame_frontend/core/services/websocket/web_socket_service.dart';
+import 'package:gogogame_frontend/core/services/game/game_service.dart';
 import 'package:gogogame_frontend/screens/game/game_board.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   final BoardSize boardSize;
@@ -23,40 +22,30 @@ class GameScreen extends ConsumerStatefulWidget {
 }
 
 class _GamePageState extends ConsumerState<GameScreen> {
-  late WebSocketService service;
+  late GameService game;
 
   @override
   void initState() {
     super.initState();
 
-    service = ref.read(webSocketService);
+    game = ref.read(gameService);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await service.connect();
-      service.listen('message', (data) {
-        log('Message: $data');
-      });
-      service.listen('validationError', (data) {
-        log('Validation error: $data');
-      });
-      service.listen('matchFound', (data) {
-        log('Game started: $data');
-      });
-      service.listen('error', (data) {
-        log('Error: $data');
-      });
-      service.sendMessage('joinQueue', {
-        'boardSize': widget.boardSize.value,
-        'initialTime': widget.timeControl.initialTime,
-        'increment': widget.timeControl.increment,
-      });
+      context.loaderOverlay.show();
+      await game.connect();
+      await game.joinQueue(
+        widget.boardSize.value,
+        widget.timeControl.initialTime,
+        widget.timeControl.increment,
+      );
+      if (mounted) context.loaderOverlay.hide();
     });
   }
 
   @override
   void dispose() {
     super.dispose();
-    service.dispose();
+    game.dispose();
   }
 
   @override

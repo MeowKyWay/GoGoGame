@@ -35,13 +35,20 @@ class WebSocketService {
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .setExtraHeaders({'Authorization': 'Bearer $token'})
-          .setReconnectionAttempts(5) // Retry 5 times
+          .setReconnectionAttempts(10) // Retry 10 times
           .setReconnectionDelay(2000) // Wait 2s between retries
-          .disableAutoConnect()
           .build(),
     );
 
     final completer = Completer<void>();
+
+    Future.delayed(const Duration(seconds: 10), () {
+      if (!completer.isCompleted) {
+        log('[WebSocket] Authentication timed out');
+        disconnect();
+        completer.completeError(Exception('Authentication timed out'));
+      }
+    });
 
     _socket!.onConnect((_) => log('[WebSocket] Connected'));
     _socket!.on('authenticated', (_) {
