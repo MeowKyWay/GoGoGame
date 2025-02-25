@@ -67,16 +67,20 @@ export class MatchmakingService {
             `[Matchmaking] Match found: ${player1.player.user.username} vs ${player2.player.user.username}`,
           );
 
+          const isPlayer1White = Math.random() < 0.5;
+
           player1.player.socket.emit('matchFound', {
             gameID: '123', // TODO: Generate unique game ID
             opponent: player2.player.user,
             format: player1.format,
+            isWhite: isPlayer1White,
           });
 
           player2.player.socket.emit('matchFound', {
             gameID: '123', // TODO: Generate unique game ID
             opponent: player1.player.user,
             format: player2.format,
+            isWhite: !isPlayer1White,
           });
 
           // TODO: Create the actual game instance
