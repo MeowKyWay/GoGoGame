@@ -34,14 +34,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleConnection(client: Socket) {
+    console.log('Client connected:', client.id);
     const token = client.handshake.headers?.authorization?.split(' ')[1];
-    if (!token) throw new Error('No token provided');
 
     let user: PublicUser;
     try {
-      user = await this.authService.validateToken(token);
+      user = await this.authService.validateToken(token!);
     } catch {
-      throw new Error('Invalid token');
+      client.emit('error', {
+        message: 'Invalid access token',
+      });
+      client.disconnect();
+      return;
     }
 
     console.log(`Client connected: ${client.id}`);

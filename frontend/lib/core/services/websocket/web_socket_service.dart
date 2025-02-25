@@ -1,43 +1,60 @@
-import 'dart:convert';
 import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/config.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/status.dart' as status;
+import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 final webSocketService = Provider(
-  (ref) => WebSocketService(Config.webSocketUrl),
+  (ref) => WebSocketService(Config.webSocketUrl, ref),
 );
 
 class WebSocketService {
   final String url;
-  late WebSocketChannel _channel;
+  final Ref ref;
 
-  WebSocketService(this.url);
+  WebSocketService(this.url, this.ref);
 
-  void connect() {
-    _channel = WebSocketChannel.connect(Uri.parse(url));
-    log('Connected to WebSocket at $url');
-  }
+  late IO.Socket socket;
 
-  void sendMessage(String event, dynamic data) {
-    final message = jsonEncode({'event': event, 'data': data});
-    _channel.sink.add(message);
-  }
+  Future<void> connect() async {
+    String? token = await ref.read(authService).getToken();
 
-  void subscribe(String event, Function(dynamic) callback) {
-    _channel.stream.listen((message) {
-      final data = jsonDecode(message);
-      if (data['event'] == event) {
-        callback(data['data']);
-      }
+    if (token == null) {
+      throw Exception('Token is null');
+    }
+
+    socket = IO.io(
+      url,
+      IO.OptionBuilder()
+          .setTransports(['websocket']) // Force WebSocket transport
+          .disableAutoConnect() // Disable auto connect (connect manually)
+          .setExtraHeaders({'Authorization': 'Bearer $token'}) // Send token
+          .build(),
+    );
+
+    socket.connect();
+
+    socket.onConnect((_) {
+      log('Connected to WebSocket');
+    });
+    socket.onDisconnect((_) {
+      log('Disconnected from WebSocket');
+    });
+    socket.onError((data) {
+      log('WebSocket error: $data');
     });
   }
 
-  Stream get messages => _channel.stream;
+  void sendMessage(String event, dynamic data) {
+    socket.emit(event, data);
+  }
+
+  void listen(String event, Function(dynamic) callback) {
+    socket.on(event, callback);
+  }
 
   void close() {
-    _channel.sink.close(status.normalClosure);
-    log('WebSocket connection closed');
+    socket.disconnect();
   }
 }

@@ -20,4 +20,15 @@ enum BoardSize {
         return '19x19';
     }
   }
+
+  int get value {
+    switch (this) {
+      case BoardSize.b9x9:
+        return 9;
+      case BoardSize.b13x13:
+        return 13;
+      case BoardSize.b19x19:
+        return 19;
+    }
+  }
 }

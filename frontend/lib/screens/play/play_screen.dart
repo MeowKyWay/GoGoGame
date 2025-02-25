@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/constants/board_size_type.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
+import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
+import 'package:gogogame_frontend/screens/game/game_screen.dart';
 import 'package:gogogame_frontend/widget/select_button.dart';
 
 class PlayScreen extends StatefulWidget {
@@ -85,7 +87,12 @@ class _PlayScreenState extends State<PlayScreen> {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () {
-                        throw UnimplementedError();
+                        context.push(
+                          GameScreen(
+                            boardSize: _boardSize,
+                            timeControl: _timeControl,
+                          ),
+                        );
                       },
                       child: const Text('Play'),
                     ),
