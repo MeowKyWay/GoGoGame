@@ -15,11 +15,7 @@ class GameService {
   Future<void> connect() async {
     await webSocket.connect();
 
-    webSocket.listen('message', (data) {
-      log('[GameService] Message: $data');
-    });
-
-    webSocket.listen('validationError', (data) {
+    webSocket.listen('validation_error', (data) {
       log('[GameService] Validation error: $data');
       throw Exception('Validation error: $data');
     });
@@ -31,7 +27,7 @@ class GameService {
   }
 
   Future<void> joinQueue(int boardSize, int initialTime, int increment) {
-    webSocket.sendMessage('joinQueue', {
+    webSocket.sendMessage('join_queue', {
       'boardSize': boardSize,
       'initialTime': initialTime,
       'increment': increment,
@@ -39,7 +35,7 @@ class GameService {
 
     Completer<void> completer = Completer<void>();
 
-    webSocket.listen('matchFound', (data) {
+    webSocket.listen('match_found', (data) {
       log('[GameService] Game started: $data');
       completer.complete();
     });

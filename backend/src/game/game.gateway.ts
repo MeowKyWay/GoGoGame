@@ -15,6 +15,7 @@ import { PublicUser } from 'src/users/users.service';
 import { JoinQueueDto } from './dto/join-queue.dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { WebSocketService } from 'src/web-socket/web-socket.service';
 
 @WebSocketGateway(3001)
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -26,6 +27,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly matchmakingService: MatchmakingService,
     private readonly authService: AuthService,
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   async handleConnection(client: Socket) {
@@ -47,8 +49,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.activeSockets[client.id] = { socket: client, user };
     //Send authenticated event to client
-    client.emit('authenticated');
-    console.log(`[WebSocket] Client authenticated: ${user.id} (${client.id})`);
+    await this.webSocketService.emitWithAck(client, 'authenticated');
+    console.log(
+      `[WebSocket] Client authenticated: ${user.username} (${client.id})`,
+    );
   }
 
   handleDisconnect(client: Socket) {
@@ -61,7 +65,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage('joinQueue')
+  @SubscribeMessage('join_queue')
   async handleJoinQueue(
     @ConnectedSocket() client: Socket,
     @MessageBody() joinQueueDto: JoinQueueDto,
@@ -90,7 +94,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     try {
-      this.matchmakingService.addToQueue({
+      await this.matchmakingService.addToQueue({
         connectedPlayer,
         ...joinQueueDto,
       });
@@ -103,7 +107,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage('leaveQueue')
+  @SubscribeMessage('leave_queue')
   handleLeaveQueue(@ConnectedSocket() client: Socket) {
     const connectedPlayer = this.activeSockets[client.id];
     if (connectedPlayer) {

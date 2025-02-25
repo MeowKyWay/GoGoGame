@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ConnectedPlayer, QueuingPlayer } from '../types/player.type';
 import { GameFormat } from '../types/game-format.type';
+import { WebSocketService } from 'src/web-socket/web-socket.service';
 
 @Injectable()
 export class MatchmakingService {
   private queue: QueuingPlayer[] = []; // Waiting players
 
-  addToQueue({
+  constructor(private readonly webSocketService: WebSocketService) {}
+
+  async addToQueue({
     connectedPlayer,
     boardSize,
     initialTime,
@@ -34,9 +37,9 @@ export class MatchmakingService {
       `[Matchmaking] ${connectedPlayer.user.username} joined the queue`,
     );
 
-    connectedPlayer.socket.emit('message', { message: 'Joined queue' });
+    this.webSocketService.message(connectedPlayer.socket, 'Queue joined');
 
-    this.matchPlayers();
+    await this.matchPlayers();
   }
 
   removeFromQueue(connectedPlayer: ConnectedPlayer) {
@@ -52,7 +55,7 @@ export class MatchmakingService {
     }
   }
 
-  private matchPlayers() {
+  private async matchPlayers() {
     for (let i = 0; i < this.queue.length; i++) {
       const player1 = this.queue[i];
 
@@ -69,19 +72,26 @@ export class MatchmakingService {
 
           const isPlayer1White = Math.random() < 0.5;
 
-          player1.player.socket.emit('matchFound', {
-            gameID: '123', // TODO: Generate unique game ID
-            opponent: player2.player.user,
-            format: player1.format,
-            isWhite: isPlayer1White,
-          });
-
-          player2.player.socket.emit('matchFound', {
-            gameID: '123', // TODO: Generate unique game ID
-            opponent: player1.player.user,
-            format: player2.format,
-            isWhite: !isPlayer1White,
-          });
+          await this.webSocketService.emitWithAck(
+            player1.player.socket,
+            'match_found',
+            {
+              gameID: '123', // TODO: Generate unique game ID
+              opponent: player2.player.user,
+              format: player1.format,
+              isWhite: isPlayer1White,
+            },
+          );
+          await this.webSocketService.emitWithAck(
+            player2.player.socket,
+            'match_found',
+            {
+              gameID: '123', // TODO: Generate unique game ID
+              opponent: player1.player.user,
+              format: player2.format,
+              isWhite: !isPlayer1White,
+            },
+          );
 
           // TODO: Create the actual game instance
           // this.gameService.createGame(player1, player2);
