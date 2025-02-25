@@ -1,38 +1,65 @@
 import { Injectable } from '@nestjs/common';
-import { ConnectedPlayer } from '../types/connected-player.type';
+import { ConnectedPlayer, QueuingPlayer } from '../types/player.type';
+import { GameFormat } from '../types/game-format.type';
 
 @Injectable()
 export class MatchmakingService {
-  private queue: ConnectedPlayer[] = []; // Waiting players
+  private queue: QueuingPlayer[] = []; // Waiting players
 
-  addToQueue(connectedPlayer: ConnectedPlayer) {
+  addToQueue({
+    connectedPlayer,
+    boardSize,
+    initialTime,
+    increment,
+  }: {
+    connectedPlayer: ConnectedPlayer;
+    boardSize: number;
+    initialTime: number;
+    increment: number;
+  }) {
     console.log(`Player ${connectedPlayer.user.username} joined the queue`);
-    this.queue.push(connectedPlayer);
+    this.queue.push({
+      player: connectedPlayer,
+      format: new GameFormat(boardSize, initialTime, increment),
+      timestamp: Date.now(),
+    });
     this.matchPlayers();
   }
 
   removeFromQueue(connectedPlayer: ConnectedPlayer) {
     this.queue = this.queue.filter(
-      (e) => e.socket.id !== connectedPlayer.socket.id,
+      (e) => e.player.socket.id !== connectedPlayer.socket.id,
     );
   }
 
   private matchPlayers() {
-    if (this.queue.length >= 2) {
-      // Match two players
-      const player1 = this.queue.shift();
-      const player2 = this.queue.shift();
+    const player1 = this.queue[this.queue.length - 1];
 
-      if (player1 && player2) {
-        const gameId = `game-${player1.socket.id}-${player2.socket.id}`;
-
-        console.log(
-          `Match created: ${player1.socket.id} vs ${player2.socket.id}`,
+    for (let i = 0; i < this.queue.length - 1; i++) {
+      const player2 = this.queue[i];
+      if (player1 === player2) continue;
+      if (player1.format.equals(player2.format)) {
+        this.queue = this.queue.filter(
+          (e) => e.player.socket.id !== player1.player.socket.id,
         );
-
-        // Notify players
-        player1.socket.emit('matchFound', { gameId, opponent: player2.user });
-        player2.socket.emit('matchFound', { gameId, opponent: player1.user });
+        this.queue.splice(i - 1, 1);
+        this.queue.splice(0, 1);
+        console.log(
+          `Match found: ${player1.player.user.username} vs ${player2.player.user.username}`,
+        );
+        //TODO game id
+        player1.player.socket.emit('matchFound', {
+          gameID: '123',
+          opponent: player2.player.user,
+          format: player1.format,
+        });
+        player2.player.socket.emit('matchFound', {
+          gameID: '123',
+          opponent: player1.player.user,
+          format: player2.format,
+        });
+        // this.gameService.createGame(player1, player2);
+        return;
       }
     }
   }
