@@ -1,60 +1,77 @@
+import 'dart:async';
 import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/config.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-final webSocketService = Provider(
-  (ref) => WebSocketService(Config.webSocketUrl, ref),
-);
+final webSocketService = Provider((ref) {
+  final service = WebSocketService(Config.webSocketUrl, ref);
+  ref.onDispose(() => service.dispose()); // Cleanup on provider disposal
+  return service;
+});
 
 class WebSocketService {
   final String url;
   final Ref ref;
+  IO.Socket? _socket; // Nullable to check connection status
 
   WebSocketService(this.url, this.ref);
 
-  late IO.Socket socket;
-
   Future<void> connect() async {
-    String? token = await ref.read(authService).getToken();
-
-    if (token == null) {
-      throw Exception('Token is null');
+    if (_socket?.connected == true) {
+      log('[WebSocket] Already connected');
+      return;
     }
 
-    socket = IO.io(
+    final token = await ref.read(authService).getToken();
+    if (token == null) {
+      log('[WebSocket] Token is null, cannot connect');
+      return;
+    }
+
+    _socket = IO.io(
       url,
       IO.OptionBuilder()
-          .setTransports(['websocket']) // Force WebSocket transport
-          .disableAutoConnect() // Disable auto connect (connect manually)
-          .setExtraHeaders({'Authorization': 'Bearer $token'}) // Send token
+          .setTransports(['websocket'])
+          .setExtraHeaders({'Authorization': 'Bearer $token'})
+          .setReconnectionAttempts(5) // Retry 5 times
+          .setReconnectionDelay(2000) // Wait 2s between retries
+          .disableAutoConnect()
           .build(),
     );
 
-    socket.connect();
+    final completer = Completer<void>();
 
-    socket.onConnect((_) {
-      log('Connected to WebSocket');
+    _socket!.onConnect((_) => log('[WebSocket] Connected'));
+    _socket!.on('authenticated', (_) {
+      log('[WebSocket] Authenticated');
+      completer.complete(); // Resolve when authenticated
     });
-    socket.onDisconnect((_) {
-      log('Disconnected from WebSocket');
-    });
-    socket.onError((data) {
-      log('WebSocket error: $data');
-    });
+
+    _socket!.connect();
+
+    return await completer.future;
   }
 
   void sendMessage(String event, dynamic data) {
-    socket.emit(event, data);
+    if (_socket?.connected == true) {
+      _socket!.emit(event, data);
+    } else {
+      log('[WebSocket] Cannot send message, socket is not connected');
+    }
   }
 
   void listen(String event, Function(dynamic) callback) {
-    socket.on(event, callback);
+    _socket?.on(event, callback);
   }
 
-  void close() {
-    socket.disconnect();
+  void disconnect() {
+    _socket?.disconnect();
+  }
+
+  void dispose() {
+    _socket?.dispose();
+    log('[WebSocket] Disposed');
   }
 }

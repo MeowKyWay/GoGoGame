@@ -17,49 +17,73 @@ export class MatchmakingService {
     initialTime: number;
     increment: number;
   }) {
-    console.log(`Player ${connectedPlayer.user.username} joined the queue`);
-    this.queue.push({
+    if (this.queue.some((e) => e.player.user.id === connectedPlayer.user.id)) {
+      throw new Error(
+        `Player ${connectedPlayer.user.username} is already in queue`,
+      );
+    }
+
+    const newPlayer: QueuingPlayer = {
       player: connectedPlayer,
       format: new GameFormat(boardSize, initialTime, increment),
       timestamp: Date.now(),
-    });
+    };
+
+    this.queue.push(newPlayer);
+    console.log(
+      `[Matchmaking] ${connectedPlayer.user.username} joined the queue`,
+    );
+
+    connectedPlayer.socket.emit('message', { message: 'Joined queue' });
+
     this.matchPlayers();
   }
 
   removeFromQueue(connectedPlayer: ConnectedPlayer) {
+    const initialLength = this.queue.length;
     this.queue = this.queue.filter(
-      (e) => e.player.socket.id !== connectedPlayer.socket.id,
+      (e) => e.player.user.id !== connectedPlayer.user.id,
     );
+
+    if (this.queue.length < initialLength) {
+      console.log(
+        `[Matchmaking] ${connectedPlayer.user.username} left the queue`,
+      );
+    }
   }
 
   private matchPlayers() {
-    const player1 = this.queue[this.queue.length - 1];
+    for (let i = 0; i < this.queue.length; i++) {
+      const player1 = this.queue[i];
 
-    for (let i = 0; i < this.queue.length - 1; i++) {
-      const player2 = this.queue[i];
-      if (player1 === player2) continue;
-      if (player1.format.equals(player2.format)) {
-        this.queue = this.queue.filter(
-          (e) => e.player.socket.id !== player1.player.socket.id,
-        );
-        this.queue.splice(i - 1, 1);
-        this.queue.splice(0, 1);
-        console.log(
-          `Match found: ${player1.player.user.username} vs ${player2.player.user.username}`,
-        );
-        //TODO game id
-        player1.player.socket.emit('matchFound', {
-          gameID: '123',
-          opponent: player2.player.user,
-          format: player1.format,
-        });
-        player2.player.socket.emit('matchFound', {
-          gameID: '123',
-          opponent: player1.player.user,
-          format: player2.format,
-        });
-        // this.gameService.createGame(player1, player2);
-        return;
+      for (let j = i + 1; j < this.queue.length; j++) {
+        const player2 = this.queue[j];
+
+        if (player1.format.equals(player2.format)) {
+          // Remove matched players from the queue
+          this.queue.splice(j, 1);
+          this.queue.splice(i, 1);
+          console.log(
+            `[Matchmaking] Match found: ${player1.player.user.username} vs ${player2.player.user.username}`,
+          );
+
+          player1.player.socket.emit('matchFound', {
+            gameID: '123', // TODO: Generate unique game ID
+            opponent: player2.player.user,
+            format: player1.format,
+          });
+
+          player2.player.socket.emit('matchFound', {
+            gameID: '123', // TODO: Generate unique game ID
+            opponent: player1.player.user,
+            format: player2.format,
+          });
+
+          // TODO: Create the actual game instance
+          // this.gameService.createGame(player1, player2);
+
+          return; // Stop further matching after a successful match
+        }
       }
     }
   }

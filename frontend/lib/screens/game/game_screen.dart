@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/board_size_type.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
@@ -32,6 +31,9 @@ class _GamePageState extends ConsumerState<GameScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await service.connect();
+      service.listen('message', (data) {
+        log('Message: $data');
+      });
       service.listen('validationError', (data) {
         log('Validation error: $data');
       });
@@ -39,7 +41,7 @@ class _GamePageState extends ConsumerState<GameScreen> {
         log('Game started: $data');
       });
       service.listen('error', (data) {
-        log('Game over: $data');
+        log('Error: $data');
       });
       service.sendMessage('joinQueue', {
         'boardSize': widget.boardSize.value,
@@ -47,6 +49,12 @@ class _GamePageState extends ConsumerState<GameScreen> {
         'increment': widget.timeControl.increment,
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    service.dispose();
   }
 
   @override
