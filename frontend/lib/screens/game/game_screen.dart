@@ -54,25 +54,23 @@ class _GamePageState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
-    return;
     game = ref.read(gameService);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // context.loaderOverlay.show();
+      context.loaderOverlay.show();
       await game.connect();
       await game.joinQueue(
         widget.boardSize.value,
         widget.timeControl.initialTime,
         widget.timeControl.increment,
       );
-      // if (mounted) context.loaderOverlay.hide();
+      if (mounted) context.loaderOverlay.hide();
     });
   }
 
   @override
   void dispose() {
     super.dispose();
-    return;
     game.dispose();
   }
 }
