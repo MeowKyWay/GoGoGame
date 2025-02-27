@@ -26,8 +26,8 @@ class GameScreen extends ConsumerStatefulWidget {
 class _GamePageState extends ConsumerState<GameScreen> {
   late GameService game;
 
-  void _onCellTap(Offset offset) {
-    log('Cell tapped at $offset');
+  void _onCellTap(int x, int y) {
+    ref.read(gameService).move(x, y);
   }
 
   @override

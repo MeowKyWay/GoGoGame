@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/websocket/web_socket_service.dart';
+import 'package:gogogame_frontend/core/types/game_type.dart';
 
 final gameService = Provider((ref) {
   return GameService(ref.read(webSocketService));
@@ -9,6 +10,8 @@ final gameService = Provider((ref) {
 
 class GameService {
   final WebSocketService webSocket;
+
+  MatchType? match;
 
   GameService(this.webSocket);
 
@@ -35,12 +38,30 @@ class GameService {
 
     Completer<void> completer = Completer<void>();
 
-    webSocket.listen('match_found', (data) {
+    webSocket.listenOnce('match_found', (data) {
       log('[GameService] Game started: $data');
+      webSocket.listen('move', (data) {
+        log('[GameService] Move received: $data');
+      });
+      match = MatchType.fromJson(data);
       completer.complete();
     });
 
     return completer.future;
+  }
+
+  Future<void> move(int x, int y) {
+    log('[GameService] Move: $x, $y');
+    if (match == null) {
+      throw Exception('No match found');
+    }
+    webSocket.sendMessage('move', {
+      'matchId': match!.matchId,
+      'color': match!.color,
+      'x': x,
+      'y': y,
+    });
+    return Future.value();
   }
 
   void dispose() {

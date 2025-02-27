@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
@@ -7,13 +5,16 @@ import 'package:gogogame_frontend/core/themes/game_theme.dart';
 
 class GameBoard extends ConsumerWidget {
   final int size; // 9, 13, or 19
-  final Function(Offset) onCellTap;
+  final Function(int, int) onCellTap;
 
   const GameBoard({super.key, required this.size, required this.onCellTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final boardTheme = ref.watch(gameThemeProvider);
+
+    const cellSize = GameConstant.cellSize;
+    const padding = cellSize / 2;
 
     return Center(
       child: SizedBox.square(
@@ -38,9 +39,9 @@ class GameBoard extends ConsumerWidget {
               child: Stack(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(GameConstant.cellSize / 2),
+                    padding: const EdgeInsets.all(padding),
                     child: SizedBox(
-                      width: (size - 1) * GameConstant.cellSize,
+                      width: (size - 1) * cellSize,
                       height: (size - 1) * GameConstant.cellSize,
                       child: CustomPaint(
                         painter: GoBoardPainter(size, boardTheme),
@@ -50,9 +51,10 @@ class GameBoard extends ConsumerWidget {
                   Positioned.fill(
                     child: GestureDetector(
                       onTapUp: (details) {
-                        log(
-                          'Cell tapped at ${details.localPosition - Offset(GameConstant.cellSize / 2, GameConstant.cellSize / 2)}',
-                        );
+                        final localPos = details.localPosition;
+                        int x = ((localPos.dx - padding) / cellSize).round();
+                        int y = ((localPos.dy - padding) / cellSize).round();
+                        onCellTap(x, y);
                       },
                       child: Container(color: Colors.transparent),
                     ),

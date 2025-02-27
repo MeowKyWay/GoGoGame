@@ -141,10 +141,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     try {
-      this.matchService.move(moveDto);
+      await this.matchService.move(moveDto);
     } catch (error) {
       console.error(`[Match] Failed to move:`, error);
-      this.webSocketService.error(
+      this.webSocketService.message(
         client,
         error instanceof Error ? error.message : 'Failed to move',
       );

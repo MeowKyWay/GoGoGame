@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/config.dart';
@@ -76,22 +77,7 @@ class WebSocketService {
 
   void listenOnce(String event, Function(dynamic) callback) {
     _socket?.once(event, (data) {
-      // log('[WebSocket] Event received: $event - Data: $data');
-      if (data is List) {
-        if (data.last is Function) {
-          (data.last as Function)(true);
-          log('[WebSocket] Acknowledgment sent for event: $event');
-        }
-        data = data.first;
-      }
-
-      callback(data);
-    });
-  }
-
-  void listen(String event, Function(dynamic) callback) {
-    _socket?.on(event, (data) {
-      // log('[WebSocket] Event received: $event - Data: $data');
+      log('[WebSocket] Event received: $event - Data: $data');
       if (data is List) {
         if (data.last is Function) {
           (data.last as Function)(true);
@@ -101,7 +87,31 @@ class WebSocketService {
       }
 
       // Call the provided callback with data
-      callback(data);
+      try {
+        callback(jsonDecode(data));
+      } catch (e) {
+        callback(data);
+      }
+    });
+  }
+
+  void listen(String event, Function(dynamic) callback) {
+    _socket?.on(event, (data) {
+      log('[WebSocket] Event received: $event - Data: $data');
+      if (data is List) {
+        if (data.last is Function) {
+          (data.last as Function)(true);
+          log('[WebSocket] Acknowledgment sent for event: $event');
+        }
+        data = data.first;
+      }
+
+      // Call the provided callback with data
+      try {
+        callback(jsonDecode(data));
+      } catch (e) {
+        callback(data);
+      }
     });
   }
 

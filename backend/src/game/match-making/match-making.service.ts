@@ -60,19 +60,19 @@ export class MatchmakingService {
   }
 
   private async matchPlayers() {
+    const matched: Set<number> = new Set();
+
     for (let i = 0; i < this.queue.length; i++) {
+      if (matched.has(this.queue[i].player.user.id)) continue;
       const player1 = this.queue[i];
 
       for (let j = i + 1; j < this.queue.length; j++) {
+        if (matched.has(this.queue[j].player.user.id)) continue;
         const player2 = this.queue[j];
 
         if (player1.format.equals(player2.format)) {
-          // Remove matched players from the queue
-          this.queue.splice(j, 1);
-          this.queue.splice(i, 1);
-          console.log(
-            `[Matchmaking] Match found: ${player1.player.user.username} vs ${player2.player.user.username}`,
-          );
+          matched.add(player1.player.user.id);
+          matched.add(player2.player.user.id);
 
           const isPlayer1White = Math.random() < 0.5;
 
@@ -84,30 +84,37 @@ export class MatchmakingService {
             player1.format.increment,
           );
 
-          await this.webSocketService.emitWithAck(
-            player1.player.socket,
-            'match_found',
-            {
-              gameID: match.id, // TODO: Generate unique game ID
-              opponent: player2.player.user,
-              format: player1.format,
-              isWhite: isPlayer1White,
-            },
-          );
-          await this.webSocketService.emitWithAck(
-            player2.player.socket,
-            'match_found',
-            {
-              gameID: match.id, // TODO: Generate unique game ID
-              opponent: player1.player.user,
-              format: player2.format,
-              isWhite: !isPlayer1White,
-            },
+          console.log(
+            `[Matchmaking] Match found: ${player1.player.user.username} vs ${player2.player.user.username}`,
           );
 
-          return; // Stop further matching after a successful match
+          await Promise.all([
+            this.webSocketService.emitWithAck(
+              player1.player.socket,
+              'match_found',
+              {
+                matchId: match.id,
+                opponent: player2.player.user,
+                format: player1.format,
+                color: isPlayer1White ? 'white' : 'black',
+              },
+            ),
+            this.webSocketService.emitWithAck(
+              player2.player.socket,
+              'match_found',
+              {
+                matchId: match.id,
+                opponent: player1.player.user,
+                format: player2.format,
+                color: isPlayer1White ? 'black' : 'white',
+              },
+            ),
+          ]);
         }
       }
     }
+
+    // Remove matched players from queue
+    this.queue = this.queue.filter((e) => !matched.has(e.player.user.id));
   }
 }

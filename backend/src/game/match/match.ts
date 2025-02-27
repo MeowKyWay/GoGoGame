@@ -40,10 +40,7 @@ export class Match {
     this.moves.push(move);
 
     console.log(`[Match ${this.id}] ${color} moved to ${x},${y}`);
-    for (const row of this.board) {
-      for (const cell of row) {
-        console.log(cell.padEnd(5));
-      }
-    }
+    console.log(this.board.map((row) => row.join(' ')).join('\n'));
+    this.turn = this.turn === 'black' ? 'white' : 'black';
   }
 }
