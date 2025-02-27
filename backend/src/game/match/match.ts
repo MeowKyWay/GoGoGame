@@ -1,36 +1,49 @@
-import { BoardSize } from '../types/game-format.type';
+import { Color, Move, Stone } from '../types/game.type';
 import { ConnectedPlayer } from '../types/player.type';
 
 export class Match {
-  private whitePlayer: ConnectedPlayer;
-  private blackPlayer: ConnectedPlayer;
+  readonly timestamp: number = Date.now();
+  private moves: Move[] = [];
+  private board: Stone[][];
 
-  private size: BoardSize;
-  private initialTime: number;
-  private increment: number;
-
-  private timestamp: number;
+  turn: Color = 'black';
 
   constructor(
-    whitePlayer: ConnectedPlayer,
-    blackPlayer: ConnectedPlayer,
-    size: BoardSize,
-    initialTime: number,
-    increment: number,
+    readonly id: string,
+    readonly whitePlayer: ConnectedPlayer,
+    readonly blackPlayer: ConnectedPlayer,
+    readonly size: number,
+    readonly initialTime: number,
+    readonly increment: number,
   ) {
-    this.whitePlayer = whitePlayer;
-    this.blackPlayer = blackPlayer;
+    this.board = Array.from({ length: size }, () =>
+      Array.from({ length: size }, () => ''),
+    );
+  }
 
-    this.size = size;
-    this.initialTime = initialTime;
-    this.increment = increment;
+  move(move: Move) {
+    const { color, x, y } = move;
 
-    this.timestamp = Date.now();
+    // Validate move
+    if (x < 0 || x >= this.size || y < 0 || y >= this.size) {
+      throw new Error('Move out of bounds');
+    }
+    if (this.board[x][y] !== '') {
+      throw new Error('Cell already occupied');
+    }
+    if (color !== this.turn) {
+      throw new Error('Not your turn');
+    }
+
+    // Place stone
+    this.board[x][y] = color;
+    this.moves.push(move);
+
+    console.log(`[Match ${this.id}] ${color} moved to ${x},${y}`);
+    for (const row of this.board) {
+      for (const cell of row) {
+        console.log(cell.padEnd(5));
+      }
+    }
   }
 }
-
-export type Move = {
-  player: 'white' | 'black';
-  x: number;
-  y: number;
-};

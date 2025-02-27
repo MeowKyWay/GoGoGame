@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedPlayer, QueuingPlayer } from '../types/player.type';
 import { GameFormat } from '../types/game-format.type';
 import { WebSocketService } from 'src/web-socket/web-socket.service';
+import { MatchService } from '../match/match.service';
 
 @Injectable()
 export class MatchmakingService {
   private queue: QueuingPlayer[] = []; // Waiting players
 
-  constructor(private readonly webSocketService: WebSocketService) {}
+  constructor(
+    private readonly webSocketService: WebSocketService,
+    private readonly matchService: MatchService,
+  ) {}
 
   async addToQueue({
     connectedPlayer,
@@ -72,11 +76,19 @@ export class MatchmakingService {
 
           const isPlayer1White = Math.random() < 0.5;
 
+          const match = this.matchService.createMatch(
+            player1.player,
+            player2.player,
+            player1.format.boardSize,
+            player1.format.initialTime,
+            player1.format.increment,
+          );
+
           await this.webSocketService.emitWithAck(
             player1.player.socket,
             'match_found',
             {
-              gameID: '123', // TODO: Generate unique game ID
+              gameID: match.id, // TODO: Generate unique game ID
               opponent: player2.player.user,
               format: player1.format,
               isWhite: isPlayer1White,
@@ -86,15 +98,12 @@ export class MatchmakingService {
             player2.player.socket,
             'match_found',
             {
-              gameID: '123', // TODO: Generate unique game ID
+              gameID: match.id, // TODO: Generate unique game ID
               opponent: player1.player.user,
               format: player2.format,
               isWhite: !isPlayer1White,
             },
           );
-
-          // TODO: Create the actual game instance
-          // this.gameService.createGame(player1, player2);
 
           return; // Stop further matching after a successful match
         }

@@ -1,15 +1,9 @@
-export enum BoardSize {
-  b9x9 = 9,
-  b13x13 = 13,
-  b19x19 = 19,
-}
-
 export class GameFormat {
-  boardSize: BoardSize;
+  boardSize: number;
   initialTime: number;
   increment: number;
 
-  constructor(boardSize: BoardSize, initialTime: number, increment: number) {
+  constructor(boardSize: number, initialTime: number, increment: number) {
     this.boardSize = boardSize;
     this.initialTime = initialTime;
     this.increment = increment;

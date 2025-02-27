@@ -13,9 +13,11 @@ import { ConnectedPlayer } from './types/player.type';
 import { AuthService } from 'src/auth/auth.service';
 import { PublicUser } from 'src/users/users.service';
 import { JoinQueueDto } from './dto/join-queue.dto';
-import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { WebSocketService } from 'src/web-socket/web-socket.service';
+import { MatchService } from './match/match.service';
+import { MoveDto } from './dto/move.dto';
+import { WebSocketEvent } from './types/websocket-event.type';
 
 @WebSocketGateway(3001)
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -28,6 +30,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly matchmakingService: MatchmakingService,
     private readonly authService: AuthService,
     private readonly webSocketService: WebSocketService,
+    private readonly matchService: MatchService,
   ) {}
 
   async handleConnection(client: Socket) {
@@ -65,31 +68,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage('join_queue')
+  @SubscribeMessage(WebSocketEvent.JOIN_QUEUE)
   async handleJoinQueue(
     @ConnectedSocket() client: Socket,
     @MessageBody() joinQueueDto: JoinQueueDto,
   ) {
     console.log(`[WebSocket] Client ${client.id} joined the queue`);
 
-    const dtoInstance = plainToInstance(JoinQueueDto, joinQueueDto);
-    const errors = await validate(dtoInstance);
-
-    if (errors.length > 0) {
-      const errorMessages = errors.map((e) =>
-        Object.values(e.constraints ?? {}).join(', '),
-      );
-      console.warn(
-        `[Validation] Failed for client ${client.id}:`,
-        errorMessages,
-      );
-      client.emit('error', { message: errorMessages });
+    const errors = await this.validateDto(joinQueueDto);
+    if (errors) {
+      this.webSocketService.error(client, errors.join(', '));
       return;
     }
 
     const connectedPlayer = this.activeSockets[client.id];
     if (!connectedPlayer) {
-      client.emit('error', { message: 'You are not authenticated' });
+      this.webSocketService.error(client, 'You are not authenticated');
       return;
     }
 
@@ -100,20 +94,60 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
     } catch (error) {
       console.error(`[Matchmaking] Failed to join queue:`, error);
-      client.emit('error', {
-        message:
-          error instanceof Error ? error.message : 'Failed to join queue',
-      });
+      this.webSocketService.error(
+        client,
+        error instanceof Error ? error.message : 'Failed to join queue',
+      );
     }
   }
 
-  @SubscribeMessage('leave_queue')
+  @SubscribeMessage(WebSocketEvent.LEAVE_QUEUE)
   handleLeaveQueue(@ConnectedSocket() client: Socket) {
     const connectedPlayer = this.activeSockets[client.id];
     if (connectedPlayer) {
       this.matchmakingService.removeFromQueue(connectedPlayer);
     } else {
-      client.emit('error', { message: 'You are not in the queue' });
+      this.webSocketService.error(client, 'You are not in the queue');
+    }
+  }
+
+  @SubscribeMessage(WebSocketEvent.MOVE)
+  async handleMove(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() moveDto: MoveDto,
+  ) {
+    const connectedPlayer = this.activeSockets[client.id];
+    if (!connectedPlayer) {
+      this.webSocketService.error(client, 'You are not authenticated');
+      return;
+    }
+    const errors = await this.validateDto(moveDto);
+    if (errors) {
+      this.webSocketService.validationError(client, errors.join(', '));
+      return;
+    }
+
+    const match = this.matchService.getMatchById(moveDto.matchId);
+    if (!match) {
+      this.webSocketService.error(client, 'Match not found');
+      return;
+    }
+    if (
+      ![match.whitePlayer.user.id, match.blackPlayer.user.id].includes(
+        connectedPlayer.user.id,
+      )
+    ) {
+      this.webSocketService.error(client, 'You are not a player in this match');
+    }
+
+    try {
+      this.matchService.move(moveDto);
+    } catch (error) {
+      console.error(`[Match] Failed to move:`, error);
+      this.webSocketService.error(
+        client,
+        error instanceof Error ? error.message : 'Failed to move',
+      );
     }
   }
 
@@ -121,5 +155,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.warn(`[WebSocket] Rejected client ${client.id}: ${message}`);
     client.emit('error', { message });
     client.disconnect();
+  }
+
+  private async validateDto(dto: object) {
+    return await validate(dto).then((errors) => {
+      if (errors.length > 0) {
+        const errorMessages = errors.map((e) =>
+          Object.values(e.constraints ?? {}).join(', '),
+        );
+        console.warn(`[Validation] Failed:`, errorMessages);
+        return errorMessages;
+      }
+    });
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { WebSocketEvent } from 'src/game/types/websocket-event.type';
 
 @Injectable()
 export class WebSocketService {
@@ -8,7 +9,15 @@ export class WebSocketService {
   }
 
   message(client: Socket, message: string): void {
-    this.emit(client, 'message', { message: message });
+    this.emit(client, WebSocketEvent.MESSAGE, { message });
+  }
+
+  error(client: Socket, message: string): void {
+    this.emit(client, WebSocketEvent.ERROR, { message });
+  }
+
+  validationError(client: Socket, message: string): void {
+    this.emit(client, WebSocketEvent.VALIDATION_ERROR, { message });
   }
 
   async emitWithAck(
