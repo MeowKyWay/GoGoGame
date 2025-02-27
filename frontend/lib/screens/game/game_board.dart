@@ -20,41 +20,45 @@ class GameBoard extends ConsumerWidget {
         dimension: double.infinity,
         child: FittedBox(
           // Ensures board scales down if needed
-          child: Container(
-            decoration: BoxDecoration(
-              color:
-                  boardTheme.boardImage == null ? boardTheme.boardColor : null,
-              image:
-                  boardTheme.boardImage != null
-                      ? DecorationImage(
-                        image: AssetImage(boardTheme.boardImage!),
-                        fit: BoxFit.cover,
-                      )
-                      : null,
-            ),
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(GameConstant.cellSize / 2),
-                  child: SizedBox(
-                    width: (size - 1) * GameConstant.cellSize,
-                    height: (size - 1) * GameConstant.cellSize,
-                    child: CustomPaint(
-                      painter: GoBoardPainter(size, boardTheme),
+          child: InteractiveViewer(
+            child: Container(
+              decoration: BoxDecoration(
+                color:
+                    boardTheme.boardImage == null
+                        ? boardTheme.boardColor
+                        : null,
+                image:
+                    boardTheme.boardImage != null
+                        ? DecorationImage(
+                          image: AssetImage(boardTheme.boardImage!),
+                          fit: BoxFit.cover,
+                        )
+                        : null,
+              ),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(GameConstant.cellSize / 2),
+                    child: SizedBox(
+                      width: (size - 1) * GameConstant.cellSize,
+                      height: (size - 1) * GameConstant.cellSize,
+                      child: CustomPaint(
+                        painter: GoBoardPainter(size, boardTheme),
+                      ),
                     ),
                   ),
-                ),
-                Positioned.fill(
-                  child: GestureDetector(
-                    onTapUp: (details) {
-                      log(
-                        'Cell tapped at ${details.localPosition - Offset(GameConstant.cellSize / 2, GameConstant.cellSize / 2)}',
-                      );
-                    },
-                    child: Container(color: Colors.transparent),
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTapUp: (details) {
+                        log(
+                          'Cell tapped at ${details.localPosition - Offset(GameConstant.cellSize / 2, GameConstant.cellSize / 2)}',
+                        );
+                      },
+                      child: Container(color: Colors.transparent),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
