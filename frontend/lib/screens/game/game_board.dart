@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
 import 'package:gogogame_frontend/core/themes/game_theme.dart';
+import 'package:gogogame_frontend/screens/game/game_cell.dart';
 
 class GameBoard extends ConsumerWidget {
   final int size = 8;
@@ -23,6 +24,7 @@ class GameBoard extends ConsumerWidget {
           // Ensures board scales down if needed
           child: InteractiveViewer(
             child: Container(
+              padding: EdgeInsets.all(padding),
               decoration: BoxDecoration(
                 color:
                     boardTheme.boardImage == null
@@ -36,30 +38,31 @@ class GameBoard extends ConsumerWidget {
                         )
                         : null,
               ),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(padding),
-                    child: SizedBox(
-                      width: (size - 1) * cellSize,
-                      height: (size - 1) * GameConstant.cellSize,
-                      child: CustomPaint(
-                        painter: GoBoardPainter(size, boardTheme),
-                      ),
-                    ),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: boardTheme.lineColor),
+                ),
+                child: SizedBox(
+                  width: (size) * cellSize,
+                  height: (size) * cellSize,
+                  child: Wrap(
+                    children: [
+                      // Padding(
+                      //   padding: const EdgeInsets.all(padding),
+                      //   child: SizedBox(
+                      //     width: (size) * cellSize,
+                      //     height: (size) * GameConstant.cellSize,
+                      //     child: CustomPaint(
+                      //       painter: BoardPainter(size, boardTheme),
+                      //     ),
+                      //   ),
+                      // ),
+                      for (int x = 0; x < size; x++)
+                        for (int y = 0; y < size; y++)
+                          GameCell(x: x, y: y, onTap: onCellTap),
+                    ],
                   ),
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onTapUp: (details) {
-                        final localPos = details.localPosition;
-                        int x = ((localPos.dx - padding) / cellSize).round();
-                        int y = ((localPos.dy - padding) / cellSize).round();
-                        onCellTap(x, y);
-                      },
-                      child: Container(color: Colors.transparent),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -67,39 +70,4 @@ class GameBoard extends ConsumerWidget {
       ),
     );
   }
-}
-
-class GoBoardPainter extends CustomPainter {
-  final int size;
-  final GameTheme theme;
-  static const double cellSize = GameConstant.cellSize; // Fixed cell size
-
-  GoBoardPainter(this.size, this.theme);
-
-  @override
-  void paint(Canvas canvas, Size boardSize) {
-    final paint =
-        Paint()
-          ..color = theme.lineColor
-          ..strokeWidth = 2
-          ..style = PaintingStyle.stroke;
-
-    // Draw Grid
-    for (int i = 0; i < size; i++) {
-      double offset = i * cellSize;
-      canvas.drawLine(
-        Offset(0, offset),
-        Offset((size - 1) * cellSize, offset),
-        paint,
-      ); // Horizontal
-      canvas.drawLine(
-        Offset(offset, 0),
-        Offset(offset, (size - 1) * cellSize),
-        paint,
-      ); // Vertical
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
