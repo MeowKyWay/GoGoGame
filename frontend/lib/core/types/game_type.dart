@@ -50,28 +50,18 @@ class UserType implements Jsonable {
 }
 
 class GameFormatType implements Jsonable {
-  final int boardSize;
   final int initialTime;
   final int increment;
 
-  GameFormatType({
-    required this.boardSize,
-    required this.initialTime,
-    required this.increment,
-  });
+  GameFormatType({required this.initialTime, required this.increment});
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'boardSize': boardSize,
-      'initialTime': initialTime,
-      'increment': increment,
-    };
+    return {'initialTime': initialTime, 'increment': increment};
   }
 
   factory GameFormatType.fromJson(Map<String, dynamic> json) {
     return GameFormatType(
-      boardSize: json['boardSize'],
       initialTime: json['initialTime'],
       increment: json['increment'],
     );

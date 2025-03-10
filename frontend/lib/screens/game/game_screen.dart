@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gogogame_frontend/core/constants/board_size_type.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/game/game_service.dart';
@@ -8,14 +7,9 @@ import 'package:gogogame_frontend/screens/game/game_board.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
-  final BoardSize boardSize;
   final TimeControl timeControl;
 
-  const GameScreen({
-    super.key,
-    required this.boardSize,
-    required this.timeControl,
-  });
+  const GameScreen({super.key, required this.timeControl});
 
   @override
   ConsumerState<GameScreen> createState() => _GamePageState();
@@ -32,7 +26,7 @@ class _GamePageState extends ConsumerState<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Game')),
-      body: GameBoard(size: widget.boardSize.value, onCellTap: _onCellTap),
+      body: GameBoard(onCellTap: _onCellTap),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colorScheme.outline,
         items: [
@@ -58,7 +52,6 @@ class _GamePageState extends ConsumerState<GameScreen> {
       context.loaderOverlay.show();
       await game.connect();
       await game.joinQueue(
-        widget.boardSize.value,
         widget.timeControl.initialTime,
         widget.timeControl.increment,
       );

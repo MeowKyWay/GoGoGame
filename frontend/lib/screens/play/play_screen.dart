@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:gogogame_frontend/core/constants/board_size_type.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/screens/game/game_screen.dart';
@@ -14,7 +13,6 @@ class PlayScreen extends StatefulWidget {
 }
 
 class _PlayScreenState extends State<PlayScreen> {
-  BoardSize _boardSize = BoardSize.b9x9;
   TimeControl _timeControl = TimeControl.defaultTimeControl;
 
   @override
@@ -36,28 +34,6 @@ class _PlayScreenState extends State<PlayScreen> {
                   Row(
                     spacing: 8,
                     children: [
-                      Flexible(
-                        flex: 1,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Board size'),
-                            SizedBox(
-                              height: 56,
-                              child: SelectButton<BoardSize>(
-                                items: BoardSize.boardSizes,
-                                prefixIcon: const Icon(Icons.grid_on),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _boardSize = value!;
-                                  });
-                                },
-                                value: _boardSize,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       Flexible(
                         flex: 1,
                         child: Column(
@@ -87,12 +63,7 @@ class _PlayScreenState extends State<PlayScreen> {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () {
-                        context.push(
-                          GameScreen(
-                            boardSize: _boardSize,
-                            timeControl: _timeControl,
-                          ),
-                        );
+                        context.push(GameScreen(timeControl: _timeControl));
                       },
                       child: const Text('Play'),
                     ),

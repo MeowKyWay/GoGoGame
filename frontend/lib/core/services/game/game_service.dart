@@ -29,9 +29,8 @@ class GameService {
     });
   }
 
-  Future<void> joinQueue(int boardSize, int initialTime, int increment) {
+  Future<void> joinQueue(int initialTime, int increment) {
     webSocket.sendMessage('join_queue', {
-      'boardSize': boardSize,
       'initialTime': initialTime,
       'increment': increment,
     });

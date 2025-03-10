@@ -4,10 +4,10 @@ import 'package:gogogame_frontend/core/constants/game_constant.dart';
 import 'package:gogogame_frontend/core/themes/game_theme.dart';
 
 class GameBoard extends ConsumerWidget {
-  final int size; // 9, 13, or 19
+  final int size = 8;
   final Function(int, int) onCellTap;
 
-  const GameBoard({super.key, required this.size, required this.onCellTap});
+  const GameBoard({super.key, required this.onCellTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -97,29 +97,6 @@ class GoBoardPainter extends CustomPainter {
         Offset(offset, (size - 1) * cellSize),
         paint,
       ); // Vertical
-    }
-
-    final starPaint = Paint()..color = theme.starPointColor;
-    List<Offset> starPoints;
-    switch (size) {
-      case 9:
-        starPoints = GameConstant.b9x9StarPoints;
-        break;
-      case 13:
-        starPoints = GameConstant.b13x13StarPoints;
-        break;
-      case 19:
-        starPoints = GameConstant.b19x19StarPoints;
-        break;
-      default:
-        starPoints = [];
-    }
-    for (var point in starPoints) {
-      canvas.drawCircle(
-        Offset(point.dx * cellSize, point.dy * cellSize),
-        4,
-        starPaint,
-      );
     }
   }
 
