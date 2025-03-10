@@ -2,6 +2,8 @@ import { Color, Move, Stone } from '../types/game.type';
 import { ConnectedPlayer } from '../types/player.type';
 
 export class Match {
+  static size = 8;
+
   readonly timestamp: number = Date.now();
   private moves: Move[] = [];
   private board: Stone[][];
@@ -12,12 +14,11 @@ export class Match {
     readonly id: string,
     readonly whitePlayer: ConnectedPlayer,
     readonly blackPlayer: ConnectedPlayer,
-    readonly size: number,
     readonly initialTime: number,
     readonly increment: number,
   ) {
-    this.board = Array.from({ length: size }, () =>
-      Array.from({ length: size }, () => ''),
+    this.board = Array.from({ length: Match.size }, () =>
+      Array.from({ length: Match.size }, () => ''),
     );
   }
 
@@ -25,7 +26,7 @@ export class Match {
     const { color, x, y } = move;
 
     // Validate move
-    if (x < 0 || x >= this.size || y < 0 || y >= this.size) {
+    if (x < 0 || x >= Match.size || y < 0 || y >= Match.size) {
       throw new Error('Move out of bounds');
     }
     if (this.board[x][y] !== '') {

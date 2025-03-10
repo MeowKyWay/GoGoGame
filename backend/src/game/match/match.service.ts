@@ -15,7 +15,6 @@ export class MatchService {
   createMatch(
     whitePlayer: ConnectedPlayer,
     blackPlayer: ConnectedPlayer,
-    size: number,
     initialTime: number,
     increment: number,
   ): Match {
@@ -23,7 +22,6 @@ export class MatchService {
       uuidv4(),
       whitePlayer,
       blackPlayer,
-      size,
       initialTime,
       increment,
     );

@@ -15,12 +15,10 @@ export class MatchmakingService {
 
   async addToQueue({
     connectedPlayer,
-    boardSize,
     initialTime,
     increment,
   }: {
     connectedPlayer: ConnectedPlayer;
-    boardSize: number;
     initialTime: number;
     increment: number;
   }) {
@@ -32,7 +30,7 @@ export class MatchmakingService {
 
     const newPlayer: QueuingPlayer = {
       player: connectedPlayer,
-      format: new GameFormat(boardSize, initialTime, increment),
+      format: new GameFormat(initialTime, increment),
       timestamp: Date.now(),
     };
 
@@ -79,7 +77,6 @@ export class MatchmakingService {
           const match = this.matchService.createMatch(
             player1.player,
             player2.player,
-            player1.format.boardSize,
             player1.format.initialTime,
             player1.format.increment,
           );
