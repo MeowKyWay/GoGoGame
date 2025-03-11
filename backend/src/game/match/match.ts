@@ -41,7 +41,17 @@ export class Match {
     this.moves.push(move);
 
     console.log(`[Match ${this.id}] ${color} moved to ${x},${y}`);
-    console.log(this.board.map((row) => row.join(' ')).join('\n'));
+    console.log(
+      this.board
+        .map((row) =>
+          row
+            .map((cell) =>
+              cell === 'black' ? '⚫' : cell === 'white' ? '⚪' : '  ',
+            )
+            .join(''),
+        )
+        .join('\n'),
+    );
     this.turn = this.turn === 'black' ? 'white' : 'black';
   }
 }
