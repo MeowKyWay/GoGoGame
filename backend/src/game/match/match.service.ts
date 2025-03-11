@@ -36,27 +36,28 @@ export class MatchService {
     if (!match) {
       throw new Error('Match not found');
     }
+
     try {
       match.move(moveDto);
-      if (match.turn === 'black') {
-        await this.webSocketService.emitWithAck(
-          match.blackPlayer.socket,
-          WebSocketEvent.MOVE,
-          moveDto,
-        );
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        log(error.message);
-        this.webSocketService.message(match.whitePlayer.socket, error.message);
-      }
-    }
-    if (match.turn === 'white') {
+
+      // Notify both players about the move
+      await this.webSocketService.emitWithAck(
+        match.whitePlayer.socket,
+        WebSocketEvent.MOVE,
+        moveDto,
+      );
       await this.webSocketService.emitWithAck(
         match.blackPlayer.socket,
         WebSocketEvent.MOVE,
         moveDto,
       );
+    } catch (error) {
+      if (error instanceof Error) {
+        log(error.message);
+        const currentPlayer =
+          moveDto.color === 'black' ? match.whitePlayer : match.blackPlayer;
+        this.webSocketService.message(currentPlayer.socket, error.message);
+      }
     }
   }
 
