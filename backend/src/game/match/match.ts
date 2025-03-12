@@ -5,12 +5,24 @@ export class Match {
   static size = 8;
 
   readonly timestamp: number = Date.now();
-  private moves: Move[] = [];
-  private board: Stone[][];
-  turn: Color = 'black';
+  private _moves: Move[] = [];
+  private _board: Stone[][];
+  private _turn: Color = 'black';
 
   state: 'playing' | 'finished' = 'playing';
   winner: Color | null = null;
+
+  get board(): Stone[][] {
+    return this._board;
+  }
+
+  get moves(): Move[] {
+    return this._moves;
+  }
+
+  get turn(): Color {
+    return this._turn;
+  }
 
   constructor(
     readonly id: string,
@@ -19,19 +31,19 @@ export class Match {
     readonly initialTime: number,
     readonly increment: number,
   ) {
-    this.board = Array.from({ length: Match.size }, () =>
+    this._board = Array.from({ length: Match.size }, () =>
       Array.from({ length: Match.size }, () => ''),
     );
 
     // Initial board setup
-    this.board[3][3] = this.board[4][4] = 'white';
-    this.board[3][4] = this.board[4][3] = 'black';
+    this._board[3][3] = this._board[4][4] = 'white';
+    this._board[3][4] = this._board[4][3] = 'black';
   }
 
   move(move: Move) {
     const { color, x, y } = move;
 
-    if (this.turn !== color) {
+    if (this._turn !== color) {
       throw new Error('Not your turn');
     }
 
@@ -40,7 +52,7 @@ export class Match {
     }
 
     this.place(color, x, y);
-    this.moves.push(move);
+    this._moves.push(move);
 
     console.log(`[Match ${this.id}] ${color} moved to ${x},${y}`);
     this.logBoard();
@@ -55,7 +67,7 @@ export class Match {
       x < Match.size &&
       y >= 0 &&
       y < Match.size &&
-      this.board[x][y] === '' &&
+      this._board[x][y] === '' &&
       this.canFlip(color, x, y).length > 0
     );
   }
@@ -67,9 +79,9 @@ export class Match {
       throw new Error('Invalid move: no pieces flipped');
     }
 
-    this.board[x][y] = color;
+    this._board[x][y] = color;
     for (const [fx, fy] of flipped) {
-      this.board[fx][fy] = color;
+      this._board[fx][fy] = color;
     }
   }
 
@@ -95,8 +107,8 @@ export class Match {
         nx < Match.size &&
         ny >= 0 &&
         ny < Match.size &&
-        this.board[nx][ny] !== '' &&
-        this.board[nx][ny] !== color
+        this._board[nx][ny] !== '' &&
+        this._board[nx][ny] !== color
       ) {
         flipped.push([nx, ny]);
         nx += dx;
@@ -108,14 +120,14 @@ export class Match {
         nx < Match.size &&
         ny >= 0 &&
         ny < Match.size &&
-        this.board[nx][ny] === color
+        this._board[nx][ny] === color
         ? flipped
         : [];
     });
   }
 
   hasLegalMove(color: Color): boolean {
-    return this.board.some((row, x) =>
+    return this._board.some((row, x) =>
       row.some(
         (cell, y) => cell === '' && this.canFlip(color, x, y).length > 0,
       ),
@@ -123,11 +135,11 @@ export class Match {
   }
 
   switchTurn() {
-    this.turn = this.turn === 'black' ? 'white' : 'black';
+    this._turn = this._turn === 'black' ? 'white' : 'black';
 
-    if (!this.hasLegalMove(this.turn)) {
-      console.log(`${this.turn} has no moves. Turn skipped.`);
-      this.turn = this.turn === 'black' ? 'white' : 'black';
+    if (!this.hasLegalMove(this._turn)) {
+      console.log(`${this._turn} has no moves. Turn skipped.`);
+      this._turn = this._turn === 'black' ? 'white' : 'black';
     }
   }
 
@@ -139,7 +151,7 @@ export class Match {
 
   logBoard() {
     console.log(
-      this.board
+      this._board
         .map((row) =>
           row
             .map((cell) =>
