@@ -1,53 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:gogogame_frontend/core/interfaces/jsonable.dart';
-
-class MatchType implements Jsonable {
-  final String matchId;
-  final UserType opponent;
-  final GameFormatType format;
-  final String color;
-
-  MatchType({
-    required this.matchId,
-    required this.opponent,
-    required this.format,
-    required this.color,
-  });
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'matchId': matchId,
-      'opponent': opponent.toJson(),
-      'format': format.toJson(),
-      'color': color,
-    };
-  }
-
-  factory MatchType.fromJson(Map<String, dynamic> json) {
-    return MatchType(
-      matchId: json['matchId'],
-      opponent: UserType.fromJson(json['opponent']),
-      format: GameFormatType.fromJson(json['format']),
-      color: json['color'],
-    );
-  }
-}
-
-class UserType implements Jsonable {
-  final int id;
-  final String username;
-
-  UserType({required this.id, required this.username});
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {'id': id, 'username': username};
-  }
-
-  factory UserType.fromJson(Map<String, dynamic> json) {
-    return UserType(id: json['id'], username: json['username']);
-  }
-}
 
 class GameFormatType implements Jsonable {
   final int initialTime;
@@ -65,5 +17,82 @@ class GameFormatType implements Jsonable {
       initialTime: json['initialTime'],
       increment: json['increment'],
     );
+  }
+}
+
+enum DiskColor {
+  black,
+  white;
+
+  static DiskColor fromString(String color) {
+    if (color == 'black') {
+      return DiskColor.black;
+    } else if (color == 'white') {
+      return DiskColor.white;
+    }
+    throw Exception('Invalid color: $color');
+  }
+
+  DiskColor opposite() {
+    return this == DiskColor.black ? DiskColor.white : DiskColor.black;
+  }
+
+  bool matches(CellDisk disk) {
+    return this == DiskColor.black
+        ? disk == CellDisk.black
+        : disk == CellDisk.white;
+  }
+
+  CellDisk toCellDisk() {
+    return this == DiskColor.black ? CellDisk.black : CellDisk.white;
+  }
+
+  @override
+  String toString() {
+    return this == DiskColor.black ? 'black' : 'white';
+  }
+}
+
+enum CellDisk {
+  empty,
+  black,
+  white;
+
+  static CellDisk fromString(String disk) {
+    if (disk == 'black') {
+      return CellDisk.black;
+    } else if (disk == 'white') {
+      return CellDisk.white;
+    } else if (disk == 'empty' || disk == '') {
+      return CellDisk.empty;
+    } else {
+      throw Exception('Invalid disk: $disk');
+    }
+  }
+
+  bool matches(DiskColor color) {
+    return color == DiskColor.black
+        ? this == CellDisk.black
+        : this == CellDisk.white;
+  }
+
+  Color toColor() {
+    switch (this) {
+      case CellDisk.black:
+        return Colors.black;
+      case CellDisk.white:
+        return Colors.white;
+      default:
+        return Colors.transparent;
+    }
+  }
+
+  @override
+  String toString() {
+    return this == CellDisk.black
+        ? 'black'
+        : this == CellDisk.white
+        ? 'white'
+        : 'empty';
   }
 }
