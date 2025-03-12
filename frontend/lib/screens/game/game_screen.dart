@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/game/game_service.dart';
+import 'package:gogogame_frontend/core/services/game/game_state.dart';
+import 'package:gogogame_frontend/core/types/match_type.dart';
 import 'package:gogogame_frontend/screens/game/game_board.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
@@ -24,9 +26,11 @@ class _GamePageState extends ConsumerState<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    MatchType? match = ref.watch(gameStateProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Game')),
-      body: GameBoard(onCellTap: _onCellTap),
+      body: GameBoard(onCellTap: _onCellTap, match: match),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colorScheme.outline,
         items: [
