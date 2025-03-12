@@ -77,7 +77,7 @@ class WebSocketService {
 
   void listenOnce(String event, Function(dynamic) callback) {
     _socket?.once(event, (data) {
-      log('[WebSocket] Event received: $event - Data: $data');
+      // log('[WebSocket] Event received: $event - Data: $data');
       if (data is List) {
         if (data.last is Function) {
           (data.last as Function)(true);
@@ -97,7 +97,7 @@ class WebSocketService {
 
   void listen(String event, Function(dynamic) callback) {
     _socket?.on(event, (data) {
-      log('[WebSocket] Event received: $event - Data: $data');
+      // log('[WebSocket] Event received: $event - Data: $data');
       if (data is List) {
         if (data.last is Function) {
           (data.last as Function)(true);
