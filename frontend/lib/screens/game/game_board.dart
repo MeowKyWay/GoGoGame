@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
 import 'package:gogogame_frontend/core/themes/game_theme.dart';
+import 'package:gogogame_frontend/core/types/game_type.dart';
+import 'package:gogogame_frontend/core/types/match_type.dart';
 import 'package:gogogame_frontend/screens/game/game_cell.dart';
 
 class GameBoard extends ConsumerWidget {
   final int size = 8;
   final Function(int, int) onCellTap;
 
-  const GameBoard({super.key, required this.onCellTap});
+  final MatchType? match;
+
+  const GameBoard({super.key, required this.onCellTap, required this.match});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,7 +63,12 @@ class GameBoard extends ConsumerWidget {
                       // ),
                       for (int x = 0; x < size; x++)
                         for (int y = 0; y < size; y++)
-                          GameCell(x: x, y: y, onTap: onCellTap),
+                          GameCell(
+                            x: x,
+                            y: y,
+                            onTap: onCellTap,
+                            disk: match?.board[x][y] ?? CellDisk.empty,
+                          ),
                     ],
                   ),
                 ),
