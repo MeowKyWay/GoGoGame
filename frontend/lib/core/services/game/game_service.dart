@@ -59,7 +59,6 @@ class GameService {
   }
 
   Future<void> move(int x, int y) {
-    log('[GameService] Move: $x, $y');
     final match = gameState.getMatch();
     if (match == null) {
       throw Exception('No match found');

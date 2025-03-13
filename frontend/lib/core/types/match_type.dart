@@ -114,10 +114,14 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     final flipped = flipPieces(x, y, color);
     if (flipped.isEmpty) return; // Invalid move
 
+    printBoard();
     board[x][y] = color.toCellDisk(); // Place piece
     for (final pos in flipped) {
+      log('[MatchType] Flipping: $pos');
       board[pos[0]][pos[1]] = color.toCellDisk(); // Flip pieces
+      log('[MatchType] Flipped: ${board[pos[0]][pos[1]]}');
     }
+    printBoard();
     turn = turn.opposite(); // Toggle turn
 
     // If next player has no move, switch back
@@ -140,6 +144,25 @@ class MatchType implements Jsonable, Clonable<MatchType> {
       color: color,
       board: board.map((row) => List.of(row)).toList(),
       turn: turn,
+    );
+  }
+
+  void printBoard() {
+    log(
+      board
+          .map(
+            (row) => row
+                .map(
+                  (cell) =>
+                      cell == CellDisk.black
+                          ? '⚫'
+                          : cell == CellDisk.white
+                          ? '⚪'
+                          : '⬜',
+                )
+                .join(' '),
+          )
+          .join('\n'),
     );
   }
 }
