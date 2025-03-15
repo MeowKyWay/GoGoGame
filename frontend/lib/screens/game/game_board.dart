@@ -21,62 +21,64 @@ class GameBoard extends ConsumerWidget {
     const cellSize = GameConstant.cellSize;
     const padding = 0.0;
 
-    return Center(
-      child: SizedBox.square(
-        dimension: double.infinity,
-        child: FittedBox(
-          // Ensures board scales down if needed
-          child: InteractiveViewer(
-            child: Container(
-              padding: EdgeInsets.all(padding),
-              decoration: BoxDecoration(
-                color:
-                    boardTheme.boardImage == null
-                        ? boardTheme.boardColor
-                        : null,
-                image:
-                    boardTheme.boardImage != null
-                        ? DecorationImage(
-                          image: AssetImage(boardTheme.boardImage!),
-                          fit: BoxFit.cover,
-                        )
-                        : null,
-              ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Center(
+          child: SizedBox.square(
+            dimension: constraints.maxWidth,
+            child: FittedBox(
+              // Ensures board scales down if needed
               child: Container(
+                padding: EdgeInsets.all(padding),
                 decoration: BoxDecoration(
-                  border: Border.all(color: boardTheme.lineColor),
+                  color:
+                      boardTheme.boardImage == null
+                          ? boardTheme.boardColor
+                          : null,
+                  image:
+                      boardTheme.boardImage != null
+                          ? DecorationImage(
+                            image: AssetImage(boardTheme.boardImage!),
+                            fit: BoxFit.cover,
+                          )
+                          : null,
                 ),
-                child: SizedBox(
-                  width: (size) * cellSize,
-                  height: (size) * cellSize,
-                  child: Wrap(
-                    children: [
-                      // Padding(
-                      //   padding: const EdgeInsets.all(padding),
-                      //   child: SizedBox(
-                      //     width: (size) * cellSize,
-                      //     height: (size) * GameConstant.cellSize,
-                      //     child: CustomPaint(
-                      //       painter: BoardPainter(size, boardTheme),
-                      //     ),
-                      //   ),
-                      // ),
-                      for (int x = 0; x < size; x++)
-                        for (int y = 0; y < size; y++)
-                          GameCell(
-                            x: x,
-                            y: y,
-                            onTap: onCellTap,
-                            disk: match?.board[x][y] ?? CellDisk.empty,
-                          ),
-                    ],
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: boardTheme.lineColor),
+                  ),
+                  child: SizedBox(
+                    width: (size) * cellSize,
+                    height: (size) * cellSize,
+                    child: Wrap(
+                      children: [
+                        // Padding(
+                        //   padding: const EdgeInsets.all(padding),
+                        //   child: SizedBox(
+                        //     width: (size) * cellSize,
+                        //     height: (size) * GameConstant.cellSize,
+                        //     child: CustomPaint(
+                        //       painter: BoardPainter(size, boardTheme),
+                        //     ),
+                        //   ),
+                        // ),
+                        for (int x = 0; x < size; x++)
+                          for (int y = 0; y < size; y++)
+                            GameCell(
+                              x: x,
+                              y: y,
+                              onTap: onCellTap,
+                              disk: match?.board[x][y] ?? CellDisk.empty,
+                            ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
