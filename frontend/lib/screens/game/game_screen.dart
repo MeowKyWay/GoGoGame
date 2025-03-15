@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
+import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/services/game/game_service.dart';
 import 'package:gogogame_frontend/core/services/game/game_state.dart';
 import 'package:gogogame_frontend/core/types/match_type.dart';
+import 'package:gogogame_frontend/core/types/user_type.dart';
 import 'package:gogogame_frontend/screens/game/game_board.dart';
+import 'package:gogogame_frontend/screens/game/game_play_tile/game_player_tile.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -27,10 +30,27 @@ class _GamePageState extends ConsumerState<GameScreen> {
   @override
   Widget build(BuildContext context) {
     MatchType? match = ref.watch(gameStateProvider);
+    UserType? user = ref.watch(authState);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Game')),
-      body: GameBoard(onCellTap: _onCellTap, match: match),
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          GamePlayerTile(
+            player: match?.opponent,
+            color: match?.color.opposite(),
+            isPlayerTurn: match?.turn == match?.color.opposite(),
+          ),
+          GameBoard(onCellTap: _onCellTap, match: match),
+          GamePlayerTile(
+            player: user,
+            color: match?.color,
+            isPlayerTurn: match?.turn == match?.color,
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colorScheme.outline,
         items: [
