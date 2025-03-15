@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:gogogame_frontend/core/extensions/color_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/themes/app_theme.dart';
+import 'package:gogogame_frontend/core/types/user_type.dart';
 import 'package:gogogame_frontend/screens/auth/login_screen/login_screen.dart';
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
 import 'package:loader_overlay/loader_overlay.dart';
@@ -18,12 +19,12 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool isAuthenticated = ref.watch(authState);
+    UserType? user = ref.watch(authState);
 
     final router = GoRouter(
       refreshListenable: ListenableAuth(ref),
       redirect: (context, state) {
-        if (!isAuthenticated) return '/login';
+        if (user == null) return '/login';
         return '/';
       },
       routes: [
