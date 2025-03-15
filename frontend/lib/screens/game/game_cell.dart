@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
 import 'package:gogogame_frontend/core/themes/game_theme.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
+import 'package:gogogame_frontend/screens/game/disk.dart';
 
 class GameCell extends ConsumerWidget {
   final int x;
@@ -30,12 +31,8 @@ class GameCell extends ConsumerWidget {
         height: GameConstant.cellSize,
         decoration: BoxDecoration(border: Border.all(color: theme.lineColor)),
         child: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: disk.toColor(),
-            ),
-          ),
+          child:
+              disk != CellDisk.empty ? Disk(color: disk.toDiskColor()) : null,
         ),
       ),
     );
