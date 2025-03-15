@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
