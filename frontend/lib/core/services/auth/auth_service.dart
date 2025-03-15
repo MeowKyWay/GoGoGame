@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gogogame_frontend/core/types/user_type.dart';
 
 class AuthService {
   final _storage = const FlutterSecureStorage();
@@ -11,6 +14,20 @@ class AuthService {
 
   Future<String?> getToken() async {
     return await _storage.read(key: _tokenKey);
+  }
+
+  Future<UserType?> getUser() async {
+    final token = await getToken();
+
+    if (token == null) return null;
+
+    try {
+      final jwt = JWT.decode(token);
+      // log(jwt.payload.toString());
+      return UserType.fromJson(jwt.payload);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> logout() async {
