@@ -89,10 +89,6 @@ class MatchType implements Jsonable, Clonable<MatchType> {
       }
     }
 
-    for (var pos in allFlipped) {
-      board[pos[0]][pos[1]] = color.toCellDisk(); // Flip pieces
-    }
-
     return allFlipped;
   }
 
