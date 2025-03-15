@@ -19,7 +19,7 @@ class GameBoard extends ConsumerWidget {
     final boardTheme = ref.watch(gameThemeProvider);
 
     const cellSize = GameConstant.cellSize;
-    const padding = cellSize / 2;
+    const padding = 0.0;
 
     return Center(
       child: SizedBox.square(
