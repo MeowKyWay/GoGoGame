@@ -87,6 +87,17 @@ enum CellDisk {
     }
   }
 
+  DiskColor toDiskColor() {
+    switch (this) {
+      case CellDisk.black:
+        return DiskColor.black;
+      case CellDisk.white:
+        return DiskColor.white;
+      default:
+        throw Exception('Empty disk has no color');
+    }
+  }
+
   @override
   String toString() {
     return this == CellDisk.black
