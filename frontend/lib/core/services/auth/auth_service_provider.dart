@@ -3,17 +3,18 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/api/api_service.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service.dart';
+import 'package:gogogame_frontend/core/types/user_type.dart';
 
 final authService = Provider((ref) => AuthService());
 
-final authState = StateNotifierProvider<AuthNotifier, bool>((ref) {
+final authState = StateNotifierProvider<AuthNotifier, UserType?>((ref) {
   return AuthNotifier(
     authService: ref.read(authService),
     apiService: ref.read(apiService),
   );
 });
 
-class AuthNotifier extends StateNotifier<bool> {
+class AuthNotifier extends StateNotifier<UserType?> {
   final AuthService _authService;
   final ApiService _apiService;
 
@@ -22,12 +23,14 @@ class AuthNotifier extends StateNotifier<bool> {
     required ApiService apiService,
   }) : _authService = authService,
        _apiService = apiService,
-       super(false) {
+       super(null) {
     _checkAuth();
   }
 
   Future<void> _checkAuth() async {
-    state = await _authService.isAuthenticated();
+    if (await _authService.isAuthenticated()) {
+      state = await _authService.getUser();
+    }
   }
 
   Future<void> login({
@@ -42,7 +45,7 @@ class AuthNotifier extends StateNotifier<bool> {
     final body = jsonDecode(res.body);
     if (body['access_token'] != null) {
       await _authService.saveToken(body['access_token']);
-      state = true;
+      _checkAuth();
     } else {
       throw Exception(body['message']);
     }
@@ -62,7 +65,7 @@ class AuthNotifier extends StateNotifier<bool> {
     final body = jsonDecode(res.body);
     if (body['access_token'] != null) {
       await _authService.saveToken(body['access_token']);
-      state = true;
+      _checkAuth();
     } else {
       throw Exception(body['message']);
     }
@@ -70,7 +73,7 @@ class AuthNotifier extends StateNotifier<bool> {
 
   Future<void> logout() async {
     await _authService.logout();
-    state = false;
+    state = null;
   }
 
   Future<bool> checkEmail(String email) async {
