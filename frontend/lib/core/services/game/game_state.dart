@@ -23,11 +23,12 @@ class GameStateNotifier extends StateNotifier<MatchType?> {
     return state;
   }
 
-  void applyMove(int x, int y, DiskColor color) {
+  void applyMove(int x, int y, DiskColor color, Map<DiskColor, int> timeLeft) {
     if (state == null) return;
 
     final match = state!.clone();
     match.applyMove(x, y, color);
+    match.updateTimer(timeLeft);
 
     state = match;
   }

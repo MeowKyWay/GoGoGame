@@ -49,6 +49,10 @@ class GameService {
           data['x'],
           data['y'],
           DiskColor.fromString(data['color']),
+          {
+            DiskColor.black: data['timeLeft']['black'],
+            DiskColor.white: data['timeLeft']['white'],
+          },
         );
       });
       gameState.startMatch(MatchType.fromJson(data));
