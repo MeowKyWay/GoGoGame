@@ -10,6 +10,9 @@ final darkColorScheme = ColorScheme(
   tertiary: Color.fromARGB(255, 66, 62, 59), //Textinput fill etc
   onTertiary: Color.fromARGB(255, 140, 139, 137), //Textfield hint color
 
+  primaryContainer: Color(0xFFF3F3F3),
+  onPrimaryContainer: Colors.black,
+
   outline: Colors.white,
   outlineVariant: Color.fromARGB(255, 93, 93, 89),
 
