@@ -44,12 +44,18 @@ export class MatchService {
       await this.webSocketService.emitWithAck(
         match.whitePlayer.socket,
         WebSocketEvent.MOVE,
-        moveDto,
+        {
+          ...moveDto,
+          timeLeft: match.timeLeft,
+        },
       );
       await this.webSocketService.emitWithAck(
         match.blackPlayer.socket,
         WebSocketEvent.MOVE,
-        moveDto,
+        {
+          ...moveDto,
+          timeLeft: match.timeLeft,
+        },
       );
     } catch (error) {
       if (error instanceof Error) {

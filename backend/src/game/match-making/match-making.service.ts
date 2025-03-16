@@ -96,6 +96,7 @@ export class MatchmakingService {
                 color: isPlayer1White ? 'white' : 'black',
                 board: match.board,
                 turn: match.turn,
+                timeLeft: match.timeLeft,
               },
             ),
             this.webSocketService.emitWithAck(
@@ -108,6 +109,7 @@ export class MatchmakingService {
                 color: isPlayer1White ? 'black' : 'white',
                 board: match.board,
                 turn: match.turn,
+                timeLeft: match.timeLeft,
               },
             ),
           ]);
