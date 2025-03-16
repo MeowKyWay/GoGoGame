@@ -10,7 +10,9 @@ class MatchType implements Jsonable, Clonable<MatchType> {
   final UserType opponent;
   final GameFormatType format;
   final DiskColor color;
-  List<List<CellDisk>> board;
+  final List<List<CellDisk>> board;
+  final Map<DiskColor, int> timeLeft;
+
   DiskColor turn;
 
   MatchType({
@@ -20,7 +22,10 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     required this.color,
     required this.board,
     required this.turn,
-  });
+  }) : timeLeft = {
+         DiskColor.black: format.initialTime * 60 * 1000,
+         DiskColor.white: format.initialTime * 60 * 1000,
+       };
 
   @override
   Map<String, dynamic> toJson() {
@@ -128,6 +133,15 @@ class MatchType implements Jsonable, Clonable<MatchType> {
       if (!hasLegalMove(turn)) {
         log('[MatchType] Game Over: No legal moves left.');
       }
+    }
+  }
+
+  void updateTimer(Map<DiskColor, int> time) {
+    if (time.containsKey(DiskColor.black)) {
+      timeLeft[DiskColor.black] = time[DiskColor.black]!;
+    }
+    if (time.containsKey(DiskColor.white)) {
+      timeLeft[DiskColor.white] = time[DiskColor.white]!;
     }
   }
 
