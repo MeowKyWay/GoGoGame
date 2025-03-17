@@ -21,7 +21,7 @@ class TileTimer extends StatelessWidget {
       child:
           timeLeft != null
               ? Text(
-                (timeLeft! / 1000).round().toString(),
+                '${(timeLeft! ~/ 60000)}:${((timeLeft! % 60000) ~/ 1000).toString().padLeft(2, '0')}',
                 style: context.textTheme.labelMedium?.withColor(
                   context.colorScheme.onPrimaryContainer,
                 ),
