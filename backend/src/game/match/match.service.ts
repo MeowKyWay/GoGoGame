@@ -47,6 +47,7 @@ export class MatchService {
         {
           ...moveDto,
           timeLeft: match.timeLeft,
+          timeStamp: Date.now(),
         },
       );
       await this.webSocketService.emitWithAck(
@@ -55,6 +56,7 @@ export class MatchService {
         {
           ...moveDto,
           timeLeft: match.timeLeft,
+          timeStamp: Date.now(),
         },
       );
     } catch (error) {
