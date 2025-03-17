@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:gogogame_frontend/core/exceptions/game_exception.dart';
 import 'package:gogogame_frontend/core/interfaces/clonable.dart';
 import 'package:gogogame_frontend/core/interfaces/jsonable.dart';
+import 'package:gogogame_frontend/core/services/game/timer_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
 
@@ -11,7 +13,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
   final GameFormatType format;
   final DiskColor color;
   final List<List<CellDisk>> board;
-  final Map<DiskColor, int> timeLeft;
+  final TimerService timerService;
 
   DiskColor turn;
 
@@ -22,10 +24,8 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     required this.color,
     required this.board,
     required this.turn,
-  }) : timeLeft = {
-         DiskColor.black: format.initialTime * 60 * 1000,
-         DiskColor.white: format.initialTime * 60 * 1000,
-       };
+    required this.timerService,
+  });
 
   @override
   Map<String, dynamic> toJson() {
@@ -39,7 +39,10 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     };
   }
 
-  factory MatchType.fromJson(Map<String, dynamic> json) {
+  factory MatchType.fromJson(
+    Map<String, dynamic> json,
+    TimerService timerService,
+  ) {
     return MatchType(
       matchId: json['matchId'],
       opponent: UserType.fromJson(json['opponent']),
@@ -51,6 +54,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
         ),
       ),
       turn: DiskColor.fromString(json['turn']),
+      timerService: timerService,
     );
   }
 
@@ -109,40 +113,36 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     return false;
   }
 
-  void applyMove(int x, int y, DiskColor color) {
-    if (board[x][y] != CellDisk.empty || color != turn) return;
+  void applyMove(int x, int y, DiskColor color, int timeStamp) {
+    if (board[x][y] != CellDisk.empty) throw InvalidMoveException();
+
+    if (turn != color) throw NotYourTurnException();
 
     final flipped = flipPieces(x, y, color);
-    if (flipped.isEmpty) return; // Invalid move
+    if (flipped.isEmpty) throw IllegalMoveException(); // Invalid move
 
-    printBoard();
-    board[x][y] = color.toCellDisk(); // Place piece
+    List<List<CellDisk>> newBoard = board.map((row) => List.of(row)).toList();
+    newBoard[x][y] = color.toCellDisk();
+
     for (final pos in flipped) {
-      log('[MatchType] Flipping: $pos');
-      board[pos[0]][pos[1]] = color.toCellDisk(); // Flip pieces
-      log('[MatchType] Flipped: ${board[pos[0]][pos[1]]}');
+      newBoard[pos[0]][pos[1]] = color.toCellDisk();
     }
-    printBoard();
-    turn = turn.opposite(); // Toggle turn
 
-    // If next player has no move, switch back
+    turn = turn.opposite();
     if (!hasLegalMove(turn)) {
       turn = turn.opposite();
-
-      // If neither player has a move, game over
-      if (!hasLegalMove(turn)) {
-        log('[MatchType] Game Over: No legal moves left.');
-      }
     }
+
+    // Update state
+    board.clear();
+    board.addAll(newBoard);
+
+    timerService.switchTurn();
+    return;
   }
 
-  void updateTimer(Map<DiskColor, int> time) {
-    if (time.containsKey(DiskColor.black)) {
-      timeLeft[DiskColor.black] = time[DiskColor.black]!;
-    }
-    if (time.containsKey(DiskColor.white)) {
-      timeLeft[DiskColor.white] = time[DiskColor.white]!;
-    }
+  void startTimer() {
+    timerService.startTimer(format.initialTime * 60 * 1000, turn);
   }
 
   @override
@@ -154,25 +154,29 @@ class MatchType implements Jsonable, Clonable<MatchType> {
       color: color,
       board: board.map((row) => List.of(row)).toList(),
       turn: turn,
+      timerService: timerService,
     );
   }
 
   void printBoard() {
-    log(
-      board
-          .map(
-            (row) => row
-                .map(
-                  (cell) =>
-                      cell == CellDisk.black
-                          ? '⚫'
-                          : cell == CellDisk.white
-                          ? '⚪'
-                          : '⬜',
-                )
-                .join(' '),
-          )
-          .join('\n'),
-    );
+    String boardString = board
+        .asMap()
+        .entries
+        .map((entry) {
+          int rowIndex = entry.key;
+          String row = entry.value
+              .map((cell) {
+                return cell == CellDisk.black
+                    ? '⚫'
+                    : cell == CellDisk.white
+                    ? '⚪'
+                    : '⬜';
+              })
+              .join(' ');
+          return '$rowIndex: $row';
+        })
+        .join('\n');
+
+    log('\n$boardString');
   }
 }

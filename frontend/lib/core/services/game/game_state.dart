@@ -13,6 +13,7 @@ class GameStateNotifier extends StateNotifier<MatchType?> {
 
   void startMatch(MatchType match) {
     state = match;
+    match.startTimer();
   }
 
   void endMatch() {
@@ -23,12 +24,22 @@ class GameStateNotifier extends StateNotifier<MatchType?> {
     return state;
   }
 
-  void applyMove(int x, int y, DiskColor color, Map<DiskColor, int> timeLeft) {
+  void applyMove(
+    int x,
+    int y,
+    DiskColor color,
+    Map<DiskColor, int> timeLeft,
+    int timeStamp,
+  ) {
     if (state == null) return;
 
     final match = state!.clone();
-    match.applyMove(x, y, color);
-    match.updateTimer(timeLeft);
+    match.applyMove(x, y, color, timeStamp);
+    match.timerService.updateTimer(
+      timeLeft[DiskColor.black]!,
+      timeLeft[DiskColor.white]!,
+      timeStamp,
+    );
 
     state = match;
   }

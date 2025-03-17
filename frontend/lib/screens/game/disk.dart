@@ -13,7 +13,7 @@ class Disk extends ConsumerWidget {
     return Center(
       child: Container(
         decoration: BoxDecoration(
-          color: ref.watch(gameThemeProvider).getDiskColor(color),
+          color: ref.watch(gameTheme).getDiskColor(color),
           shape: BoxShape.circle,
           border: Border.all(color: Colors.black),
         ),

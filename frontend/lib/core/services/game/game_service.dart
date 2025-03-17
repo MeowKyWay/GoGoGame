@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/game/game_state.dart';
+import 'package:gogogame_frontend/core/services/game/timer_service.dart';
 import 'package:gogogame_frontend/core/services/websocket/web_socket_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/match_type.dart';
@@ -10,14 +11,16 @@ final gameService = Provider((ref) {
   return GameService(
     ref.read(webSocketService),
     ref.read(gameStateProvider.notifier),
+    ref.read(timerService.notifier),
   );
 });
 
 class GameService {
   final WebSocketService webSocket;
   final GameStateNotifier gameState;
+  final TimerService timerService;
 
-  GameService(this.webSocket, this.gameState);
+  GameService(this.webSocket, this.gameState, this.timerService);
 
   Future<void> connect() async {
     await webSocket.connect();
@@ -53,9 +56,11 @@ class GameService {
             DiskColor.black: data['timeLeft']['black'],
             DiskColor.white: data['timeLeft']['white'],
           },
+          data['timeStamp'],
         );
       });
-      gameState.startMatch(MatchType.fromJson(data));
+      MatchType match = MatchType.fromJson(data, timerService);
+      gameState.startMatch(match);
       completer.complete();
     });
 

@@ -11,14 +11,12 @@ class GamePlayerTile extends ConsumerStatefulWidget {
   final UserType? player;
   final DiskColor? color;
   final bool? isPlayerTurn;
-  final int? timeLeft;
 
   const GamePlayerTile({
     super.key,
     required this.player,
     required this.color,
     required this.isPlayerTurn,
-    required this.timeLeft,
   });
 
   @override
@@ -38,7 +36,7 @@ class _GamePlayerTileState extends ConsumerState<GamePlayerTile> {
             Gap(16),
             TileLabel(user: widget.player, color: widget.color),
             const Spacer(),
-            TileTimer(timeLeft: widget.timeLeft),
+            TileTimer(color: widget.color, isPlayerTurn: widget.isPlayerTurn),
           ],
         ),
       ),
