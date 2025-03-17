@@ -28,13 +28,14 @@ class GameStateNotifier extends StateNotifier<MatchType?> {
     int x,
     int y,
     DiskColor color,
+    DiskColor turn,
     Map<DiskColor, int> timeLeft,
     int timeStamp,
   ) {
     if (state == null) return;
 
     final match = state!.clone();
-    match.applyMove(x, y, color, timeStamp);
+    match.applyMove(x, y, color, turn, timeStamp);
     match.timerService.updateTimer(
       timeLeft[DiskColor.black]!,
       timeLeft[DiskColor.white]!,

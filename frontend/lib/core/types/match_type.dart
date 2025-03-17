@@ -6,6 +6,7 @@ import 'package:gogogame_frontend/core/interfaces/jsonable.dart';
 import 'package:gogogame_frontend/core/services/game/timer_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
+import 'package:tuple/tuple.dart';
 
 class MatchType implements Jsonable, Clonable<MatchType> {
   final String matchId;
@@ -69,13 +70,13 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     [1, 1],
   ];
 
-  List<List<int>> flipPieces(int x, int y, DiskColor color) {
-    List<List<int>> allFlipped = [];
+  List<Tuple2<int, int>> flipPieces(int x, int y, DiskColor color) {
+    List<Tuple2<int, int>> allFlipped = [];
 
     for (var dir in directions) {
       int dx = dir[0], dy = dir[1];
       int nx = x + dx, ny = y + dy;
-      List<List<int>> flipped = [];
+      List<Tuple2<int, int>> flipped = [];
 
       while (nx >= 0 &&
           nx < board.length &&
@@ -83,7 +84,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
           ny < board.length &&
           board[nx][ny] != CellDisk.empty &&
           !board[nx][ny].matches(color)) {
-        flipped.add([nx, ny]);
+        flipped.add(Tuple2(nx, ny));
         nx += dx;
         ny += dy;
       }
@@ -113,10 +114,10 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     return false;
   }
 
-  void applyMove(int x, int y, DiskColor color, int timeStamp) {
+  void applyMove(int x, int y, DiskColor color, DiskColor turn, int timeStamp) {
     if (board[x][y] != CellDisk.empty) throw InvalidMoveException();
 
-    if (turn != color) throw NotYourTurnException();
+    if (this.turn != color) throw NotYourTurnException();
 
     final flipped = flipPieces(x, y, color);
     if (flipped.isEmpty) throw IllegalMoveException(); // Invalid move
@@ -125,24 +126,35 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     newBoard[x][y] = color.toCellDisk();
 
     for (final pos in flipped) {
-      newBoard[pos[0]][pos[1]] = color.toCellDisk();
+      newBoard[pos.item1][pos.item2] = color.toCellDisk();
     }
 
-    turn = turn.opposite();
-    if (!hasLegalMove(turn)) {
-      turn = turn.opposite();
-    }
+    this.turn = turn;
+    timerService.setTurn(turn);
 
     // Update state
     board.clear();
     board.addAll(newBoard);
-
-    timerService.switchTurn();
     return;
   }
 
   void startTimer() {
     timerService.startTimer(format.initialTime * 60 * 1000, turn);
+  }
+
+  List<Tuple2<int, int>> getValidMoves() {
+    List<Tuple2<int, int>> validMoves = [];
+
+    for (int x = 0; x < board.length; x++) {
+      for (int y = 0; y < board.length; y++) {
+        if (board[x][y] == CellDisk.empty &&
+            flipPieces(x, y, turn).isNotEmpty) {
+          validMoves.add(Tuple2(x, y));
+        }
+      }
+    }
+
+    return validMoves;
   }
 
   @override

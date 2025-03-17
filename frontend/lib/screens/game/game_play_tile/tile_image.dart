@@ -20,7 +20,9 @@ class TileImage extends StatelessWidget {
               color: GameConstant.imageBackgroundColor,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Center(child: color != null ? Disk(color: color!) : null),
+            child: Center(
+              child: color != null ? Disk(cellDisk: color!.toCellDisk()) : null,
+            ),
           ),
         );
       },

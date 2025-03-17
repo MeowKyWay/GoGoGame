@@ -5,6 +5,7 @@ import 'package:gogogame_frontend/core/themes/game_theme.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/match_type.dart';
 import 'package:gogogame_frontend/screens/game/game_cell.dart';
+import 'package:tuple/tuple.dart';
 
 class GameBoard extends ConsumerWidget {
   final int size = 8;
@@ -20,6 +21,8 @@ class GameBoard extends ConsumerWidget {
 
     const cellSize = GameConstant.cellSize;
     const padding = 0.0;
+
+    final validMoves = match?.getValidMoves() ?? [];
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -52,16 +55,6 @@ class GameBoard extends ConsumerWidget {
                     height: (size) * cellSize,
                     child: Wrap(
                       children: [
-                        // Padding(
-                        //   padding: const EdgeInsets.all(padding),
-                        //   child: SizedBox(
-                        //     width: (size) * cellSize,
-                        //     height: (size) * GameConstant.cellSize,
-                        //     child: CustomPaint(
-                        //       painter: BoardPainter(size, boardTheme),
-                        //     ),
-                        //   ),
-                        // ),
                         for (int x = 0; x < size; x++)
                           for (int y = 0; y < size; y++)
                             GameCell(
@@ -69,6 +62,9 @@ class GameBoard extends ConsumerWidget {
                               y: y,
                               onTap: onCellTap,
                               disk: match?.board[x][y] ?? CellDisk.empty,
+                              isVaildMove:
+                                  validMoves.contains(Tuple2(x, y)) &&
+                                  match?.turn == match?.color,
                             ),
                       ],
                     ),

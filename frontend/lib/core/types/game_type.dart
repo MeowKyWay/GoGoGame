@@ -98,6 +98,10 @@ enum CellDisk {
     }
   }
 
+  bool get isDiskColor {
+    return this == CellDisk.black || this == CellDisk.white;
+  }
+
   @override
   String toString() {
     return this == CellDisk.black

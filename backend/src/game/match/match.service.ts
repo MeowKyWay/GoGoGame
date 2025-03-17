@@ -47,6 +47,7 @@ export class MatchService {
         {
           ...moveDto,
           timeLeft: match.timeLeft,
+          turn: match.turn,
           timeStamp: Date.now(),
         },
       );
@@ -56,6 +57,7 @@ export class MatchService {
         {
           ...moveDto,
           timeLeft: match.timeLeft,
+          turn: match.turn,
           timeStamp: Date.now(),
         },
       );

@@ -52,6 +52,7 @@ class GameService {
           data['x'],
           data['y'],
           DiskColor.fromString(data['color']),
+          DiskColor.fromString(data['turn']),
           {
             DiskColor.black: data['timeLeft']['black'],
             DiskColor.white: data['timeLeft']['white'],

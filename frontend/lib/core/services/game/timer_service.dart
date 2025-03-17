@@ -44,8 +44,8 @@ class TimerService extends StateNotifier<Map<DiskColor, int>> {
     });
   }
 
-  void switchTurn() {
-    _currentTurn = _currentTurn.opposite();
+  void setTurn(DiskColor turn) {
+    _currentTurn = turn;
     _startPeriodicTimer(); // Restart the timer for the next turn
   }
 

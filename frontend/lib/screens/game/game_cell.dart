@@ -11,6 +11,7 @@ class GameCell extends ConsumerWidget {
   final int y;
   final Function(int, int) onTap;
   final CellDisk disk;
+  final bool isVaildMove;
 
   const GameCell({
     super.key,
@@ -18,6 +19,7 @@ class GameCell extends ConsumerWidget {
     required this.y,
     required this.onTap,
     required this.disk,
+    this.isVaildMove = false,
   });
 
   @override
@@ -30,10 +32,7 @@ class GameCell extends ConsumerWidget {
         width: GameConstant.cellSize,
         height: GameConstant.cellSize,
         decoration: BoxDecoration(border: Border.all(color: theme.lineColor)),
-        child: Center(
-          child:
-              disk != CellDisk.empty ? Disk(color: disk.toDiskColor()) : null,
-        ),
+        child: Center(child: Disk(cellDisk: disk, isHint: isVaildMove)),
       ),
     );
   }
