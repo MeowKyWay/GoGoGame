@@ -4,7 +4,7 @@ import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart'
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
 
 class MorePage extends ConsumerWidget implements AppHomePage {
-  const MorePage({Key? key});
+  const MorePage({super.key});
 
   @override
   Widget get title => const Text('More');
