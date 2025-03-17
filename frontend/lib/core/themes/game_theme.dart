@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 
-final gameThemeProvider = StateNotifierProvider<GameThemeNotifier, GameTheme>(
+final gameTheme = StateNotifierProvider<GameThemeNotifier, GameTheme>(
   (ref) => GameThemeNotifier(),
 );
 

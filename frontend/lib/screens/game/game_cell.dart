@@ -22,7 +22,7 @@ class GameCell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = ref.watch(gameThemeProvider);
+    final theme = ref.watch(gameTheme);
 
     return GestureDetector(
       onTap: () => onTap(x, y),

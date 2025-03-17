@@ -16,7 +16,7 @@ class GameBoard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final boardTheme = ref.watch(gameThemeProvider);
+    final boardTheme = ref.watch(gameTheme);
 
     const cellSize = GameConstant.cellSize;
     const padding = 0.0;
