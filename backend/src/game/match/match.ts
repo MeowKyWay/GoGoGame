@@ -66,7 +66,7 @@ export class Match extends EventEmitter {
     this._lastMoveTimestamp = now;
 
     if (this._timeLeft[this._turn] <= 0) {
-      const message: string = `${this.turn} ran out of time. ${this._turn === 'black' ? 'white' : 'black'} wins!`;
+      const message: string = `${this.turn} ran out of time.`;
       this.endGame(this._turn === 'black' ? 'white' : 'black', message);
       console.log(
         `Game over: ${this._turn} ran out of time. ${this.winner} wins!`,
@@ -209,18 +209,13 @@ export class Match extends EventEmitter {
       .flat()
       .filter((cell) => cell === 'white').length;
 
+    const message = `No more legal moves.`;
     if (blackCount > whiteCount) {
-      const message = `No more legal moves. Black: ${blackCount}, White: ${whiteCount}.`;
       this.endGame('black', message);
-      console.log(message);
     } else if (whiteCount > blackCount) {
-      const message = `No more legal moves. Black: ${blackCount}, White: ${whiteCount}.`;
       this.endGame('white', message);
-      console.log(message);
     } else {
-      const message = `No more legal moves. Black: ${blackCount}, White: ${whiteCount}.`;
       this.endGame(null, message);
-      console.log(message);
     }
   }
 

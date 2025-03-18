@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { MoveDto } from '../dto/move.dto';
 import { WebSocketService } from 'src/web-socket/web-socket.service';
 import { WebSocketEvent } from '../types/websocket-event.type';
-import { log } from 'console';
 
 @Injectable()
 export class MatchService {
@@ -28,6 +27,13 @@ export class MatchService {
     );
 
     this.matches.push(match);
+    match.on('game_over', (data: { winner: string; message: string }) => {
+      console.log(data);
+      this.gameOver({
+        match,
+        ...data,
+      }).catch((error) => console.log(error));
+    });
     return match;
   }
 
@@ -63,12 +69,34 @@ export class MatchService {
       );
     } catch (error) {
       if (error instanceof Error) {
-        log(error.message);
+        console.log(error.message);
         const currentPlayer =
           moveDto.color === 'black' ? match.whitePlayer : match.blackPlayer;
         this.webSocketService.message(currentPlayer.socket, error.message);
       }
     }
+  }
+
+  async gameOver(data: { match: Match; winner: string; message: string }) {
+    const payload = {
+      winner: data.winner,
+      message: data.message,
+      matchId: data.match.id,
+    };
+    // Notify both players about the game over
+    await this.webSocketService.emitWithAck(
+      data.match.whitePlayer.socket,
+      WebSocketEvent.GAME_OVER,
+      payload,
+    );
+    await this.webSocketService.emitWithAck(
+      data.match.blackPlayer.socket,
+      WebSocketEvent.GAME_OVER,
+      payload,
+    );
+
+    // Remove the match from the list
+    this.matches = this.matches.filter((m) => m.id !== data.match.id);
   }
 
   getMatchById(id: string) {
