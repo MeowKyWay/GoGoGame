@@ -1,12 +1,13 @@
-import { Color, Move, Stone } from '../types/game.type';
+import { EventEmitter } from 'events';
+import { Color, Move, Disk } from '../types/game.type';
 import { ConnectedPlayer } from '../types/player.type';
 
-export class Match {
+export class Match extends EventEmitter {
   static readonly size = 8;
 
   readonly timestamp: number = Date.now();
   private _moves: Move[] = [];
-  private _board: Stone[][];
+  private _board: Disk[][];
   private _turn: Color = 'black';
 
   state: 'playing' | 'finished' = 'playing';
@@ -15,7 +16,7 @@ export class Match {
   private _timeLeft: Record<Color, number>;
   private _lastMoveTimestamp: number;
 
-  get board(): Stone[][] {
+  get board(): Disk[][] {
     return this._board;
   }
 
@@ -35,22 +36,42 @@ export class Match {
     readonly id: string,
     readonly whitePlayer: ConnectedPlayer,
     readonly blackPlayer: ConnectedPlayer,
-    readonly initialTime: number, // Time in **minute** (✅ Marked Change)
-    readonly increment: number, // Time increment per move in **seconds** (✅ Marked Change)
+    readonly initialTime: number, // Time in minute
+    readonly increment: number, // Time increment per move in seconds
   ) {
+    super();
     this._board = Array.from({ length: Match.size }, () =>
       Array.from({ length: Match.size }, () => ''),
     );
-
+    // Set initial disks
     this._board[3][3] = this._board[4][4] = 'white';
     this._board[3][4] = this._board[4][3] = 'black';
 
     this._timeLeft = {
-      black: initialTime * 1000 * 60, // ✅ Convert minute to milliseconds
-      white: initialTime * 1000 * 60, // ✅ Convert minute to milliseconds
+      black: initialTime * 1000 * 60, // Convert minute to milliseconds
+      white: initialTime * 1000 * 60,
     };
 
     this._lastMoveTimestamp = Date.now();
+
+    setInterval(() => this.checkTimeout(), 1000);
+  }
+
+  checkTimeout() {
+    if (this.state === 'finished') return; // Stop if the game is already over
+
+    const now = Date.now();
+    const elapsed = now - this._lastMoveTimestamp;
+    this._timeLeft[this._turn] -= elapsed;
+    this._lastMoveTimestamp = now;
+
+    if (this._timeLeft[this._turn] <= 0) {
+      const message: string = `${this.turn} ran out of time. ${this._turn === 'black' ? 'white' : 'black'} wins!`;
+      this.endGame(this._turn === 'black' ? 'white' : 'black', message);
+      console.log(
+        `Game over: ${this._turn} ran out of time. ${this.winner} wins!`,
+      );
+    }
   }
 
   move(move: Move) {
@@ -77,7 +98,7 @@ export class Match {
     this._moves.push(move);
 
     console.log(`[Match ${this.id}] ${color} moved to (${x},${y})`);
-    this.logBoard();
+    // this.logBoard();
 
     this._timeLeft[color] += this.increment * 1000; // ✅ Convert increment to milliseconds
     this._lastMoveTimestamp = Date.now();
@@ -189,15 +210,27 @@ export class Match {
       .filter((cell) => cell === 'white').length;
 
     if (blackCount > whiteCount) {
-      this.winner = 'black';
-      console.log('Black wins!');
+      const message = `No more legal moves. Black: ${blackCount}, White: ${whiteCount}.`;
+      this.endGame('black', message);
+      console.log(message);
     } else if (whiteCount > blackCount) {
-      this.winner = 'white';
-      console.log('White wins!');
+      const message = `No more legal moves. Black: ${blackCount}, White: ${whiteCount}.`;
+      this.endGame('white', message);
+      console.log(message);
     } else {
-      this.winner = null;
-      console.log('Game ends in a draw.');
+      const message = `No more legal moves. Black: ${blackCount}, White: ${whiteCount}.`;
+      this.endGame(null, message);
+      console.log(message);
     }
+  }
+
+  endGame(winner: Color | null, reason: string) {
+    this.state = 'finished';
+    this.winner = winner;
+    if (this.winner) console.log(`Game over: ${winner} wins! ${reason}`);
+    else console.log(`Game over: Draw! ${reason}`);
+
+    this.emit('game_over', { winner, reason });
   }
 
   logBoard() {
