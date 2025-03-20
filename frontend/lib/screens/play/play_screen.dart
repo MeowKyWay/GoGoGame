@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
+import 'package:gogogame_frontend/core/services/game/game_state.dart';
 import 'package:gogogame_frontend/screens/game/game_screen.dart';
 import 'package:gogogame_frontend/widget/select_button.dart';
 
-class PlayScreen extends StatefulWidget {
+class PlayScreen extends ConsumerStatefulWidget {
   const PlayScreen({super.key});
 
   @override
-  State<PlayScreen> createState() => _PlayScreenState();
+  ConsumerState<PlayScreen> createState() => _PlayScreenState();
 }
 
-class _PlayScreenState extends State<PlayScreen> {
+class _PlayScreenState extends ConsumerState<PlayScreen> {
   TimeControl _timeControl = TimeControl.defaultTimeControl;
 
   @override
@@ -63,6 +65,7 @@ class _PlayScreenState extends State<PlayScreen> {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () {
+                        ref.read(gameStateProvider.notifier).endMatch();
                         context.push(GameScreen(timeControl: _timeControl));
                       },
                       child: const Text('Play'),

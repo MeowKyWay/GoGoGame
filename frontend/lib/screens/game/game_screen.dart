@@ -9,7 +9,7 @@ import 'package:gogogame_frontend/core/types/match_type.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
 import 'package:gogogame_frontend/screens/game/game_board.dart';
 import 'package:gogogame_frontend/screens/game/game_play_tile/game_player_tile.dart';
-import 'package:loader_overlay/loader_overlay.dart';
+import 'package:gogogame_frontend/screens/game/queue_modal.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   final TimeControl timeControl;
@@ -24,7 +24,7 @@ class _GamePageState extends ConsumerState<GameScreen> {
   late GameService game;
 
   void _onCellTap(int x, int y) {
-    ref.read(gameService).move(x, y);
+    game.move(x, y);
   }
 
   @override
@@ -73,13 +73,13 @@ class _GamePageState extends ConsumerState<GameScreen> {
     game = ref.read(gameService);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.loaderOverlay.show();
+      final modal = QueueModal.show(context);
       await game.connect();
       await game.joinQueue(
         widget.timeControl.initialTime,
         widget.timeControl.increment,
       );
-      if (mounted) context.loaderOverlay.hide();
+      modal.hide();
     });
   }
 
