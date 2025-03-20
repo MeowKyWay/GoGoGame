@@ -14,7 +14,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
   final GameFormatType format;
   final DiskColor color;
   final List<List<CellDisk>> board;
-  final TimerService timerService;
+  bool isOver;
 
   DiskColor turn;
 
@@ -25,7 +25,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     required this.color,
     required this.board,
     required this.turn,
-    required this.timerService,
+    required this.isOver,
   });
 
   @override
@@ -55,7 +55,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
         ),
       ),
       turn: DiskColor.fromString(json['turn']),
-      timerService: timerService,
+      isOver: false,
     );
   }
 
@@ -130,16 +130,11 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     }
 
     this.turn = turn;
-    timerService.setTurn(turn);
 
     // Update state
     board.clear();
     board.addAll(newBoard);
     return;
-  }
-
-  void startTimer() {
-    timerService.startTimer(format.initialTime * 60 * 1000, turn);
   }
 
   List<Tuple2<int, int>> getValidMoves() {
@@ -166,7 +161,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
       color: color,
       board: board.map((row) => List.of(row)).toList(),
       turn: turn,
-      timerService: timerService,
+      isOver: isOver,
     );
   }
 
@@ -190,5 +185,19 @@ class MatchType implements Jsonable, Clonable<MatchType> {
         .join('\n');
 
     log('\n$boardString');
+  }
+}
+
+class MatchResult {
+  final DiskColor winner;
+  final String reason;
+
+  MatchResult({required this.winner, required this.reason});
+
+  factory MatchResult.fromJson(Map<String, dynamic> json) {
+    return MatchResult(
+      winner: DiskColor.fromString(json['winner']),
+      reason: json['message'],
+    );
   }
 }

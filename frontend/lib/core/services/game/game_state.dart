@@ -1,22 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gogogame_frontend/core/services/game/timer_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/match_type.dart';
 
 final gameStateProvider = StateNotifierProvider<GameStateNotifier, MatchType?>((
   ref,
 ) {
-  return GameStateNotifier();
+  return GameStateNotifier(timerService: ref.read(timerService.notifier));
 });
 
 class GameStateNotifier extends StateNotifier<MatchType?> {
-  GameStateNotifier() : super(null);
+  final TimerService timerService;
+
+  GameStateNotifier({required this.timerService}) : super(null);
 
   void startMatch(MatchType match) {
     state = match;
-    match.startTimer();
+    timerService.startTimer(match.format.initialTime * 60 * 1000, match.turn);
   }
 
-  void endMatch() {
+  void resetMatch() {
     state = null;
   }
 
@@ -36,11 +39,22 @@ class GameStateNotifier extends StateNotifier<MatchType?> {
 
     final match = state!.clone();
     match.applyMove(x, y, color, turn, timeStamp);
-    match.timerService.updateTimer(
+    timerService.updateTimer(
       timeLeft[DiskColor.black]!,
       timeLeft[DiskColor.white]!,
       timeStamp,
     );
+    if (!match.isOver) timerService.setTurn(turn);
+
+    state = match;
+  }
+
+  void applyResult(MatchResult result) {
+    if (state == null) return;
+    timerService.stopTimer();
+
+    final match = state!.clone();
+    match.isOver = true;
 
     state = match;
   }
