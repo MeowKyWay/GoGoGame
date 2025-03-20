@@ -83,6 +83,7 @@ export class MatchService {
       message: data.message,
       matchId: data.match.id,
     };
+    console.log('Game Over', payload);
     // Notify both players about the game over
     await this.webSocketService.emitWithAck(
       data.match.whitePlayer.socket,

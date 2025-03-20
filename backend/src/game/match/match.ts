@@ -225,7 +225,7 @@ export class Match extends EventEmitter {
     if (this.winner) console.log(`Game over: ${winner} wins! ${reason}`);
     else console.log(`Game over: Draw! ${reason}`);
 
-    this.emit('game_over', { winner, reason });
+    this.emit('game_over', { winner, message: reason });
   }
 
   logBoard() {
