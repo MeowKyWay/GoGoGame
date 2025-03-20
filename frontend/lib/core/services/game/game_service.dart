@@ -61,6 +61,10 @@ class GameService {
         );
       });
       MatchType match = MatchType.fromJson(data, timerService);
+      webSocket.listenOnce('game_over', (data) {
+        log('[GameService] Game over: $data');
+        gameState.applyResult(MatchResult.fromJson(data));
+      });
       gameState.startMatch(match);
       completer.complete();
     });
