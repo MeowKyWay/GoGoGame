@@ -2,36 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/color_extension.dart';
 import 'package:gogogame_frontend/widget/icons/rotated_icon.dart';
+import 'package:gogogame_frontend/widget/modals/app_modal.dart';
 import 'package:gogogame_frontend/widget/modals/center_modal.dart';
 import 'package:gogogame_frontend/widget/modals/modal_background.dart';
 
-class QueueModal {
-  OverlayEntry? _entry;
-  final BuildContext _context;
+class QueueModal extends AppModal {
+  final Function()? onClose;
 
-  QueueModal._(this._context);
+  QueueModal(super.context, {this.onClose});
 
-  static QueueModal show(BuildContext context) {
-    final modal = QueueModal._(context);
-    modal._entry = OverlayEntry(
-      builder:
-          (overlayContext) =>
-              _QueueModal(context: modal._context, modal: modal),
-    );
-    Overlay.of(context).insert(modal._entry!);
-    return modal;
-  }
-
-  void hide() {
-    _entry?.remove();
+  @override
+  Widget build(BuildContext context, AppModal modal) {
+    return _QueueModal(context: context, modal: this, onClose: onClose);
   }
 }
 
 class _QueueModal extends StatefulWidget {
   final BuildContext context;
   final QueueModal modal;
+  final Function()? onClose;
 
-  const _QueueModal({required this.context, required this.modal});
+  const _QueueModal({required this.context, required this.modal, this.onClose});
 
   @override
   State<_QueueModal> createState() => _QueueModalState();
@@ -84,6 +75,7 @@ class _QueueModalState extends State<_QueueModal> {
                         ),
                         onPressed: () {
                           widget.modal.hide();
+                          widget.onClose?.call();
                         },
                         child: const Text('Cancel'),
                       ),
