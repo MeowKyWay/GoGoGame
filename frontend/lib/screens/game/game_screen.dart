@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
@@ -9,7 +11,7 @@ import 'package:gogogame_frontend/core/types/match_type.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
 import 'package:gogogame_frontend/screens/game/game_board.dart';
 import 'package:gogogame_frontend/screens/game/game_play_tile/game_player_tile.dart';
-import 'package:gogogame_frontend/screens/game/queue_modal.dart';
+import 'package:gogogame_frontend/screens/game/modal/queue_modal.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   final TimeControl timeControl;
@@ -32,23 +34,28 @@ class _GamePageState extends ConsumerState<GameScreen> {
     MatchType? match = ref.watch(gameStateProvider);
     UserType? user = ref.watch(authState);
 
+    log((match?.isOver).toString());
+
     return Scaffold(
       appBar: AppBar(title: const Text('Game')),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          GamePlayerTile(
-            player: match?.opponent,
-            color: match?.color.opposite(),
-            isPlayerTurn: match?.turn == match?.color.opposite(),
-          ),
+          if (match != null)
+            GamePlayerTile(
+              player: match.opponent,
+              color: match.color.opposite(),
+              isPlayerTurn:
+                  !match.isOver && match.turn == match.color.opposite(),
+            ),
           GameBoard(onCellTap: _onCellTap, match: match),
-          GamePlayerTile(
-            player: user,
-            color: match?.color,
-            isPlayerTurn: match?.turn == match?.color,
-          ),
+          if (match != null)
+            GamePlayerTile(
+              player: user,
+              color: match.color,
+              isPlayerTurn: !match.isOver && match.turn == match.color,
+            ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -73,7 +80,13 @@ class _GamePageState extends ConsumerState<GameScreen> {
     game = ref.read(gameService);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final modal = QueueModal.show(context);
+      final modal = QueueModal(
+        context,
+        onClose: () {
+          Navigator.of(context).pop();
+        },
+      );
+      modal.show();
       await game.connect();
       await game.joinQueue(
         widget.timeControl.initialTime,

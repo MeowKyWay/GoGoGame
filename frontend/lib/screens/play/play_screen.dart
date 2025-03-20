@@ -65,7 +65,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () {
-                        ref.read(gameStateProvider.notifier).endMatch();
+                        ref.read(gameStateProvider.notifier).resetMatch();
                         context.push(GameScreen(timeControl: _timeControl));
                       },
                       child: const Text('Play'),
