@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { WebSocketEvent } from 'src/game/types/websocket-event.type';
+import { WebSocketEvent } from 'src/game/types/web-socket-event.type';
 
 @Injectable()
 export class WebSocketService {

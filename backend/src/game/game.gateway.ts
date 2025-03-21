@@ -17,7 +17,7 @@ import { validate } from 'class-validator';
 import { WebSocketService } from 'src/web-socket/web-socket.service';
 import { MatchService } from './match/match.service';
 import { MoveDto } from './dto/move.dto';
-import { WebSocketEvent } from './types/websocket-event.type';
+import { WebSocketEvent } from './types/web-socket-event.type';
 
 @WebSocketGateway(3001)
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -65,6 +65,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (connectedPlayer) {
       this.matchmakingService.removeFromQueue(connectedPlayer);
       delete this.activeSockets[client.id];
+
+      this.matchService.onDisconnect(client.id);
     }
   }
 

@@ -4,7 +4,8 @@ import { ConnectedPlayer } from '../types/player.type';
 import { v4 as uuidv4 } from 'uuid';
 import { MoveDto } from '../dto/move.dto';
 import { WebSocketService } from 'src/web-socket/web-socket.service';
-import { WebSocketEvent } from '../types/websocket-event.type';
+import { WebSocketEvent } from '../types/web-socket-event.type';
+import { oppositeColor } from '../types/game.type';
 
 @Injectable()
 export class MatchService {
@@ -85,16 +86,24 @@ export class MatchService {
     };
     console.log('Game Over', payload);
     // Notify both players about the game over
-    await this.webSocketService.emitWithAck(
-      data.match.whitePlayer.socket,
-      WebSocketEvent.GAME_OVER,
-      payload,
-    );
-    await this.webSocketService.emitWithAck(
-      data.match.blackPlayer.socket,
-      WebSocketEvent.GAME_OVER,
-      payload,
-    );
+    const players = [data.match.whitePlayer, data.match.blackPlayer];
+
+    for (const player of players) {
+      try {
+        if (player.socket.connected) {
+          await this.webSocketService.emitWithAck(
+            player.socket,
+            WebSocketEvent.GAME_OVER,
+            payload,
+          );
+        }
+      } catch (error) {
+        console.warn(
+          `[WebSocket] Failed to send game over event to ${player.user.username}:`,
+          error,
+        );
+      }
+    }
 
     // Remove the match from the list
     this.matches = this.matches.filter((m) => m.id !== data.match.id);
@@ -102,5 +111,23 @@ export class MatchService {
 
   getMatchById(id: string) {
     return this.matches.find((match) => match.id == id);
+  }
+
+  /// On disconnect, the player will lose the match
+  onDisconnect(socketId: string) {
+    const match = this.matches.find(
+      (match) =>
+        match.whitePlayer.socket.id === socketId ||
+        match.blackPlayer.socket.id === socketId,
+    );
+    if (match) {
+      const winner =
+        match.whitePlayer.socket.id === socketId ? 'black' : 'white';
+      this.gameOver({
+        match,
+        winner,
+        message: `${oppositeColor(winner)} player disconnected`,
+      }).catch((error) => console.log(error));
+    }
   }
 }
