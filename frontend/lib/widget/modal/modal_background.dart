@@ -23,6 +23,7 @@ class ModalBackground extends StatelessWidget {
       onTap: onTap,
       child: BackdropFilter(
         filter: imageFilter ?? ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+        enabled: imageFilter != null,
         child: Container(
           color: color ?? Colors.black.withOpa(0.5),
           child: child,
