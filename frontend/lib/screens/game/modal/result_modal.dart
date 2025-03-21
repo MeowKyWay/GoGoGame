@@ -41,102 +41,123 @@ class _ResultModal extends ConsumerWidget {
       data: Theme.of(context),
       child: ModalBackground(
         child: CenterModal(
-          child: Container(
-            decoration: BoxDecoration(
-              color: ColorScheme.of(context).surface,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: IntrinsicWidth(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Flexible(child: Container(color: Colors.transparent)),
-                      Padding(
-                        padding: EdgeInsets.only(top: 16),
-                        child: Text(
-                          '${result.winner.toDisplayString()} Wins',
-                          style: context.textTheme.headlineLarge,
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: modal.hide,
+          child: FittedBox(
+            child: Container(
+              decoration: BoxDecoration(
+                color: ColorScheme.of(context).surface,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: IntrinsicWidth(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Flexible(child: Container(color: Colors.transparent)),
+                        Padding(
+                          padding: EdgeInsets.only(top: 16),
+                          child: Text(
+                            '${result.winner.toDisplayString()} Wins',
+                            style: context.textTheme.headlineLarge,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          result.reason,
-                          style: context.textTheme.bodyMedium,
-                        ),
-                        Gap(16),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 32,
-                          children: [
-                            Column(
-                              spacing: 16,
-                              children: [
-                                SizedBox.square(
-                                  dimension: 100,
-                                  child: DiskImage(color: gameState.color),
-                                ),
-                                Text(
-                                  user.username,
-                                  style: context.textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
-                            Text('VS', style: context.textTheme.bodyMedium),
-                            Column(
-                              spacing: 16,
-                              children: [
-                                SizedBox.square(
-                                  dimension: 100,
-                                  child: DiskImage(
-                                    color: gameState.color.opposite(),
-                                  ),
-                                ),
-                                Text(
-                                  gameState.opponent.username,
-                                  style: context.textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Gap(32),
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: () {
-                              modal.hide();
-                              modal.onClose();
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Text('Play Again'),
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: modal.hide,
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            result.reason,
+                            style: context.textTheme.bodyMedium,
+                          ),
+                          Gap(16),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                spacing: 16,
+                                children: [
+                                  SizedBox.square(
+                                    dimension: 100,
+                                    child: DiskImage(color: gameState.color),
+                                  ),
+                                  Text(
+                                    user.username,
+                                    style: context.textTheme.bodyMedium,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                width: 64,
+                                child: Center(
+                                  child: Text(
+                                    '${gameState.count(gameState.color)}',
+                                    style: context.textTheme.displaySmall
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              Text(':', style: context.textTheme.displaySmall),
+                              SizedBox(
+                                width: 64,
+                                child: Center(
+                                  child: Text(
+                                    '${gameState.count(gameState.color.opposite())}',
+                                    style: context.textTheme.displaySmall
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                spacing: 16,
+                                children: [
+                                  SizedBox.square(
+                                    dimension: 100,
+                                    child: DiskImage(
+                                      color: gameState.color.opposite(),
+                                    ),
+                                  ),
+                                  Text(
+                                    gameState.opponent.username,
+                                    style: context.textTheme.bodyMedium,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Gap(32),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: () {
+                                modal.hide();
+                                modal.onClose();
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text('Play Again'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

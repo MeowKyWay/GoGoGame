@@ -32,6 +32,13 @@ class MatchType implements Jsonable, Clonable<MatchType> {
 
   List<List<CellDisk>> get board => _board;
 
+  int count(DiskColor color) {
+    return board
+        .expand((row) => row)
+        .where((cell) => cell.matches(color))
+        .length;
+  }
+
   @override
   Map<String, dynamic> toJson() {
     return {

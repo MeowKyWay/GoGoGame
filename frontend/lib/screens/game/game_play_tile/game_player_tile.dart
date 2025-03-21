@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:gogogame_frontend/core/services/game/game_state.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
 import 'package:gogogame_frontend/widget/general/disk_image.dart';
@@ -26,6 +27,11 @@ class GamePlayerTile extends ConsumerStatefulWidget {
 class _GamePlayerTileState extends ConsumerState<GamePlayerTile> {
   @override
   Widget build(BuildContext context) {
+    final count = ref.read(gameStateProvider)?.count(widget.color!) ?? 0;
+
+    final oppositeCount =
+        ref.read(gameStateProvider)?.count(widget.color!.opposite()) ?? 0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
@@ -34,7 +40,11 @@ class _GamePlayerTileState extends ConsumerState<GamePlayerTile> {
           children: [
             DiskImage(color: widget.color),
             Gap(16),
-            TileLabel(user: widget.player, color: widget.color),
+            TileLabel(
+              user: widget.player,
+              color: widget.color,
+              count: count - oppositeCount,
+            ),
             const Spacer(),
             TileTimer(color: widget.color, isPlayerTurn: widget.isPlayerTurn),
           ],

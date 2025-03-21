@@ -8,8 +8,9 @@ import 'package:gogogame_frontend/screens/game/disk.dart';
 class TileLabel extends StatelessWidget {
   final UserType? user;
   final DiskColor? color;
+  final int count;
 
-  const TileLabel({super.key, this.user, this.color});
+  const TileLabel({super.key, this.user, this.color, required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,10 @@ class TileLabel extends StatelessWidget {
                 child: Disk(cellDisk: color!.toCellDisk()),
               ),
               Gap(4),
-              Text('+10', style: context.textTheme.bodySmall),
+              Text(
+                '${count >= 0 ? '+' : ''}$count',
+                style: context.textTheme.bodySmall,
+              ),
             ],
           ),
       ],
