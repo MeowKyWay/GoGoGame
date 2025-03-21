@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/screens/auth/login_screen/login_form.dart';
 import 'package:gogogame_frontend/screens/auth/register_screens/register_step_1.dart';
-import 'package:gogogame_frontend/widget/text_divider.dart';
+import 'package:gogogame_frontend/widget/input/text_divider.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});

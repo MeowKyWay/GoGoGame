@@ -15,6 +15,7 @@ class GameStateNotifier extends StateNotifier<MatchType?> {
   GameStateNotifier({required this.timerService}) : super(null);
 
   void startMatch(MatchType match) {
+    if (state != null) return;
     state = match;
     timerService.startTimer(match.format.initialTime * 60 * 1000, match.turn);
   }
@@ -37,25 +38,19 @@ class GameStateNotifier extends StateNotifier<MatchType?> {
   ) {
     if (state == null) return;
 
-    final match = state!.clone();
-    match.applyMove(x, y, color, turn, timeStamp);
+    state = state!.applyMove(x, y, color, turn, timeStamp);
     timerService.updateTimer(
       timeLeft[DiskColor.black]!,
       timeLeft[DiskColor.white]!,
       timeStamp,
     );
-    if (!match.isOver) timerService.setTurn(turn);
-
-    state = match;
+    if (!state!.isOver) timerService.setTurn(turn);
   }
 
   void applyResult(MatchResult result) {
     if (state == null) return;
     timerService.stopTimer();
 
-    final match = state!.clone();
-    match.isOver = true;
-
-    state = match;
+    state = state!.copyWith(result: result);
   }
 }

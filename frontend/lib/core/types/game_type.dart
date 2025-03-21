@@ -51,6 +51,10 @@ enum DiskColor {
   String toString() {
     return this == DiskColor.black ? 'black' : 'white';
   }
+
+  String toDisplayString() {
+    return this == DiskColor.black ? 'Black' : 'White';
+  }
 }
 
 enum CellDisk {

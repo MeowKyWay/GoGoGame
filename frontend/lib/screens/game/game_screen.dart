@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
@@ -12,6 +10,7 @@ import 'package:gogogame_frontend/core/types/user_type.dart';
 import 'package:gogogame_frontend/screens/game/game_board.dart';
 import 'package:gogogame_frontend/screens/game/game_play_tile/game_player_tile.dart';
 import 'package:gogogame_frontend/screens/game/modal/queue_modal.dart';
+import 'package:gogogame_frontend/screens/game/modal/result_modal.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   final TimeControl timeControl;
@@ -34,7 +33,17 @@ class _GamePageState extends ConsumerState<GameScreen> {
     MatchType? match = ref.watch(gameStateProvider);
     UserType? user = ref.watch(authState);
 
-    log((match?.isOver).toString());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (match?.result != null) {
+        final modal = ResultModal(
+          context,
+          onClose: () {
+            Navigator.of(context).pop();
+          },
+        );
+        modal.show();
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(title: const Text('Game')),

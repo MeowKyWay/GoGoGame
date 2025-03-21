@@ -13,20 +13,24 @@ class MatchType implements Jsonable, Clonable<MatchType> {
   final UserType opponent;
   final GameFormatType format;
   final DiskColor color;
-  final List<List<CellDisk>> board;
-  bool isOver;
+  final List<List<CellDisk>> _board;
+  final DiskColor turn;
 
-  DiskColor turn;
+  final MatchResult? result;
 
   MatchType({
     required this.matchId,
     required this.opponent,
     required this.format,
     required this.color,
-    required this.board,
+    required List<List<CellDisk>> board,
     required this.turn,
-    required this.isOver,
-  });
+    this.result,
+  }) : _board = List<List<CellDisk>>.unmodifiable(
+         board.map((row) => List<CellDisk>.unmodifiable(row)),
+       ); // Ensuring deep immutability
+
+  List<List<CellDisk>> get board => _board;
 
   @override
   Map<String, dynamic> toJson() {
@@ -55,7 +59,6 @@ class MatchType implements Jsonable, Clonable<MatchType> {
         ),
       ),
       turn: DiskColor.fromString(json['turn']),
-      isOver: false,
     );
   }
 
@@ -114,27 +117,41 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     return false;
   }
 
-  void applyMove(int x, int y, DiskColor color, DiskColor turn, int timeStamp) {
-    if (board[x][y] != CellDisk.empty) throw InvalidMoveException();
+  /// Apply match result
+  /// Returns a new MatchType with the result applied
+  MatchType applyResult(MatchResult result) {
+    log('Match over: ${result.winner} won - ${result.reason}');
+    return copyWith(result: result);
+  }
 
+  /// Apply a move to the board
+  /// Returns a new MatchType with the move applied
+  MatchType applyMove(
+    int x,
+    int y,
+    DiskColor color,
+    DiskColor turn,
+    int timeStamp,
+  ) {
+    if (board[x][y] != CellDisk.empty) throw InvalidMoveException();
     if (this.turn != color) throw NotYourTurnException();
 
     final flipped = flipPieces(x, y, color);
     if (flipped.isEmpty) throw IllegalMoveException(); // Invalid move
 
-    List<List<CellDisk>> newBoard = board.map((row) => List.of(row)).toList();
+    // Create a new board while maintaining immutability
+    final newBoard = board.map((row) => row.toList()).toList();
     newBoard[x][y] = color.toCellDisk();
-
     for (final pos in flipped) {
       newBoard[pos.item1][pos.item2] = color.toCellDisk();
     }
 
-    this.turn = turn;
-
-    // Update state
-    board.clear();
-    board.addAll(newBoard);
-    return;
+    return copyWith(
+      board: List<List<CellDisk>>.unmodifiable(
+        newBoard.map(List<CellDisk>.unmodifiable),
+      ),
+      turn: turn,
+    );
   }
 
   List<Tuple2<int, int>> getValidMoves() {
@@ -161,7 +178,23 @@ class MatchType implements Jsonable, Clonable<MatchType> {
       color: color,
       board: board.map((row) => List.of(row)).toList(),
       turn: turn,
-      isOver: isOver,
+      result: result,
+    );
+  }
+
+  copyWith({
+    List<List<CellDisk>>? board,
+    DiskColor? turn,
+    MatchResult? result,
+  }) {
+    return MatchType(
+      matchId: matchId,
+      opponent: opponent,
+      format: format,
+      color: color,
+      board: board ?? this.board,
+      turn: turn ?? this.turn,
+      result: result ?? this.result,
     );
   }
 
@@ -186,6 +219,8 @@ class MatchType implements Jsonable, Clonable<MatchType> {
 
     log('\n$boardString');
   }
+
+  bool get isOver => result != null;
 }
 
 class MatchResult {
