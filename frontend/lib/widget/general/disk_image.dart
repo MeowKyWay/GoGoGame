@@ -3,10 +3,10 @@ import 'package:gogogame_frontend/core/constants/game_constant.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/screens/game/disk.dart';
 
-class TileImage extends StatelessWidget {
+class DiskImage extends StatelessWidget {
   final DiskColor? color;
 
-  const TileImage({super.key, required this.color});
+  const DiskImage({super.key, required this.color});
 
   @override
   Widget build(BuildContext context) {

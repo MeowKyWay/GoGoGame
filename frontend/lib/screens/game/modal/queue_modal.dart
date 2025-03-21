@@ -1,10 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/color_extension.dart';
-import 'package:gogogame_frontend/widget/icons/rotated_icon.dart';
-import 'package:gogogame_frontend/widget/modals/app_modal.dart';
-import 'package:gogogame_frontend/widget/modals/center_modal.dart';
-import 'package:gogogame_frontend/widget/modals/modal_background.dart';
+import 'package:gogogame_frontend/widget/icon/rotated_icon.dart';
+import 'package:gogogame_frontend/widget/modal/app_modal.dart';
+import 'package:gogogame_frontend/widget/modal/center_modal.dart';
+import 'package:gogogame_frontend/widget/modal/modal_background.dart';
 
 class QueueModal extends AppModal {
   final Function()? onClose;
@@ -34,6 +36,7 @@ class _QueueModalState extends State<_QueueModal> {
     return Theme(
       data: Theme.of(widget.context), // Inheriting theme from parent context
       child: ModalBackground(
+        imageFilter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
         child: CenterModal(
           child: Container(
             padding: const EdgeInsets.all(16),

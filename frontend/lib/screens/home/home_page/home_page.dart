@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
 import 'package:gogogame_frontend/screens/play/play_screen.dart';
-import 'package:gogogame_frontend/widget/text_divider.dart';
+import 'package:gogogame_frontend/widget/input/text_divider.dart';
 
 class HomePage extends ConsumerWidget implements AppHomePage {
   const HomePage({super.key});

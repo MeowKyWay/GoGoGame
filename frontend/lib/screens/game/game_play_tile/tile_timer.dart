@@ -4,7 +4,7 @@ import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/extensions/text_style_extension.dart';
 import 'package:gogogame_frontend/core/services/game/timer_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
-import 'package:gogogame_frontend/widget/icons/rotated_icon.dart';
+import 'package:gogogame_frontend/widget/icon/rotated_icon.dart';
 
 class TileTimer extends ConsumerWidget {
   final DiskColor? color;

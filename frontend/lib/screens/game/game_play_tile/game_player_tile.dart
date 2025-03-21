@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
-import 'package:gogogame_frontend/screens/game/game_play_tile/tile_image.dart';
+import 'package:gogogame_frontend/widget/general/disk_image.dart';
 import 'package:gogogame_frontend/screens/game/game_play_tile/tile_label.dart';
 import 'package:gogogame_frontend/screens/game/game_play_tile/tile_timer.dart';
 
@@ -32,7 +32,7 @@ class _GamePlayerTileState extends ConsumerState<GamePlayerTile> {
         height: 50,
         child: Row(
           children: [
-            TileImage(color: widget.color),
+            DiskImage(color: widget.color),
             Gap(16),
             TileLabel(user: widget.player, color: widget.color),
             const Spacer(),
