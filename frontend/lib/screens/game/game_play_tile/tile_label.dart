@@ -14,27 +14,33 @@ class TileLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(user?.username ?? '', style: context.textTheme.bodyLarge),
-        if (color != null)
-          Row(
-            children: [
-              SizedBox.square(
-                dimension: context.textTheme.bodySmall!.fontSize! + 4,
-                child: Disk(cellDisk: color!.toCellDisk()),
+    return SizedBox(
+      height: 60,
+      child: FittedBox(
+        fit: BoxFit.fitHeight,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 16,
+          children: [
+            Text(user?.username ?? '', style: context.textTheme.bodyLarge),
+            if (color != null)
+              Row(
+                children: [
+                  SizedBox.square(
+                    dimension: context.textTheme.bodySmall!.fontSize! + 4,
+                    child: Disk(cellDisk: color!.toCellDisk()),
+                  ),
+                  Gap(4),
+                  Text(
+                    '${count >= 0 ? '+' : ''}$count',
+                    style: context.textTheme.bodySmall,
+                  ),
+                ],
               ),
-              Gap(4),
-              Text(
-                '${count >= 0 ? '+' : ''}$count',
-                style: context.textTheme.bodySmall,
-              ),
-            ],
-          ),
-      ],
+          ],
+        ),
+      ),
     );
   }
 }

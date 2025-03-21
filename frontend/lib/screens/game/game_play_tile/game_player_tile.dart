@@ -32,22 +32,26 @@ class _GamePlayerTileState extends ConsumerState<GamePlayerTile> {
     final oppositeCount =
         ref.read(gameStateProvider)?.count(widget.color!.opposite()) ?? 0;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SizedBox(
-        height: 50,
-        child: Row(
-          children: [
-            DiskImage(color: widget.color),
-            Gap(16),
-            TileLabel(
-              user: widget.player,
-              color: widget.color,
-              count: count - oppositeCount,
-            ),
-            const Spacer(),
-            TileTimer(color: widget.color, isPlayerTurn: widget.isPlayerTurn),
-          ],
+    return Flexible(
+      flex: 1,
+      fit: FlexFit.loose,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: 50, maxHeight: 75),
+          child: Row(
+            children: [
+              DiskImage(color: widget.color),
+              Gap(16),
+              TileLabel(
+                user: widget.player,
+                color: widget.color,
+                count: count - oppositeCount,
+              ),
+              const Spacer(),
+              TileTimer(color: widget.color, isPlayerTurn: widget.isPlayerTurn),
+            ],
+          ),
         ),
       ),
     );
