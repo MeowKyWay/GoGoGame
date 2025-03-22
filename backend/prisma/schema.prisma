@@ -19,4 +19,37 @@ model User {
   username  String  @unique
   password String
   hashedRefreshToken String?
+
+  blackMatches Match[] @relation("Match_black")
+  whiteMatches Match[] @relation("Match_white")
+}
+
+model Match {
+  id    Int     @id @default(autoincrement())
+
+  blackPlayerId Int?
+  whitePlayerId Int?
+
+  blackPlayer User? @relation(fields: [blackPlayerId], references: [id], name: "Match_black", onDelete: SetNull)
+  whitePlayer User? @relation(fields: [whitePlayerId], references: [id], name: "Match_white", onDelete: SetNull)
+
+  winner Winner?  // 'BLACK', 'WHITE', or 'DRAW'
+  endReason EndReason? // Why the game ended
+  blackScore Int?  // Final number of black disks
+  whiteScore Int?  // Final number of white disks
+
+  createdAt DateTime @default(now()) // Track when match was created
+}
+
+enum Winner {
+  BLACK
+  WHITE
+  DRAW
+}
+
+enum EndReason {
+  NORMAL   // Game ended by standard rules (no valid moves left)
+  TIMEOUT  // A player ran out of time
+  RESIGN   // A player resigned
+  DISCONNECT // A player disconnected
 }
