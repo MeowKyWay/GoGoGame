@@ -11,6 +11,11 @@ class UserType implements Jsonable {
     return {'id': id, 'username': username};
   }
 
+  @override
+  String toString() {
+    return 'UserType{id: $id, username: $username}';
+  }
+
   factory UserType.fromJson(Map<String, dynamic> json) {
     return UserType(id: json['sub'] ?? json['id'], username: json['username']);
   }

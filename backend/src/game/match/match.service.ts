@@ -1,34 +1,48 @@
 import { Injectable } from '@nestjs/common';
 import { Match } from './match';
 import { ConnectedPlayer } from '../types/player.type';
-import { v4 as uuidv4 } from 'uuid';
 import { MoveDto } from '../dto/move.dto';
 import { WebSocketService } from 'src/web-socket/web-socket.service';
 import { WebSocketEvent } from '../types/web-socket-event.type';
 import { oppositeColor } from '../types/game.type';
+import { MatchesService } from 'src/matches/matches.service';
+import { CreateMatchDto } from 'src/matches/dto/create-match.dto';
+import { Winner } from '@prisma/client';
 
 @Injectable()
 export class MatchService {
   private matches: Match[] = [];
 
-  constructor(private readonly webSocketService: WebSocketService) {}
+  constructor(
+    private readonly webSocketService: WebSocketService,
+    private readonly matchesService: MatchesService,
+  ) {}
 
-  createMatch(
+  async createMatch(
     whitePlayer: ConnectedPlayer,
     blackPlayer: ConnectedPlayer,
     initialTime: number,
-    increment: number,
-  ): Match {
+    incrementTime: number,
+  ): Promise<Match> {
+    const createMatchDto = {
+      whitePlayerId: whitePlayer.user.id,
+      blackPlayerId: blackPlayer.user.id,
+      initialTime,
+      incrementTime: incrementTime,
+    } as CreateMatchDto;
+
+    const matchModel = await this.matchesService.createMatch(createMatchDto);
+
     const match = new Match(
-      uuidv4(),
+      matchModel.id,
       whitePlayer,
       blackPlayer,
       initialTime,
-      increment,
+      incrementTime,
     );
 
     this.matches.push(match);
-    match.on('game_over', (data: { winner: string; message: string }) => {
+    match.on('game_over', (data: { winner: Winner; message: string }) => {
       console.log(data);
       this.gameOver({
         match,
@@ -78,7 +92,7 @@ export class MatchService {
     }
   }
 
-  async gameOver(data: { match: Match; winner: string; message: string }) {
+  async gameOver(data: { match: Match; winner: Winner; message: string }) {
     const payload = {
       winner: data.winner,
       message: data.message,
@@ -105,11 +119,22 @@ export class MatchService {
       }
     }
 
+    const score = data.match.score();
+
+    await this.matchesService.updateMatch(data.match.id, {
+      winner: data.winner,
+      endReason: data.message,
+      blackScore: score.black,
+      whiteScore: score.white,
+      timeLeftBlack: data.match.timeLeft.black,
+      timeLeftWhite: data.match.timeLeft.white,
+    });
+
     // Remove the match from the list
     this.matches = this.matches.filter((m) => m.id !== data.match.id);
   }
 
-  getMatchById(id: string) {
+  getMatchById(id: number) {
     return this.matches.find((match) => match.id == id);
   }
 

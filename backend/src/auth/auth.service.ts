@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   async validateToken(token: string): Promise<PublicUser> {
-    const payload = this.jwtService.verify<{
+    const payload = this.jwtService.decode<{
       sub: number;
     }>(token);
     const user = await this.usersService.findById(payload.sub);

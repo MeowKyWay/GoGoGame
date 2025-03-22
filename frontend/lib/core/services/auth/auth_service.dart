@@ -21,7 +21,6 @@ class AuthService {
 
     try {
       final jwt = JWT.decode(token);
-      // log(jwt.payload.toString());
       return UserType.fromJson(jwt.payload);
     } catch (e) {
       return null;

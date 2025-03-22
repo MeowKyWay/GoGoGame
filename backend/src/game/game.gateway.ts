@@ -36,7 +36,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(client: Socket) {
     console.log(`[WebSocket] Client connected: ${client.id}`);
 
-    const token = client.handshake.headers?.authorization?.split(' ')[1];
+    const token = client.handshake.auth.token as string;
     if (!token) {
       this.rejectClient(client, 'Missing access token');
       return;

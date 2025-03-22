@@ -74,7 +74,7 @@ export class MatchmakingService {
 
           const isPlayer1White = Math.random() < 0.5;
 
-          const match = this.matchService.createMatch(
+          const match = await this.matchService.createMatch(
             player1.player,
             player2.player,
             player1.format.initialTime,

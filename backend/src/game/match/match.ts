@@ -33,11 +33,11 @@ export class Match extends EventEmitter {
   }
 
   constructor(
-    readonly id: string,
+    readonly id: number,
     readonly whitePlayer: ConnectedPlayer,
     readonly blackPlayer: ConnectedPlayer,
     readonly initialTime: number, // Time in minute
-    readonly increment: number, // Time increment per move in seconds
+    readonly incrementTime: number, // Time increment per move in seconds
   ) {
     super();
     this._board = Array.from({ length: Match.size }, () =>
@@ -100,7 +100,7 @@ export class Match extends EventEmitter {
     console.log(`[Match ${this.id}] ${color} moved to (${x},${y})`);
     // this.logBoard();
 
-    this._timeLeft[color] += this.increment * 1000; // ✅ Convert increment to milliseconds
+    this._timeLeft[color] += this.incrementTime * 1000; // ✅ Convert increment to milliseconds
     this._lastMoveTimestamp = Date.now();
 
     this.switchTurn();
@@ -226,6 +226,21 @@ export class Match extends EventEmitter {
     else console.log(`Game over: Draw! ${reason}`);
 
     this.emit('game_over', { winner, message: reason });
+  }
+
+  score(): Record<Color, number> {
+    let blackScore = 0;
+    let whiteScore = 0;
+    for (const row of this._board) {
+      for (const cell of row) {
+        if (cell === 'black') {
+          blackScore++;
+        } else if (cell === 'white') {
+          whiteScore++;
+        }
+      }
+    }
+    return { black: blackScore, white: whiteScore };
   }
 
   logBoard() {

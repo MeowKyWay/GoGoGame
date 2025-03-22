@@ -31,16 +31,21 @@ class WebSocketService {
       return;
     }
 
+    _socket?.disconnect(); // Ensure previous connection is closed
+    _socket?.dispose(); // Free resources before reconnecting
+    _socket = null; // Reset the socket
+
     _socket = io.io(
       url,
       io.OptionBuilder()
           .setTransports(['websocket'])
-          .setExtraHeaders({'Authorization': 'Bearer $token'})
           .setReconnectionAttempts(10) // Retry 10 times
           .setReconnectionDelay(2000) // Wait 2s between retries
           .disableAutoConnect() // Do not connect immediately
           .build(),
     );
+
+    _socket!.auth = {'token': token};
 
     final completer = Completer<void>();
 

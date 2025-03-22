@@ -9,7 +9,7 @@ import 'package:gogogame_frontend/core/types/user_type.dart';
 import 'package:tuple/tuple.dart';
 
 class MatchType implements Jsonable, Clonable<MatchType> {
-  final String matchId;
+  final int matchId;
   final UserType opponent;
   final GameFormatType format;
   final DiskColor color;
