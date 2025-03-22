@@ -20,6 +20,59 @@ class GameFormatType implements Jsonable {
   }
 }
 
+enum Winner {
+  black,
+  white,
+  draw;
+
+  DiskColor toDiskColor() {
+    switch (this) {
+      case Winner.black:
+        return DiskColor.black;
+      case Winner.white:
+        return DiskColor.white;
+      default:
+        throw Exception('Draw has no color');
+    }
+  }
+
+  static Winner fromString(String winner) {
+    switch (winner) {
+      case 'black':
+        return Winner.black;
+      case 'white':
+        return Winner.white;
+      case 'draw':
+        return Winner.draw;
+      default:
+        throw Exception('Invalid winner: $winner');
+    }
+  }
+
+  @override
+  String toString() {
+    switch (this) {
+      case Winner.black:
+        return 'black';
+      case Winner.white:
+        return 'white';
+      default:
+        return 'draw';
+    }
+  }
+
+  String toDisplayString() {
+    switch (this) {
+      case Winner.black:
+        return 'Black';
+      case Winner.white:
+        return 'White';
+      default:
+        return 'Draw';
+    }
+  }
+}
+
 enum DiskColor {
   black,
   white;
@@ -45,6 +98,10 @@ enum DiskColor {
 
   CellDisk toCellDisk() {
     return this == DiskColor.black ? CellDisk.black : CellDisk.white;
+  }
+
+  Winner toWinner() {
+    return this == DiskColor.black ? Winner.black : Winner.white;
   }
 
   @override

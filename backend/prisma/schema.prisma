@@ -35,12 +35,12 @@ model Match {
   blackPlayer User? @relation(fields: [blackPlayerId], references: [id], name: "Match_black", onDelete: SetNull)
   whitePlayer User? @relation(fields: [whitePlayerId], references: [id], name: "Match_white", onDelete: SetNull)
 
-  winner Winner?  // 'BLACK', 'WHITE', or 'DRAW'
-  endReason String? // Why the game ended
-  blackScore Int?  // Final number of black disks
-  whiteScore Int?  // Final number of white disks
-  timeLeftBlack Int?  // Time left for black player
-  timeLeftWhite Int?  // Time left for white player
+  winner Winner  // 'BLACK', 'WHITE', or 'DRAW'
+  endReason String // Why the game ended
+  blackScore Int  // Final number of black disks
+  whiteScore Int  // Final number of white disks
+  timeLeftBlack Int  // Time left for black player
+  timeLeftWhite Int  // Time left for white player
 
   createdAt DateTime @default(now()) // Track when match was created
 }

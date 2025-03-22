@@ -9,7 +9,7 @@ import 'package:gogogame_frontend/core/types/user_type.dart';
 import 'package:tuple/tuple.dart';
 
 class MatchType implements Jsonable, Clonable<MatchType> {
-  final int matchId;
+  final String matchId;
   final UserType opponent;
   final GameFormatType format;
   final DiskColor color;
@@ -231,15 +231,15 @@ class MatchType implements Jsonable, Clonable<MatchType> {
 }
 
 class MatchResult {
-  final DiskColor winner;
+  final Winner winner;
   final String reason;
 
   MatchResult({required this.winner, required this.reason});
 
   factory MatchResult.fromJson(Map<String, dynamic> json) {
     return MatchResult(
-      winner: DiskColor.fromString(json['winner']),
-      reason: json['message'],
+      winner: Winner.fromString(json['winner']),
+      reason: json['endReason'],
     );
   }
 }

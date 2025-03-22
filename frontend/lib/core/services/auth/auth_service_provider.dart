@@ -36,7 +36,7 @@ class AuthNotifier extends StateNotifier<UserType?> {
     required String username,
     required String password,
   }) async {
-    final res = await _apiService.postRequest('auth/signin', {
+    final res = await _apiService.post('auth/signin', {
       'username': username,
       'password': password,
     });
@@ -55,7 +55,7 @@ class AuthNotifier extends StateNotifier<UserType?> {
     required String username,
     required String password,
   }) async {
-    final res = await _apiService.postRequest('auth/signup', {
+    final res = await _apiService.post('auth/signup', {
       'email': email,
       'username': username,
       'password': password,
@@ -76,13 +76,13 @@ class AuthNotifier extends StateNotifier<UserType?> {
   }
 
   Future<bool> checkEmail(String email) async {
-    final res = await _apiService.getRequest('users/check-email/$email');
+    final res = await _apiService.get('users/check-email/$email');
     final body = jsonDecode(res.body);
     return body == false;
   }
 
   Future<bool> checkUsername(String username) async {
-    final res = await _apiService.getRequest('users/check-username/$username');
+    final res = await _apiService.get('users/check-username/$username');
     final body = jsonDecode(res.body);
     return body == false;
   }

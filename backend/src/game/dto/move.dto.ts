@@ -8,7 +8,7 @@ import {
 export class MoveDto {
   @IsNotEmpty()
   @IsString()
-  matchId: number;
+  matchId: string;
 
   @IsNotEmpty()
   @IsString()

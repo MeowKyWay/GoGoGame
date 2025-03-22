@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gogogame_frontend/screens/home/home_page/home_page.dart';
 import 'package:gogogame_frontend/screens/home/more_page/more_page.dart';
-import 'package:gogogame_frontend/screens/home/store_page/store_page.dart';
+import 'package:gogogame_frontend/screens/home/record_page/record_page.dart';
 
 abstract class AppHomePage extends Widget {
   const AppHomePage({super.key});
@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentIndex = 0;
 
-  final List<AppHomePage> _pages = [HomePage(), StorePage(), MorePage()];
+  final List<AppHomePage> _pages = [HomePage(), Record(), Store()];
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.play_circle), label: 'Play'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Store',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'More'),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
+          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Store'),
         ],
       ),
       body: PageView(

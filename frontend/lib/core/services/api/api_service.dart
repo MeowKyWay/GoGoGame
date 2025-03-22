@@ -14,14 +14,11 @@ class ApiService {
 
   ApiService({required AuthService authService}) : _authService = authService;
 
-  Future<http.Response> postRequest(
-    String endpoint,
-    Map<String, dynamic> data,
-  ) async {
+  Future<http.Response> post(String endpoint, Map<String, dynamic> data) async {
     final url = Uri.parse("${Config.baseUrl}/$endpoint");
     final token = await _authService.getToken(); // Retrieve JWT token
 
-    return http.post(
+    final res = await http.post(
       url,
       headers: {
         "Content-Type": "application/json",
@@ -29,18 +26,34 @@ class ApiService {
       },
       body: jsonEncode(data),
     );
+
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      throw Exception(
+        "Failed to post data with status code ${res.statusCode} : ${res.body}",
+      );
+    }
+
+    return res;
   }
 
-  Future<http.Response> getRequest(String endpoint) async {
+  Future<http.Response> get(String endpoint) async {
     final url = Uri.parse("${Config.baseUrl}/$endpoint");
     final token = await _authService.getToken();
 
-    return await http.get(
+    final res = await http.get(
       url,
       headers: {
         "Content-Type": "application/json",
         if (token != null) "Authorization": "Bearer $token",
       },
     );
+
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      throw Exception(
+        "Failed to get data with status code ${res.statusCode} : ${res.body}",
+      );
+    }
+
+    return res;
   }
 }

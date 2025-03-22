@@ -74,15 +74,15 @@ export class MatchmakingService {
 
           const isPlayer1White = Math.random() < 0.5;
 
-          const match = await this.matchService.createMatch(
+          console.log(
+            `[Matchmaking] Match found: ${player1.player.user.username} vs ${player2.player.user.username}`,
+          );
+
+          const match = this.matchService.createMatch(
             player1.player,
             player2.player,
             player1.format.initialTime,
             player1.format.increment,
-          );
-
-          console.log(
-            `[Matchmaking] Match found: ${player1.player.user.username} vs ${player2.player.user.username}`,
           );
 
           await Promise.all([

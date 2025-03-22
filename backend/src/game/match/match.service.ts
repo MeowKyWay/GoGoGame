@@ -1,44 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { Match } from './match';
+import { MatchType } from './match';
 import { ConnectedPlayer } from '../types/player.type';
 import { MoveDto } from '../dto/move.dto';
 import { WebSocketService } from 'src/web-socket/web-socket.service';
 import { WebSocketEvent } from '../types/web-socket-event.type';
 import { oppositeColor } from '../types/game.type';
 import { MatchesService } from 'src/matches/matches.service';
-import { CreateMatchDto } from 'src/matches/dto/create-match.dto';
 import { Winner } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MatchService {
-  private matches: Match[] = [];
+  private matches: MatchType[] = [];
 
   constructor(
     private readonly webSocketService: WebSocketService,
     private readonly matchesService: MatchesService,
   ) {}
 
-  async createMatch(
+  createMatch(
     whitePlayer: ConnectedPlayer,
     blackPlayer: ConnectedPlayer,
     initialTime: number,
     incrementTime: number,
-  ): Promise<Match> {
-    const createMatchDto = {
-      whitePlayerId: whitePlayer.user.id,
-      blackPlayerId: blackPlayer.user.id,
-      initialTime,
-      incrementTime: incrementTime,
-    } as CreateMatchDto;
-
-    const matchModel = await this.matchesService.createMatch(createMatchDto);
-
-    const match = new Match(
-      matchModel.id,
+  ): MatchType {
+    const match = new MatchType(
+      uuidv4(),
       whitePlayer,
       blackPlayer,
       initialTime,
       incrementTime,
+    );
+
+    console.log(
+      `[MatchService] Match ${blackPlayer.user.username} vs ${whitePlayer.user.username} is created`,
     );
 
     this.matches.push(match);
@@ -92,36 +87,20 @@ export class MatchService {
     }
   }
 
-  async gameOver(data: { match: Match; winner: Winner; message: string }) {
-    const payload = {
-      winner: data.winner,
-      message: data.message,
-      matchId: data.match.id,
-    };
-    console.log('Game Over', payload);
-    // Notify both players about the game over
-    const players = [data.match.whitePlayer, data.match.blackPlayer];
-
-    for (const player of players) {
-      try {
-        if (player.socket.connected) {
-          await this.webSocketService.emitWithAck(
-            player.socket,
-            WebSocketEvent.GAME_OVER,
-            payload,
-          );
-        }
-      } catch (error) {
-        console.warn(
-          `[WebSocket] Failed to send game over event to ${player.user.username}:`,
-          error,
-        );
-      }
-    }
+  async gameOver(data: { match: MatchType; winner: Winner; message: string }) {
+    console.log(
+      `[MatchService] Match ${data.match.blackPlayer.user.username} vs ${data.match.whitePlayer.user.username} is over with ${data.winner} as winner`,
+    );
 
     const score = data.match.score();
 
-    await this.matchesService.updateMatch(data.match.id, {
+    const match = await this.matchesService.createMatch({
+      initialTime: data.match.initialTime,
+      incrementTime: data.match.incrementTime,
+
+      blackPlayerId: data.match.blackPlayer.user.id,
+      whitePlayerId: data.match.whitePlayer.user.id,
+
       winner: data.winner,
       endReason: data.message,
       blackScore: score.black,
@@ -129,12 +108,24 @@ export class MatchService {
       timeLeftBlack: data.match.timeLeft.black,
       timeLeftWhite: data.match.timeLeft.white,
     });
+    // Notify both players about the game over
+    const players = [data.match.whitePlayer, data.match.blackPlayer];
+
+    for (const player of players) {
+      if (player.socket.connected) {
+        await this.webSocketService.emitWithAck(
+          player.socket,
+          WebSocketEvent.GAME_OVER,
+          match,
+        );
+      }
+    }
 
     // Remove the match from the list
     this.matches = this.matches.filter((m) => m.id !== data.match.id);
   }
 
-  getMatchById(id: number) {
+  getMatchById(id: string) {
     return this.matches.find((match) => match.id == id);
   }
 

@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { Color, Move, Disk } from '../types/game.type';
 import { ConnectedPlayer } from '../types/player.type';
 
-export class Match extends EventEmitter {
+export class MatchType extends EventEmitter {
   static readonly size = 8;
 
   readonly timestamp: number = Date.now();
@@ -33,15 +33,15 @@ export class Match extends EventEmitter {
   }
 
   constructor(
-    readonly id: number,
+    readonly id: string,
     readonly whitePlayer: ConnectedPlayer,
     readonly blackPlayer: ConnectedPlayer,
     readonly initialTime: number, // Time in minute
     readonly incrementTime: number, // Time increment per move in seconds
   ) {
     super();
-    this._board = Array.from({ length: Match.size }, () =>
-      Array.from({ length: Match.size }, () => ''),
+    this._board = Array.from({ length: MatchType.size }, () =>
+      Array.from({ length: MatchType.size }, () => ''),
     );
     // Set initial disks
     this._board[3][3] = this._board[4][4] = 'white';
@@ -68,9 +68,6 @@ export class Match extends EventEmitter {
     if (this._timeLeft[this._turn] <= 0) {
       const message: string = `${this.turn} ran out of time.`;
       this.endGame(this._turn === 'black' ? 'white' : 'black', message);
-      console.log(
-        `Game over: ${this._turn} ran out of time. ${this.winner} wins!`,
-      );
     }
   }
 
@@ -86,7 +83,6 @@ export class Match extends EventEmitter {
     if (this._timeLeft[color] <= 0) {
       this.winner = color === 'black' ? 'white' : 'black';
       this.state = 'finished';
-      console.log(`Game over: ${color} ran out of time. ${this.winner} wins!`);
       return;
     }
 
@@ -115,9 +111,9 @@ export class Match extends EventEmitter {
   isValidMove(color: Color, x: number, y: number): boolean {
     return (
       x >= 0 &&
-      x < Match.size &&
+      x < MatchType.size &&
       y >= 0 &&
-      y < Match.size &&
+      y < MatchType.size &&
       this._board[x][y] === '' &&
       this.canFlip(color, x, y).length > 0
     );
@@ -153,9 +149,9 @@ export class Match extends EventEmitter {
 
       while (
         nx >= 0 &&
-        nx < Match.size &&
+        nx < MatchType.size &&
         ny >= 0 &&
-        ny < Match.size &&
+        ny < MatchType.size &&
         this._board[nx][ny] !== '' &&
         this._board[nx][ny] !== color
       ) {
@@ -166,9 +162,9 @@ export class Match extends EventEmitter {
 
       return flipped.length > 0 &&
         nx >= 0 &&
-        nx < Match.size &&
+        nx < MatchType.size &&
         ny >= 0 &&
-        ny < Match.size &&
+        ny < MatchType.size &&
         this._board[nx][ny] === color
         ? flipped
         : [];
@@ -191,7 +187,6 @@ export class Match extends EventEmitter {
       this._turn = this._turn === 'black' ? 'white' : 'black';
 
       if (!this.hasLegalMove(this._turn)) {
-        console.log(`Game over: No moves for either player.`);
         this.checkGameOver();
       }
     }
@@ -222,8 +217,6 @@ export class Match extends EventEmitter {
   endGame(winner: Color | null, reason: string) {
     this.state = 'finished';
     this.winner = winner;
-    if (this.winner) console.log(`Game over: ${winner} wins! ${reason}`);
-    else console.log(`Game over: Draw! ${reason}`);
 
     this.emit('game_over', { winner, message: reason });
   }
