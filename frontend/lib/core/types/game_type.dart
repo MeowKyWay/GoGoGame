@@ -18,6 +18,11 @@ class GameFormatType implements Jsonable {
       increment: json['increment'],
     );
   }
+
+  @override
+  String toString() {
+    return '${initialTime.toString().padLeft(2, '0')}:${increment.toString().padLeft(2, '0')}';
+  }
 }
 
 enum Winner {

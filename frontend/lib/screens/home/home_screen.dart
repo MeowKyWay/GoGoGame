@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.play_circle), label: 'Play'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Records'),
           BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Store'),
         ],
       ),

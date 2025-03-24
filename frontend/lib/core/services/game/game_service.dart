@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/game/game_state.dart';
 import 'package:gogogame_frontend/core/services/game/timer_service.dart';
+import 'package:gogogame_frontend/core/services/record/record_provider.dart';
 import 'package:gogogame_frontend/core/services/websocket/web_socket_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
+import 'package:gogogame_frontend/core/types/match_record.dart';
 import 'package:gogogame_frontend/core/types/match_type.dart';
 
 final gameService = Provider((ref) {
@@ -12,6 +14,7 @@ final gameService = Provider((ref) {
     ref.read(webSocketService),
     ref.read(gameStateProvider.notifier),
     ref.read(timerService.notifier),
+    ref.read(recordProvider.notifier),
   );
 });
 
@@ -19,8 +22,9 @@ class GameService {
   final WebSocketService webSocket;
   final GameStateNotifier gameState;
   final TimerService timerService;
+  final RecordNotifier record;
 
-  GameService(this.webSocket, this.gameState, this.timerService);
+  GameService(this.webSocket, this.gameState, this.timerService, this.record);
 
   Future<void> connect() async {
     await webSocket.connect();
@@ -64,6 +68,7 @@ class GameService {
       webSocket.listenOnce('game_over', (data) {
         log('[GameService] Game over: $data');
         gameState.applyResult(MatchResult.fromJson(data));
+        record.addRecord(MatchRecord.fromJson(data));
       });
       gameState.startMatch(match);
       completer.complete();

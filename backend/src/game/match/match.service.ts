@@ -116,7 +116,11 @@ export class MatchService {
         await this.webSocketService.emitWithAck(
           player.socket,
           WebSocketEvent.GAME_OVER,
-          match,
+          {
+            ...match,
+            blackPlayer: data.match.blackPlayer.user,
+            whitePlayer: data.match.whitePlayer.user,
+          },
         );
       }
     }
