@@ -49,7 +49,7 @@ class GameService {
     Completer<void> completer = Completer<void>();
 
     webSocket.listenOnce('match_found', (data) {
-      log('[GameService] Game started: $data');
+      log('[GameService] Game started');
       webSocket.listen('move', (data) {
         log('[GameService] Move received: $data');
         gameState.applyMove(

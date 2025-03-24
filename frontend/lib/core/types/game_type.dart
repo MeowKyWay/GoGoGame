@@ -21,7 +21,7 @@ class GameFormatType implements Jsonable {
 
   @override
   String toString() {
-    return '${initialTime.toString().padLeft(2, '0')}:${increment.toString().padLeft(2, '0')}';
+    return '$initialTime|$increment';
   }
 }
 
