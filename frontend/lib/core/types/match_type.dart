@@ -16,6 +16,8 @@ class MatchType implements Jsonable, Clonable<MatchType> {
   final List<List<CellDisk>> _board;
   final DiskColor turn;
 
+  final Tuple2<int, int>? lastMove;
+
   final MatchResult? result;
 
   MatchType({
@@ -25,6 +27,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     required this.color,
     required List<List<CellDisk>> board,
     required this.turn,
+    this.lastMove,
     this.result,
   }) : _board = List<List<CellDisk>>.unmodifiable(
          board.map((row) => List<CellDisk>.unmodifiable(row)),
@@ -157,6 +160,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
       board: List<List<CellDisk>>.unmodifiable(
         newBoard.map(List<CellDisk>.unmodifiable),
       ),
+      lastMove: Tuple2(x, y),
       turn: turn,
     );
   }
@@ -192,6 +196,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
   copyWith({
     List<List<CellDisk>>? board,
     DiskColor? turn,
+    Tuple2<int, int>? lastMove,
     MatchResult? result,
   }) {
     return MatchType(
@@ -201,6 +206,7 @@ class MatchType implements Jsonable, Clonable<MatchType> {
       color: color,
       board: board ?? this.board,
       turn: turn ?? this.turn,
+      lastMove: lastMove ?? this.lastMove,
       result: result ?? this.result,
     );
   }

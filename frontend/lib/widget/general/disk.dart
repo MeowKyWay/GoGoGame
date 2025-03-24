@@ -10,11 +10,7 @@ class Disk extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Center(
-      child: Image.asset(
-        'assets/images/disk_${color.toString()}.png',
-        width: 200,
-        height: 200,
-      ),
+      child: Image.asset('assets/images/disk_${color.toString()}.png'),
     );
   }
 }

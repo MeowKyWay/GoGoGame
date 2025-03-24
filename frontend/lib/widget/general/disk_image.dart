@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
-import 'package:gogogame_frontend/screens/game/disk.dart';
+import 'package:gogogame_frontend/screens/game/animated_disk.dart';
 
 class DiskImage extends StatelessWidget {
   final DiskColor? color;
@@ -20,7 +20,7 @@ class DiskImage extends StatelessWidget {
               color: GameConstant.imageBackgroundColor,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: color != null ? Disk(color: color!) : null,
+            child: color != null ? AnimatedDisk(color: color!) : null,
           ),
         );
       },

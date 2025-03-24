@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
-import 'package:gogogame_frontend/screens/game/disk.dart';
+import 'package:gogogame_frontend/screens/game/animated_disk.dart';
 
 class TileLabel extends StatelessWidget {
   final UserType? user;
@@ -29,7 +29,7 @@ class TileLabel extends StatelessWidget {
                 children: [
                   SizedBox.square(
                     dimension: context.textTheme.bodySmall!.fontSize! + 4,
-                    child: Disk(color: color!),
+                    child: AnimatedDisk(color: color!),
                   ),
                   Gap(4),
                   Text(

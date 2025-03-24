@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
 import 'package:gogogame_frontend/core/themes/game_theme.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
-import 'package:gogogame_frontend/screens/game/disk.dart';
+import 'package:gogogame_frontend/screens/game/animated_disk.dart';
+import 'package:gogogame_frontend/screens/game/hint_disk.dart';
+import 'package:tuple/tuple.dart';
 
 class GameCell extends ConsumerWidget {
   final int x;
@@ -12,6 +14,7 @@ class GameCell extends ConsumerWidget {
   final Function(int, int) onTap;
   final CellDisk disk;
   final DiskColor? userColor;
+  final Tuple2<int, int>? lastMove;
   final bool isVaildMove;
 
   const GameCell({
@@ -21,6 +24,7 @@ class GameCell extends ConsumerWidget {
     required this.onTap,
     required this.disk,
     required this.userColor,
+    this.lastMove,
     this.isVaildMove = false,
   });
 
@@ -31,14 +35,15 @@ class GameCell extends ConsumerWidget {
     Widget child;
 
     if (disk.isDiskColor) {
-      child = Disk(color: disk.toDiskColor());
+      final int distance =
+          lastMove != null
+              ? (lastMove!.item1 - x).abs() + (lastMove!.item2 - y).abs()
+              : 0;
+      final double delay = distance * 0.1; // Adjust timing for ripple effect
+
+      child = AnimatedDisk(color: disk.toDiskColor(), delay: delay);
     } else if (isVaildMove && userColor != null) {
-      child = Center(
-        child: SizedBox.square(
-          dimension: GameConstant.cellSize * 0.4,
-          child: Disk(color: userColor!),
-        ),
-      );
+      child = HintDisk(color: userColor!);
     } else {
       child = Container();
     }
