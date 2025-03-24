@@ -15,14 +15,12 @@ class DiskImage extends StatelessWidget {
         return SizedBox.square(
           dimension: constraint.maxHeight,
           child: Container(
-            padding: EdgeInsets.all(5),
+            padding: EdgeInsets.all(constraint.maxHeight * 0.1),
             decoration: BoxDecoration(
               color: GameConstant.imageBackgroundColor,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Center(
-              child: color != null ? Disk(cellDisk: color!.toCellDisk()) : null,
-            ),
+            child: color != null ? Disk(color: color!) : null,
           ),
         );
       },

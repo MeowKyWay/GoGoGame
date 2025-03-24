@@ -29,7 +29,7 @@ class TileLabel extends StatelessWidget {
                 children: [
                   SizedBox.square(
                     dimension: context.textTheme.bodySmall!.fontSize! + 4,
-                    child: Disk(cellDisk: color!.toCellDisk()),
+                    child: Disk(color: color!),
                   ),
                   Gap(4),
                   Text(

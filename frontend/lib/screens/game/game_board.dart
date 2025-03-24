@@ -62,6 +62,7 @@ class GameBoard extends ConsumerWidget {
                               y: y,
                               onTap: onCellTap,
                               disk: match?.board[x][y] ?? CellDisk.empty,
+                              userColor: match?.color,
                               isVaildMove:
                                   validMoves.contains(Tuple2(x, y)) &&
                                   match?.turn == match?.color,

@@ -48,7 +48,7 @@ class _GamePageState extends ConsumerState<GameScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Game'),
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: match?.isOver ?? false,
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
