@@ -6,6 +6,7 @@ import 'package:gogogame_frontend/core/services/record/record_provider.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/match_record.dart';
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
+import 'package:gogogame_frontend/screens/home/record_page/record_modal.dart';
 
 class Record extends ConsumerWidget implements AppHomePage {
   const Record({super.key});
@@ -37,6 +38,14 @@ class Record extends ConsumerWidget implements AppHomePage {
             '${record.blackPlayer?.id == user?.id ? 'You' : record.blackPlayer?.username} vs ${record.whitePlayer?.id == user?.id ? 'You' : record.whitePlayer?.username}';
 
         return ListTile(
+          onTap: () {
+            RecordModal modal = RecordModal(
+              context,
+              onClose: () {},
+              record: record,
+            );
+            modal.show();
+          },
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
           leading: FittedBox(
             child: Column(
