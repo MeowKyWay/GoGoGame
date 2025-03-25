@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/config.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:http/http.dart' as http;
-import '../auth/auth_service.dart'; // For JWT storage
+import 'auth/auth_service.dart'; // For JWT storage
 
 final apiService = Provider(
   (ref) => ApiService(authService: ref.read(authService)),

@@ -28,6 +28,17 @@ class _GamePageState extends ConsumerState<GameScreen> {
     game.move(x, y);
   }
 
+  void showResultModal() async {
+    final modal = ResultModal(
+      context,
+      onClose: () {
+        Navigator.of(context).pop();
+      },
+    );
+    await Future.delayed(Duration(milliseconds: 500));
+    modal.show();
+  }
+
   @override
   Widget build(BuildContext context) {
     MatchType? match = ref.watch(gameStateProvider);
@@ -35,13 +46,7 @@ class _GamePageState extends ConsumerState<GameScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (match?.result != null) {
-        final modal = ResultModal(
-          context,
-          onClose: () {
-            Navigator.of(context).pop();
-          },
-        );
-        modal.show();
+        showResultModal();
       }
     });
 

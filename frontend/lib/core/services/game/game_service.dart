@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/game/game_state.dart';
 import 'package:gogogame_frontend/core/services/game/timer_service.dart';
-import 'package:gogogame_frontend/core/services/record/record_provider.dart';
-import 'package:gogogame_frontend/core/services/websocket/web_socket_service.dart';
+import 'package:gogogame_frontend/core/services/record_provider.dart';
+import 'package:gogogame_frontend/core/services/web_socket_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/match_record.dart';
 import 'package:gogogame_frontend/core/types/match_type.dart';
@@ -51,7 +51,9 @@ class GameService {
     webSocket.listenOnce('match_found', (data) {
       log('[GameService] Game started');
       webSocket.listen('move', (data) {
-        log('[GameService] Move received: $data');
+        log(
+          '[GameService] Move received: ${data['color']} ${data['x']} ${data['y']}',
+        );
         gameState.applyMove(
           data['x'],
           data['y'],
@@ -66,7 +68,7 @@ class GameService {
       });
       MatchType match = MatchType.fromJson(data, timerService);
       webSocket.listenOnce('game_over', (data) {
-        log('[GameService] Game over: $data');
+        log('[GameService] Game over: ${data['winner']}');
         gameState.applyResult(MatchResult.fromJson(data));
         record.addRecord(MatchRecord.fromJson(data));
       });

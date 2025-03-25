@@ -16,10 +16,12 @@ class AnimatedDisk extends ConsumerStatefulWidget {
 }
 
 class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
+    with TickerProviderStateMixin {
+  late final AnimationController _flipController;
+  late final AnimationController _initialScaleController;
   late final Animation<double> _flipAnimation;
   late final Animation<double> _scaleAnimation;
+  late final Animation<double> _initialScaleAnimation;
   late DiskColor _previousColor;
 
   @override
@@ -27,18 +29,29 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
     super.initState();
     _previousColor = widget.color;
 
-    _controller = AnimationController(
+    _flipController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
-    _flipAnimation = Tween<double>(begin: 0, end: pi).animate(_controller);
+    _initialScaleController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _flipAnimation = Tween<double>(begin: 0, end: pi).animate(_flipController);
     _scaleAnimation = TweenSequence([
       TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.1), weight: 50),
       TweenSequenceItem(tween: Tween<double>(begin: 1.1, end: 1.0), weight: 50),
-    ]).animate(_controller);
+    ]).animate(_flipController);
 
-    // Update `_previousColor` at halfway point of the animation
+    _initialScaleAnimation = Tween<double>(begin: 0.2, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _initialScaleController,
+        curve: Curves.easeOutBack,
+      ),
+    );
+
     _flipAnimation.addListener(() {
       if (_flipAnimation.value >= pi / 2 && _previousColor != widget.color) {
         setState(() {
@@ -46,6 +59,9 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
         });
       }
     });
+
+    // Start initial scale animation when the widget is first rendered
+    _initialScaleController.forward();
   }
 
   @override
@@ -59,7 +75,7 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
   void animate(double delay) {
     Future.delayed(Duration(milliseconds: (delay * 1000).toInt()), () {
       if (mounted) {
-        _controller.forward(from: 0);
+        _flipController.forward(from: 0);
       }
     });
   }
@@ -67,10 +83,14 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: Listenable.merge([_flipController, _initialScaleController]),
       builder: (context, child) {
         final double angle = _flipAnimation.value;
-        final double scale = _scaleAnimation.value;
+        final double scale =
+            (_initialScaleController.isAnimating ||
+                    _initialScaleController.isCompleted)
+                ? _initialScaleAnimation.value
+                : _scaleAnimation.value;
         final bool showNewColor = angle > pi / 2;
 
         return Transform(
@@ -78,10 +98,7 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
               Matrix4.identity()
                 ..scale(scale)
                 ..rotateY(angle)
-                ..scale(
-                  showNewColor ? -1.0 : 1.0,
-                  1.0,
-                ), // Flip image horizontally after rotation
+                ..scale(showNewColor ? -1.0 : 1.0, 1.0),
           alignment: Alignment.center,
           child: Disk(color: _previousColor),
         );
@@ -91,7 +108,8 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _flipController.dispose();
+    _initialScaleController.dispose();
     super.dispose();
   }
 }

@@ -106,7 +106,7 @@ class WebSocketService {
       if (data is List) {
         if (data.last is Function) {
           (data.last as Function)(true);
-          log('[WebSocket] Acknowledgment sent for event: $event');
+          // log('[WebSocket] Acknowledgment sent for event: $event');
         }
         data = data.first;
       }

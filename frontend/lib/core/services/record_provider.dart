@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gogogame_frontend/core/services/api/api_service.dart';
+import 'package:gogogame_frontend/core/services/api_service.dart';
 import 'package:gogogame_frontend/core/types/match_record.dart';
 
 // Provider for managing records

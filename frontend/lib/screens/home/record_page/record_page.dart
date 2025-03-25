@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
-import 'package:gogogame_frontend/core/services/record/record_provider.dart';
+import 'package:gogogame_frontend/core/services/record_provider.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/match_record.dart';
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
