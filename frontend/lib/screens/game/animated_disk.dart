@@ -45,7 +45,7 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
       TweenSequenceItem(tween: Tween<double>(begin: 1.1, end: 1.0), weight: 50),
     ]).animate(_flipController);
 
-    _initialScaleAnimation = Tween<double>(begin: 0.2, end: 1.0).animate(
+    _initialScaleAnimation = Tween<double>(begin: 0.4, end: 1.0).animate(
       CurvedAnimation(
         parent: _initialScaleController,
         curve: Curves.easeOutBack,
