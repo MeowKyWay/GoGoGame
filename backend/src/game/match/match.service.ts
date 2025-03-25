@@ -87,6 +87,20 @@ export class MatchService {
     }
   }
 
+  async resign(userId: number) {
+    const match = this.getMatchByPlayerId(userId);
+    if (!match) {
+      throw new Error('Match not found');
+    }
+
+    const winner = match.whitePlayer.user.id == userId ? 'black' : 'white';
+    await this.gameOver({
+      match,
+      winner,
+      message: `${oppositeColor(winner)} player resigned`,
+    }).catch((error) => console.log(error));
+  }
+
   async gameOver(data: { match: MatchType; winner: Winner; message: string }) {
     console.log(
       `[MatchService] Match ${data.match.blackPlayer.user.username} vs ${data.match.whitePlayer.user.username} is over with ${data.winner} as winner`,
@@ -131,6 +145,14 @@ export class MatchService {
 
   getMatchById(id: string) {
     return this.matches.find((match) => match.id == id);
+  }
+
+  getMatchByPlayerId(playerId: number) {
+    return this.matches.find(
+      (match) =>
+        match.whitePlayer.user.id === playerId ||
+        match.blackPlayer.user.id === playerId,
+    );
   }
 
   /// On disconnect, the player will lose the match

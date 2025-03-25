@@ -10,5 +10,6 @@ export enum WebSocketEvent {
   JOIN_QUEUE = 'join_queue',
   LEAVE_QUEUE = 'leave_queue',
   MOVE = 'move',
+  RESIGN = 'resign',
   GAME_OVER = 'game_over',
 }

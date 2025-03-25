@@ -11,6 +11,8 @@ import 'package:gogogame_frontend/screens/game/game_board.dart';
 import 'package:gogogame_frontend/screens/game/game_play_tile/game_player_tile.dart';
 import 'package:gogogame_frontend/screens/game/modal/queue_modal.dart';
 import 'package:gogogame_frontend/screens/game/modal/result_modal.dart';
+import 'package:gogogame_frontend/widget/modal/app_modal.dart';
+import 'package:gogogame_frontend/widget/modal/confirm_modal.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   final TimeControl timeControl;
@@ -77,6 +79,13 @@ class _GamePageState extends ConsumerState<GameScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: context.colorScheme.outline,
+        onTap: (index) async {
+          switch (index) {
+            case 0:
+              _resignModal().show();
+              break;
+          }
+        },
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.arrow_back),
@@ -88,6 +97,19 @@ class _GamePageState extends ConsumerState<GameScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  AppModal _resignModal() {
+    return ConfirmModal(
+      context,
+      title: 'Resign',
+      message: 'Are you sure you want to resign?',
+      leftButtonText: 'Cancel',
+      rightButtonText: 'Resign',
+      onRightButton: () {
+        game.resign();
+      },
     );
   }
 

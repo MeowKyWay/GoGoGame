@@ -153,6 +153,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  @SubscribeMessage(WebSocketEvent.RESIGN)
+  async handleResign(@ConnectedSocket() client: Socket) {
+    const connectedPlayer = this.activeSockets[client.id];
+    if (!connectedPlayer) {
+      this.webSocketService.error(client, 'You are not authenticated');
+      return;
+    }
+
+    try {
+      await this.matchService.resign(connectedPlayer.user.id);
+    } catch (error) {
+      console.error(`[Match] Failed to resign:`, error);
+      this.webSocketService.message(
+        client,
+        error instanceof Error ? error.message : 'Failed to resign',
+      );
+    }
+  }
+
   private rejectClient(client: Socket, message: string) {
     console.warn(`[WebSocket] Rejected client ${client.id}: ${message}`);
     client.emit('error', { message });

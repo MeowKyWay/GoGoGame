@@ -10,7 +10,6 @@ import 'package:gogogame_frontend/screens/home/record_page/player_row.dart';
 import 'package:gogogame_frontend/widget/general/format_icon.dart';
 import 'package:gogogame_frontend/widget/modal/app_modal.dart';
 import 'package:gogogame_frontend/widget/modal/center_modal.dart';
-import 'package:gogogame_frontend/widget/modal/modal_background.dart';
 
 class RecordModal extends AppModal {
   final Function() onClose;
@@ -66,84 +65,81 @@ class _RecordModal extends ConsumerWidget {
       data: Theme.of(context),
       child: DefaultTextStyle(
         style: context.textTheme.labelMedium!,
-        child: ModalBackground(
-          onTap: modal.hide,
-          child: CenterModal(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: ColorScheme.of(context).surface,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: FittedBox(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: ColorScheme.of(context).surface,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: IntrinsicWidth(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
+        child: CenterModal(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Container(
+              decoration: BoxDecoration(
+                color: ColorScheme.of(context).surface,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: FittedBox(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ColorScheme.of(context).surface,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: IntrinsicWidth(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Flexible(
+                              child: Container(color: Colors.transparent),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 16),
+                              child: Text(
+                                '${record.winner.toDisplayString()} Wins',
+                                style: context.textTheme.headlineLarge,
+                              ),
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Container(
+                                alignment: Alignment.topRight,
+                                child: IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: modal.hide,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Flexible(
-                                child: Container(color: Colors.transparent),
+                              Text(
+                                record.endReason,
+                                style: context.textTheme.bodyMedium,
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 16),
-                                child: Text(
-                                  '${record.winner.toDisplayString()} Wins',
-                                  style: context.textTheme.headlineLarge,
-                                ),
+                              Gap(16),
+                              PlayerRow(
+                                userColor: userColor,
+                                userPlayer: userPlayer,
+                                context: context,
+                                userScore: userScore,
+                                opponentScore: opponentScore,
+                                opponentColor: opponentColor,
+                                opponentPlayer: opponentPlayer,
                               ),
-                              Flexible(
-                                flex: 1,
-                                child: Container(
-                                  alignment: Alignment.topRight,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.close),
-                                    onPressed: modal.hide,
+
+                              Column(
+                                children: [
+                                  FormatIcon(
+                                    format: record.format,
+                                    style: context.textTheme.labelLarge,
                                   ),
-                                ),
+                                ],
                               ),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  record.endReason,
-                                  style: context.textTheme.bodyMedium,
-                                ),
-                                Gap(16),
-                                PlayerRow(
-                                  userColor: userColor,
-                                  userPlayer: userPlayer,
-                                  context: context,
-                                  userScore: userScore,
-                                  opponentScore: opponentScore,
-                                  opponentColor: opponentColor,
-                                  opponentPlayer: opponentPlayer,
-                                ),
-
-                                Column(
-                                  children: [
-                                    FormatIcon(
-                                      format: record.format,
-                                      style: context.textTheme.labelLarge,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

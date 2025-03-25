@@ -93,6 +93,15 @@ class GameService {
     return Future.value();
   }
 
+  Future<void> resign() {
+    final match = gameState.getMatch();
+    if (match == null) {
+      throw Exception('No match found');
+    }
+    webSocket.sendMessage('resign', {});
+    return Future.value();
+  }
+
   void dispose() {
     webSocket.dispose();
   }
