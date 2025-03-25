@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:math';
 
 import 'package:gogogame_frontend/core/exceptions/game_exception.dart';
 import 'package:gogogame_frontend/core/interfaces/clonable.dart';
@@ -130,7 +130,6 @@ class MatchType implements Jsonable, Clonable<MatchType> {
   /// Apply match result
   /// Returns a new MatchType with the result applied
   MatchType applyResult(MatchResult result) {
-    log('Match over: ${result.winner} won - ${result.reason}');
     return copyWith(result: result);
   }
 
@@ -180,6 +179,41 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     return validMoves;
   }
 
+  MatchType removeRandomPair() {
+    Tuple2<int, int>? black = getRandomDiskPosition(DiskColor.black);
+    Tuple2<int, int>? white = getRandomDiskPosition(DiskColor.white);
+
+    if (black == null || white == null) {
+      throw Exception('No pair found');
+    }
+
+    final newBoard = board.map((row) => row.toList()).toList();
+    newBoard[black.item1][black.item2] = CellDisk.empty;
+    newBoard[white.item1][white.item2] = CellDisk.empty;
+
+    return copyWith(
+      board: List<List<CellDisk>>.unmodifiable(
+        newBoard.map(List<CellDisk>.unmodifiable),
+      ),
+    );
+  }
+
+  Tuple2<int, int>? getRandomDiskPosition(DiskColor color) {
+    List<Tuple2<int, int>> positions = [];
+
+    for (int x = 0; x < board.length; x++) {
+      for (int y = 0; y < board[x].length; y++) {
+        if (board[x][y].matches(color)) {
+          positions.add(Tuple2(x, y));
+        }
+      }
+    }
+
+    if (positions.isEmpty) return null; // No disks of the given color found
+
+    return positions[Random().nextInt(positions.length)];
+  }
+
   @override
   MatchType clone() {
     return MatchType(
@@ -211,41 +245,19 @@ class MatchType implements Jsonable, Clonable<MatchType> {
     );
   }
 
-  void printBoard() {
-    String boardString = board
-        .asMap()
-        .entries
-        .map((entry) {
-          int rowIndex = entry.key;
-          String row = entry.value
-              .map((cell) {
-                return cell == CellDisk.black
-                    ? '⚫'
-                    : cell == CellDisk.white
-                    ? '⚪'
-                    : '⬜';
-              })
-              .join(' ');
-          return '$rowIndex: $row';
-        })
-        .join('\n');
-
-    log('\n$boardString');
-  }
-
   bool get isOver => result != null;
 }
 
 class MatchResult {
   final Winner winner;
-  final String reason;
+  final String reasonString;
 
-  MatchResult({required this.winner, required this.reason});
+  MatchResult({required this.winner, required this.reasonString});
 
   factory MatchResult.fromJson(Map<String, dynamic> json) {
     return MatchResult(
       winner: Winner.fromString(json['winner']),
-      reason: json['endReason'],
+      reasonString: json['endReason'],
     );
   }
 }

@@ -28,7 +28,7 @@ class RecordNotifier extends StateNotifier<List<MatchRecord>> {
     final json = jsonDecode(res.body);
     final data =
         (json as List).map((json) => MatchRecord.fromJson(json)).toList();
-    data.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    data.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     state = data;
     isLoading = false;
     log("Records fetched: ${state.length}");
@@ -37,6 +37,6 @@ class RecordNotifier extends StateNotifier<List<MatchRecord>> {
   // Add a new record (without refetching)
   void addRecord(MatchRecord newRecord) {
     log("Adding new record: $newRecord");
-    state = [...state, newRecord];
+    state = [newRecord, ...state];
   }
 }

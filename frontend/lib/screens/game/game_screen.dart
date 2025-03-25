@@ -82,15 +82,21 @@ class _GamePageState extends ConsumerState<GameScreen> {
         onTap: (index) async {
           switch (index) {
             case 0:
-              _resignModal().show();
+              if (match?.isOver ?? false) {
+                showResultModal();
+              } else {
+                _resignModal().show();
+              }
               break;
           }
         },
         items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.arrow_back),
-            label: 'Resign',
-          ),
+          match?.isOver ?? false
+              ? BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Result')
+              : BottomNavigationBarItem(
+                icon: Icon(Icons.arrow_back),
+                label: 'Resign',
+              ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',

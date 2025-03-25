@@ -67,7 +67,7 @@ export class MatchType extends EventEmitter {
 
     if (this._timeLeft[this._turn] <= 0) {
       const message: string = `${this.turn} ran out of time.`;
-      this.endGame(this._turn === 'black' ? 'white' : 'black', message);
+      this.endGame(this._turn === 'black' ? 'white' : 'black', message, 0);
     }
   }
 
@@ -206,19 +206,19 @@ export class MatchType extends EventEmitter {
 
     const message = `No more legal moves.`;
     if (blackCount > whiteCount) {
-      this.endGame('black', message);
+      this.endGame('black', message, 0);
     } else if (whiteCount > blackCount) {
-      this.endGame('white', message);
+      this.endGame('white', message, 0);
     } else {
-      this.endGame(null, message);
+      this.endGame(null, message, 0);
     }
   }
 
-  endGame(winner: Color | null, reason: string) {
+  endGame(winner: Color | null, reason: string, statusCode: number) {
     this.state = 'finished';
     this.winner = winner;
 
-    this.emit('game_over', { winner, message: reason });
+    this.emit('game_over', { winner, message: reason, statusCode });
   }
 
   score(): Record<Color, number> {

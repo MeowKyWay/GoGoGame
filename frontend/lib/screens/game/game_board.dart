@@ -66,7 +66,8 @@ class GameBoard extends ConsumerWidget {
                               lastMove: match?.lastMove,
                               isVaildMove:
                                   validMoves.contains(Tuple2(x, y)) &&
-                                  match?.turn == match?.color,
+                                  match?.turn == match?.color &&
+                                  match?.isOver == false,
                             ),
                       ],
                     ),

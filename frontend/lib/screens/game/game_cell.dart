@@ -47,7 +47,7 @@ class _GameCellState extends ConsumerState<GameCell> {
       double delay = distance * 0.1; // Adjust timing for ripple effect
 
       if (delay != 0) {
-        delay = delay + 0.15;
+        delay = delay + 0.3;
       }
 
       Future.delayed(Duration(milliseconds: (delay * 1000).toInt()), () {

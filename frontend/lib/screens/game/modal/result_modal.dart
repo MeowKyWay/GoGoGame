@@ -80,7 +80,7 @@ class _ResultModal extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            result.reason,
+                            result.reasonString,
                             style: context.textTheme.bodyMedium,
                           ),
                           Gap(16),

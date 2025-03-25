@@ -47,7 +47,7 @@ class GameStateNotifier extends StateNotifier<MatchType?> {
     if (!state!.isOver) timerService.setTurn(turn);
   }
 
-  void applyResult(MatchResult result) {
+  void applyResult(MatchResult result, int statusCode) async {
     if (state == null) return;
     timerService.stopTimer();
 

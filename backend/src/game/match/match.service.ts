@@ -37,13 +37,16 @@ export class MatchService {
     );
 
     this.matches.push(match);
-    match.on('game_over', (data: { winner: Winner; message: string }) => {
-      console.log(data);
-      this.gameOver({
-        match,
-        ...data,
-      }).catch((error) => console.log(error));
-    });
+    match.on(
+      'game_over',
+      (data: { winner: Winner; message: string; statusCode: number }) => {
+        console.log(data);
+        this.gameOver({
+          match,
+          ...data,
+        }).catch((error) => console.log(error));
+      },
+    );
     return match;
   }
 
@@ -98,10 +101,16 @@ export class MatchService {
       match,
       winner,
       message: `${oppositeColor(winner)} player resigned`,
+      statusCode: 1,
     }).catch((error) => console.log(error));
   }
 
-  async gameOver(data: { match: MatchType; winner: Winner; message: string }) {
+  async gameOver(data: {
+    match: MatchType;
+    winner: Winner;
+    message: string;
+    statusCode: number;
+  }) {
     console.log(
       `[MatchService] Match ${data.match.blackPlayer.user.username} vs ${data.match.whitePlayer.user.username} is over with ${data.winner} as winner`,
     );
@@ -134,6 +143,7 @@ export class MatchService {
             ...match,
             blackPlayer: data.match.blackPlayer.user,
             whitePlayer: data.match.whitePlayer.user,
+            statusCode: data.statusCode,
           },
         );
       }
@@ -169,6 +179,7 @@ export class MatchService {
         match,
         winner,
         message: `${oppositeColor(winner)} player disconnected`,
+        statusCode: 1,
       }).catch((error) => console.log(error));
     }
   }

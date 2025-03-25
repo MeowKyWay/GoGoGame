@@ -69,7 +69,7 @@ class GameService {
       MatchType match = MatchType.fromJson(data, timerService);
       webSocket.listenOnce('game_over', (data) {
         log('[GameService] Game over: ${data['winner']}');
-        gameState.applyResult(MatchResult.fromJson(data));
+        gameState.applyResult(MatchResult.fromJson(data), data['statusCode']);
         record.addRecord(MatchRecord.fromJson(data));
       });
       gameState.startMatch(match);
