@@ -42,8 +42,8 @@ class GameCell extends ConsumerWidget {
       final double delay = distance * 0.1; // Adjust timing for ripple effect
 
       child = AnimatedDisk(color: disk.toDiskColor(), delay: delay);
-    } else if (isVaildMove && userColor != null) {
-      child = HintDisk(color: userColor!);
+    } else if (userColor != null) {
+      child = HintDisk(color: userColor!, shouldShow: isVaildMove);
     } else {
       child = Container();
     }
