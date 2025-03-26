@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
-import 'package:gogogame_frontend/core/extensions/text_extension.dart';
 import 'package:gogogame_frontend/core/extensions/text_style_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:loader_overlay/loader_overlay.dart';

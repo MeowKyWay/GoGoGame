@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gogogame_frontend/core/extensions/color_extension.dart';
 import 'package:gogogame_frontend/core/themes/dark_color_scheme.dart';
+import 'package:gogogame_frontend/core/themes/light_color_scheme.dart';
 
 class AppTheme {
   static ThemeData get darkTheme {
     return getTheme(colorScheme: darkColorScheme);
+  }
+
+  static ThemeData get lightTheme {
+    return getTheme(colorScheme: lightColorScheme);
   }
 
   static ThemeData getTheme({required ColorScheme colorScheme}) {

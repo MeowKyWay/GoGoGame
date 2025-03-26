@@ -12,8 +12,8 @@ import 'package:gogogame_frontend/widget/modal/cupertino_app_modal.dart';
 /// usage: await ConfirmModal(context).show();
 /// returns: true if right button is clicked, false if left button is clicked
 /// returns: null if modal is dismissed
-class GameThemeModal extends CupertinoAppModal {
-  GameThemeModal(super.context, {required super.vsync});
+class BoardThemeModal extends CupertinoAppModal {
+  BoardThemeModal(super.context, {required super.vsync});
 
   @override
   Widget buildModalContent(BuildContext context, AppModal modal) {
@@ -23,7 +23,7 @@ class GameThemeModal extends CupertinoAppModal {
 
 class _GameThemeModal extends ConsumerWidget {
   final BuildContext context;
-  final GameThemeModal modal;
+  final BoardThemeModal modal;
 
   const _GameThemeModal({required this.context, required this.modal});
 
@@ -40,7 +40,7 @@ class _GameThemeModal extends ConsumerWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Game Theme'),
+            title: const Text('Board Theme'),
             actions: [
               IconButton(
                 icon: const Icon(Icons.close),
@@ -49,8 +49,9 @@ class _GameThemeModal extends ConsumerWidget {
             ],
           ),
           body: ListView(
+            padding: const EdgeInsets.only(top: 16),
             children: [
-              for (var theme in GameTheme.themes)
+              for (var theme in BoardTheme.themes)
                 GameThemeItem(
                   theme: theme,
                   isSelected: selectedTheme.name == theme.name,

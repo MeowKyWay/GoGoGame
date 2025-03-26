@@ -4,7 +4,7 @@ import 'package:gogogame_frontend/core/themes/game_theme.dart';
 
 class BoardPainter extends CustomPainter {
   final int size;
-  final GameTheme theme;
+  final BoardTheme theme;
   static const double cellSize = GameConstant.cellSize; // Fixed cell size
 
   BoardPainter(this.size, this.theme);

@@ -37,9 +37,15 @@ class _StoreState extends ConsumerState<Store> with TickerProviderStateMixin {
           ),
         ),
         ListTile(
-          title: const Text('Game Theme'),
+          title: Row(
+            children: [
+              Icon(Icons.grid_3x3_rounded),
+              Gap(8),
+              const Text('Customize Board'),
+            ],
+          ),
           onTap: () {
-            GameThemeModal(context, vsync: this).show();
+            BoardThemeModal(context, vsync: this).show();
           },
         ),
         Padding(

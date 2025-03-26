@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
 import 'package:gogogame_frontend/screens/play/play_screen.dart';
+import 'package:gogogame_frontend/widget/general/logo.dart';
 import 'package:gogogame_frontend/widget/input/text_divider.dart';
 
 class HomePage extends ConsumerWidget implements AppHomePage {
@@ -18,7 +19,13 @@ class HomePage extends ConsumerWidget implements AppHomePage {
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          Flexible(flex: 1, child: Center(child: Text('logo'))),
+          Flexible(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              child: Center(child: Hero(tag: 'logo', child: Logo())),
+            ),
+          ),
           TextDivider(text: 'Play'),
           Flexible(
             flex: 1,
@@ -29,11 +36,14 @@ class HomePage extends ConsumerWidget implements AppHomePage {
                 SizedBox(
                   height: 56,
                   width: double.infinity,
-                  child: FilledButton(
-                    onPressed: () {
-                      context.push(PlayScreen());
-                    },
-                    child: Text('Play'),
+                  child: Hero(
+                    tag: 'play',
+                    child: FilledButton(
+                      onPressed: () {
+                        context.push(PlayScreen());
+                      },
+                      child: Text('Play'),
+                    ),
                   ),
                 ),
               ],

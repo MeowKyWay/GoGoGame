@@ -5,6 +5,7 @@ import 'package:gogogame_frontend/core/constants/time_control.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/game/game_state.dart';
 import 'package:gogogame_frontend/screens/game/game_screen.dart';
+import 'package:gogogame_frontend/widget/general/logo.dart';
 import 'package:gogogame_frontend/widget/input/select_button.dart';
 
 class PlayScreen extends ConsumerStatefulWidget {
@@ -26,7 +27,13 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Flexible(flex: 1, child: Center(child: Text('logo'))),
+            Flexible(
+              flex: 1,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 32),
+                child: Center(child: Hero(tag: 'logo', child: Logo())),
+              ),
+            ),
             Flexible(
               flex: 1,
               child: Column(
@@ -63,12 +70,15 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
                   SizedBox(
                     height: 56,
                     width: double.infinity,
-                    child: FilledButton(
-                      onPressed: () {
-                        ref.read(gameStateProvider.notifier).resetMatch();
-                        context.push(GameScreen(timeControl: _timeControl));
-                      },
-                      child: const Text('Play'),
+                    child: Hero(
+                      tag: 'play',
+                      child: FilledButton(
+                        onPressed: () {
+                          ref.read(gameStateProvider.notifier).resetMatch();
+                          context.push(GameScreen(timeControl: _timeControl));
+                        },
+                        child: const Text('Play'),
+                      ),
                     ),
                   ),
                 ],

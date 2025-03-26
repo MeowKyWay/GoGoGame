@@ -46,7 +46,7 @@ class ConfigService extends StateNotifier<AppConfig> {
     updateConfig(state.copyWith(isDarkMode: !state.isDarkMode));
   }
 
-  void changeGameTheme(GameTheme newTheme) {
+  void changeGameTheme(BoardTheme newTheme) {
     updateConfig(state.copyWith(gameTheme: newTheme));
   }
 }
@@ -54,7 +54,7 @@ class ConfigService extends StateNotifier<AppConfig> {
 class AppConfig {
   bool isMuted;
   bool isDarkMode;
-  GameTheme gameTheme;
+  BoardTheme gameTheme;
 
   AppConfig({
     required this.isMuted,
@@ -70,7 +70,7 @@ class AppConfig {
     );
   }
 
-  AppConfig copyWith({bool? isMuted, bool? isDarkMode, GameTheme? gameTheme}) {
+  AppConfig copyWith({bool? isMuted, bool? isDarkMode, BoardTheme? gameTheme}) {
     return AppConfig(
       isMuted: isMuted ?? this.isMuted,
       isDarkMode: isDarkMode ?? this.isDarkMode,
@@ -90,7 +90,7 @@ class AppConfig {
     return AppConfig(
       isMuted: data['isMuted'],
       isDarkMode: data['isDarkMode'],
-      gameTheme: GameTheme.fromJson(data['gameTheme']),
+      gameTheme: BoardTheme.fromJson(data['gameTheme']),
     );
   }
 }

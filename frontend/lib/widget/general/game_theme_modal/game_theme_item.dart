@@ -5,7 +5,7 @@ import 'package:gogogame_frontend/core/themes/game_theme.dart';
 import 'package:gogogame_frontend/widget/general/game_theme_modal/example_board.dart';
 
 class GameThemeItem extends StatelessWidget {
-  final GameTheme theme;
+  final BoardTheme theme;
   final bool isSelected;
   final Function() onTap;
 

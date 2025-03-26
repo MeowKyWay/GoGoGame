@@ -55,7 +55,7 @@ class _GameCellState extends ConsumerState<GameCell> {
                 (widget.lastMove!.item2 - widget.y).abs(),
               )
               : 0;
-      final double delay = distance * 0.15; // Adjust timing for ripple effect
+      final double delay = distance * 0.2; // Adjust timing for ripple effect
 
       child = AnimatedDisk(color: widget.disk.toDiskColor(), delay: delay);
     } else if (widget.userColor != null) {
