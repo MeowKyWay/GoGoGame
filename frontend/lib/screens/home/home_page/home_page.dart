@@ -9,7 +9,7 @@ class HomePage extends ConsumerWidget implements AppHomePage {
   const HomePage({super.key});
 
   @override
-  Widget get title => const Text('GoGoGame');
+  Widget get title => const Text('Gothello');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

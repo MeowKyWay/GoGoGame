@@ -11,7 +11,7 @@ class Store extends ConsumerStatefulWidget implements AppHomePage {
   const Store({super.key});
 
   @override
-  Widget get title => const Text('More');
+  Widget get title => const Text('Settings');
 
   @override
   ConsumerState<Store> createState() => _StoreState();

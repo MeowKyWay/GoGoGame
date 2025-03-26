@@ -26,10 +26,10 @@ abstract class CupertinoAppModal<T> extends AppModal<T> {
   @override
   Widget build(BuildContext context, AppModal<T> modal) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 64),
-        child: Align(
-          alignment: Alignment.bottomCenter,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.9,
           child: Transform.translate(
             offset:
                 translateAnimation.value * MediaQuery.of(context).size.height,

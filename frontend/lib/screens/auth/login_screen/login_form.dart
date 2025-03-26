@@ -124,14 +124,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               ),
               obscureText: _isObscure,
             ),
-            TextButton(
-              onPressed: () {
-                throw UnimplementedError();
-              },
-              child: Text(
-                'Forgot Password?',
-              ).withColor(context.colorScheme.onSecondary),
-            ),
             AnimatedContainer(
               height: _isFilled ? 56 : 0,
               duration: const Duration(milliseconds: 100),

@@ -36,21 +36,32 @@ class _GameThemeModal extends ConsumerWidget {
 
     return Theme(
       data: context.theme,
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Game Theme')),
-        body: ListView(
-          children: [
-            for (var theme in GameTheme.themes)
-              GameThemeItem(
-                theme: theme,
-                isSelected: selectedTheme.name == theme.name,
-                onTap: () {
-                  configNotifier.changeGameTheme(theme);
-                  log(config.gameTheme.name);
-                  modal.hide();
-                },
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Game Theme'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => modal.hide(),
               ),
-          ],
+            ],
+          ),
+          body: ListView(
+            children: [
+              for (var theme in GameTheme.themes)
+                GameThemeItem(
+                  theme: theme,
+                  isSelected: selectedTheme.name == theme.name,
+                  onTap: () {
+                    configNotifier.changeGameTheme(theme);
+                    log(config.gameTheme.name);
+                    modal.hide();
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     );

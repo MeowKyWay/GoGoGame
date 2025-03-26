@@ -55,11 +55,11 @@ abstract class AppModal<T> {
                 child: ModalBackground(
                   imageFilter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
                   onTap: isDismissible ? () => hide() : null,
-                  child: GestureDetector(
-                    onTap: () {}, // Prevents tap from reaching background
-                    behavior: HitTestBehavior.translucent,
-                    child: Transform.translate(
-                      offset: translateAnimation.value,
+                  child: Transform.translate(
+                    offset: translateAnimation.value,
+                    child: GestureDetector(
+                      onTap: () {},
+                      behavior: HitTestBehavior.translucent,
                       child: build(context, this),
                     ),
                   ),
