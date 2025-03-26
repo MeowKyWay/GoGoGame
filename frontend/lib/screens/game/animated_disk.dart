@@ -39,11 +39,15 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
       vsync: this,
     );
 
-    _flipAnimation = Tween<double>(begin: 0, end: pi).animate(_flipController);
+    _flipAnimation = Tween<double>(begin: 0, end: pi).animate(
+      CurvedAnimation(parent: _flipController, curve: Curves.easeOutBack),
+    );
     _scaleAnimation = TweenSequence([
-      TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.1), weight: 50),
-      TweenSequenceItem(tween: Tween<double>(begin: 1.1, end: 1.0), weight: 50),
-    ]).animate(_flipController);
+      TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.2), weight: 50),
+      TweenSequenceItem(tween: Tween<double>(begin: 1.2, end: 1.0), weight: 50),
+    ]).animate(
+      CurvedAnimation(parent: _flipController, curve: Curves.linearToEaseOut),
+    );
 
     _initialScaleAnimation = Tween<double>(begin: 0.4, end: 1.0).animate(
       CurvedAnimation(
@@ -87,8 +91,7 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
       builder: (context, child) {
         final double angle = _flipAnimation.value;
         final double scale =
-            (_initialScaleController.isAnimating ||
-                    _initialScaleController.isCompleted)
+            (_initialScaleController.isAnimating)
                 ? _initialScaleAnimation.value
                 : _scaleAnimation.value;
         final bool showNewColor = angle > pi / 2;
