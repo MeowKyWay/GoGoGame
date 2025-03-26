@@ -18,22 +18,25 @@ class GameThemeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            theme.name,
-            style: context.textTheme.labelMedium?.withFontWeight(
-              isSelected ? FontWeight.bold : FontWeight.normal,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              theme.name,
+              style: context.textTheme.labelMedium?.withFontWeight(
+                isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
-          ),
-          if (isSelected) const Icon(Icons.check, size: 24),
-          const Spacer(),
-          ExampleBoard(theme: theme),
-        ],
+            if (isSelected) const Icon(Icons.check, size: 24),
+            const Spacer(),
+            ExampleBoard(theme: theme),
+          ],
+        ),
       ),
     );
   }

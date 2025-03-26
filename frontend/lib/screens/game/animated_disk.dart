@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gogogame_frontend/core/services/game/game_sound_effect_service.dart';
 import 'dart:math';
 
 import 'package:gogogame_frontend/core/types/game_type.dart';
@@ -24,9 +25,16 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
   late final Animation<double> _initialScaleAnimation;
   late DiskColor _previousColor;
 
+  late final GameSoundEffectService soundEffectService;
+
+  bool _hasPlayedSound = false;
+
   @override
   void initState() {
     super.initState();
+
+    soundEffectService = ref.read(gameSoundEffectService);
+
     _previousColor = widget.color;
 
     _flipController = AnimationController(
@@ -61,6 +69,17 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
         setState(() {
           _previousColor = widget.color;
         });
+        _hasPlayedSound = false;
+      }
+      if (_flipAnimation.value >= 3 * pi / 4 && !_hasPlayedSound) {
+        _hasPlayedSound = true;
+        soundEffectService.playDiskSound();
+      }
+    });
+
+    _initialScaleAnimation.addStatusListener((status) {
+      if (status == AnimationStatus.forward) {
+        soundEffectService.playDiskSound();
       }
     });
 

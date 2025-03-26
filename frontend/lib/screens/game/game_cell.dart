@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
 import 'package:gogogame_frontend/core/services/config_service.dart';
-import 'package:gogogame_frontend/core/services/game/game_sound_effect_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/screens/game/animated_disk.dart';
 import 'package:gogogame_frontend/screens/game/hint_disk.dart';
@@ -53,10 +52,6 @@ class _GameCellState extends ConsumerState<GameCell> {
       if (delay != 0) {
         delay = delay + 0.15;
       }
-
-      Future.delayed(Duration(milliseconds: (delay * 1000).toInt()), () {
-        ref.read(gameSoundEffectService).playDiskSound();
-      });
     }
   }
 
