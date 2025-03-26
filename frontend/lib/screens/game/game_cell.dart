@@ -38,21 +38,6 @@ class _GameCellState extends ConsumerState<GameCell> {
   @override
   void didUpdateWidget(GameCell oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.disk != widget.disk && widget.disk.isDiskColor) {
-      final int distance =
-          widget.lastMove != null
-              ? max(
-                (widget.lastMove!.item1 - widget.x).abs(),
-                (widget.lastMove!.item2 - widget.y).abs(),
-              )
-              : 0;
-      double delay = distance * 0.1; // Adjust timing for ripple effect
-
-      if (delay != 0) {
-        delay = delay + 0.15;
-      }
-    }
   }
 
   @override
@@ -65,8 +50,10 @@ class _GameCellState extends ConsumerState<GameCell> {
     if (widget.disk.isDiskColor) {
       final int distance =
           widget.lastMove != null
-              ? (widget.lastMove!.item1 - widget.x).abs() +
-                  (widget.lastMove!.item2 - widget.y).abs()
+              ? max(
+                (widget.lastMove!.item1 - widget.x).abs(),
+                (widget.lastMove!.item2 - widget.y).abs(),
+              )
               : 0;
       final double delay = distance * 0.1; // Adjust timing for ripple effect
 

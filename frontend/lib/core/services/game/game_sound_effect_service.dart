@@ -11,15 +11,34 @@ final gameSoundEffectService = Provider(
 
 class GameSoundEffectService {
   final AppConfig config;
+  int _currentPlayingSounds = 0; // Keep track of how many sounds are playing.
 
   GameSoundEffectService({required this.config});
+
+  // Maximum number of sounds that can be played at once.
+  static const int maxSimultaneousSounds = 1;
 
   void playDiskSound() {
     if (config.isMuted) return;
 
+    // Prevent playing more than 2 sounds simultaneously.
+    if (_currentPlayingSounds >= maxSimultaneousSounds) {
+      return; // Do nothing if we are already playing 2 sounds.
+    }
+
+    _currentPlayingSounds++; // Increment count of playing sounds.
+
     dev.log(config.isMuted.toString());
     Random random = Random();
     int soundIndex = random.nextInt(4) + 1;
-    AudioService().playLocalAudio('sounds/disk_$soundIndex.mp3');
+
+    AudioService()
+        .playLocalAudio('sounds/disk_$soundIndex.mp3')
+        .then((_) {
+          _currentPlayingSounds--; // Decrement count once the sound finishes playing.
+        })
+        .catchError((error) {
+          _currentPlayingSounds--; // Decrement if there is an error.
+        });
   }
 }

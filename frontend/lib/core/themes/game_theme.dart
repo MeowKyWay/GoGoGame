@@ -49,6 +49,7 @@ class GameTheme extends Jsonable {
     lightWoodGameTheme,
     darkWoodGameTheme,
     pinkTheme,
+    purpleTheme,
   ];
 }
 
@@ -73,5 +74,11 @@ GameTheme darkWoodGameTheme = GameTheme(
 GameTheme pinkTheme = GameTheme(
   name: "Pink",
   boardColor: Tuple2(Color(0xFFFB6F91), Color(0xFFFEB3C6)), // Pink
+  lineColor: Colors.transparent,
+);
+
+GameTheme purpleTheme = GameTheme(
+  name: "Purple",
+  boardColor: Tuple2(Color(0xFF8c72eb), Color(0xFFaa99e8)), // Purple
   lineColor: Colors.transparent,
 );
