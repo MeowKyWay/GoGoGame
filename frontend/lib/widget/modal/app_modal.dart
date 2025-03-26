@@ -5,29 +5,41 @@ import 'package:gogogame_frontend/widget/modal/modal_background.dart';
 
 abstract class AppModal<T> {
   OverlayEntry? _entry;
-  final BuildContext _context;
+  final BuildContext context;
+  final TickerProvider vsync;
   final Function()? onDismiss;
-  late final AnimationController _controller;
-  late final Animation<double> _opacityAnimation;
-  late final Animation<Offset> _translateAnimation;
-  final Completer<T?> _completer = Completer<T?>(); // For returning a value
+  late final AnimationController controller;
+  late final Animation<double> opacityAnimation;
+  late final Animation<Offset> translateAnimation;
+  final Completer<T?> completer = Completer<T?>(); // For returning a value
 
-  final bool isDissmissable;
+  final bool isDismissible;
 
-  AppModal(this._context, {this.onDismiss, this.isDissmissable = true}) {
-    _controller = AnimationController(
-      vsync: Navigator.of(_context),
+  AppModal(
+    this.context, {
+    required this.vsync,
+    this.onDismiss,
+    this.isDismissible = true,
+  }) {
+    controller = AnimationController(
+      vsync: vsync,
       duration: const Duration(milliseconds: 300),
     );
 
-    _opacityAnimation = Tween<double>(
+    initializeAnimations(); // ✅ Initialize animations separately
+  }
+
+  /// Initializes animation properties
+  void initializeAnimations() {
+    opacityAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-    _translateAnimation = Tween<Offset>(
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
+
+    translateAnimation = Tween<Offset>(
       begin: const Offset(0, 100),
-      end: const Offset(0, 0),
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
   }
 
   Widget build(BuildContext context, AppModal<T> modal);
@@ -36,16 +48,20 @@ abstract class AppModal<T> {
     _entry = OverlayEntry(
       builder:
           (context) => AnimatedBuilder(
-            animation: _controller,
+            animation: controller,
             builder: (context, child) {
               return Opacity(
-                opacity: _opacityAnimation.value,
+                opacity: opacityAnimation.value,
                 child: ModalBackground(
                   imageFilter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
-                  onTap: isDissmissable ? () => hide() : null,
-                  child: Transform.translate(
-                    offset: _translateAnimation.value,
-                    child: build(context, this),
+                  onTap: isDismissible ? () => hide() : null,
+                  child: GestureDetector(
+                    onTap: () {}, // Prevents tap from reaching background
+                    behavior: HitTestBehavior.translucent,
+                    child: Transform.translate(
+                      offset: translateAnimation.value,
+                      child: build(context, this),
+                    ),
                   ),
                 ),
               );
@@ -53,18 +69,18 @@ abstract class AppModal<T> {
           ),
     );
 
-    Overlay.of(_context).insert(_entry!);
-    _controller.forward();
+    Overlay.of(context).insert(_entry!);
+    controller.forward();
 
-    return _completer.future;
+    return completer.future;
   }
 
   void hide([T? result]) {
-    _controller.reverse().then((_) {
+    controller.reverse().then((_) {
       _entry?.remove();
       _entry = null;
       onDismiss?.call();
-      _completer.complete(result); // Return the result when modal closes
+      completer.complete(result); // Return the result when modal closes
     });
   }
 }

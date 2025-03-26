@@ -8,14 +8,20 @@ import 'package:gogogame_frontend/core/types/match_record.dart';
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
 import 'package:gogogame_frontend/screens/home/record_page/record_modal.dart';
 
-class Record extends ConsumerWidget implements AppHomePage {
+class Record extends ConsumerStatefulWidget implements AppHomePage {
   const Record({super.key});
 
   @override
   Widget get title => const Text('Records');
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Record> createState() => _RecordState();
+}
+
+class _RecordState extends ConsumerState<Record>
+    with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
     final List<MatchRecord> records = ref.watch(recordProvider);
     final user = ref.watch(authState);
     if (ref.read(recordProvider.notifier).isLoading) {
@@ -41,6 +47,7 @@ class Record extends ConsumerWidget implements AppHomePage {
           onTap: () {
             RecordModal modal = RecordModal(
               context,
+              vsync: this,
               onClose: () {},
               record: record,
             );

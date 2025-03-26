@@ -15,7 +15,12 @@ class RecordModal extends AppModal {
   final Function() onClose;
   final MatchRecord record;
 
-  RecordModal(super.context, {required this.onClose, required this.record});
+  RecordModal(
+    super.context, {
+    required super.vsync,
+    required this.onClose,
+    required this.record,
+  });
 
   @override
   Widget build(BuildContext context, AppModal modal) {

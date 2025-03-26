@@ -19,6 +19,7 @@ class ConfirmModal extends AppModal<bool> {
 
   ConfirmModal(
     super.context, {
+    required super.vsync,
     this.title = 'Confirm',
     this.onLeftButton,
     this.onRightButton,

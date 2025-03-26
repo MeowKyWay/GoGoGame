@@ -23,6 +23,7 @@ class ConfigService extends StateNotifier<AppConfig> {
         state = AppConfig.fromJson(data);
       } catch (e) {
         log("Error loading config: $e");
+        saveConfig();
       }
     }
   }

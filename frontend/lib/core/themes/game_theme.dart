@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:gogogame_frontend/core/interfaces/jsonable.dart';
+import 'package:tuple/tuple.dart';
 
 class GameTheme extends Jsonable {
-  final Color boardColor;
+  final String name;
+  final Tuple2<Color, Color> boardColor;
   final Color lineColor;
 
   GameTheme({
+    required this.name,
     required this.boardColor, // Can be null if using an image
     required this.lineColor,
   });
 
-  GameTheme copyWith({Color? boardColor, Color? lineColor}) {
+  GameTheme copyWith({Tuple2<Color, Color>? boardColor, Color? lineColor}) {
     return GameTheme(
+      name: name,
       boardColor: boardColor ?? this.boardColor,
       lineColor: lineColor ?? this.lineColor,
     );
@@ -20,25 +24,47 @@ class GameTheme extends Jsonable {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "boardColor": boardColor.toARGB32(),
+      "name": name,
+      "boardColor": {
+        "item1": boardColor.item1.toARGB32(),
+        "item2": boardColor.item2.toARGB32(),
+      },
       "lineColor": lineColor.toARGB32(),
     };
   }
 
   factory GameTheme.fromJson(Map<String, dynamic> data) {
     return GameTheme(
-      boardColor: Color(data["boardColor"]),
+      name: data["name"],
+      boardColor: Tuple2(
+        Color(data["boardColor"]["item1"]),
+        Color(data["boardColor"]["item2"]),
+      ),
       lineColor: Color(data["lineColor"]),
     );
   }
+
+  static List<GameTheme> themes = [
+    defaultGameTheme,
+    lightWoodGameTheme,
+    darkWoodGameTheme,
+  ];
 }
 
 GameTheme defaultGameTheme = GameTheme(
-  boardColor: Color(0xFFD7A96B), // Light wood
-  lineColor: Colors.black,
+  name: "Default",
+  boardColor: Tuple2(Color(0xFF006800), Color(0xFF008001)), // Green
+  lineColor: Colors.transparent,
 );
 
-GameTheme darkGameTheme = GameTheme(
-  boardColor: Color(0xFF8B4513), // Dark wood
-  lineColor: Colors.white,
+GameTheme lightWoodGameTheme = GameTheme(
+  name: "Light Wood",
+  boardColor: Tuple2(Color(0xFFB58A5B), Color(0xFFCDA578)), // Light Wood
+  lineColor: Colors.transparent,
+);
+
+GameTheme darkWoodGameTheme = GameTheme(
+  name: "Dark Wood",
+  boardColor: Tuple2(Color(0xFF91663E), Color(0xFFA0764A)), // Dark Wood
+  lineColor: Colors.transparent,
 );

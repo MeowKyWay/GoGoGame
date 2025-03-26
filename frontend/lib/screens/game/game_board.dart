@@ -34,7 +34,6 @@ class GameBoard extends ConsumerWidget {
               // Ensures board scales down if needed
               child: Container(
                 padding: EdgeInsets.all(padding),
-                decoration: BoxDecoration(color: gameTheme.boardColor),
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: gameTheme.lineColor),

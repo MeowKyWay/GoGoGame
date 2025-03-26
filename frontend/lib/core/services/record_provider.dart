@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/api_service.dart';
@@ -31,12 +30,10 @@ class RecordNotifier extends StateNotifier<List<MatchRecord>> {
     data.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     state = data;
     isLoading = false;
-    log("Records fetched: ${state.length}");
   }
 
   // Add a new record (without refetching)
   void addRecord(MatchRecord newRecord) {
-    log("Adding new record: $newRecord");
     state = [newRecord, ...state];
   }
 }

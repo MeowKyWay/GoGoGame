@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:gogogame_frontend/core/interfaces/jsonable.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
@@ -39,7 +37,6 @@ class MatchRecord implements Jsonable {
   });
 
   factory MatchRecord.fromJson(Map<String, dynamic> json) {
-    log(json.toString());
     return MatchRecord(
       id: json['id'],
       format: GameFormatType(

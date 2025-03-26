@@ -8,7 +8,12 @@ import 'package:gogogame_frontend/widget/modal/center_modal.dart';
 class QueueModal extends AppModal {
   final Function()? onClose;
 
-  QueueModal(super.context, {this.onClose, super.isDissmissable = false});
+  QueueModal(
+    super.context, {
+    required super.vsync,
+    this.onClose,
+    super.isDismissible = false,
+  });
 
   @override
   Widget build(BuildContext context, AppModal modal) {

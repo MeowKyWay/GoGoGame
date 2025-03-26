@@ -12,7 +12,7 @@ import 'package:gogogame_frontend/widget/modal/center_modal.dart';
 class ResultModal extends AppModal {
   final Function() onClose;
 
-  ResultModal(super.context, {required this.onClose});
+  ResultModal(super.context, {required super.vsync, required this.onClose});
 
   @override
   Widget build(BuildContext context, AppModal modal) {

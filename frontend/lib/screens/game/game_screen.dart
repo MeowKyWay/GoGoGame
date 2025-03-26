@@ -23,7 +23,8 @@ class GameScreen extends ConsumerStatefulWidget {
   ConsumerState<GameScreen> createState() => _GamePageState();
 }
 
-class _GamePageState extends ConsumerState<GameScreen> {
+class _GamePageState extends ConsumerState<GameScreen>
+    with TickerProviderStateMixin {
   late GameService game;
 
   void _onCellTap(int x, int y) {
@@ -33,6 +34,7 @@ class _GamePageState extends ConsumerState<GameScreen> {
   void showResultModal() async {
     final modal = ResultModal(
       context,
+      vsync: this,
       onClose: () {
         Navigator.of(context).pop();
       },
@@ -109,6 +111,7 @@ class _GamePageState extends ConsumerState<GameScreen> {
   AppModal _resignModal() {
     return ConfirmModal(
       context,
+      vsync: this,
       title: 'Resign',
       message: 'Are you sure you want to resign?',
       leftButtonText: 'Cancel',
@@ -127,6 +130,7 @@ class _GamePageState extends ConsumerState<GameScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final modal = QueueModal(
         context,
+        vsync: this,
         onClose: () {
           Navigator.of(context).pop();
         },

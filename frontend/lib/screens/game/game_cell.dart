@@ -90,7 +90,13 @@ class _GameCellState extends ConsumerState<GameCell> {
       child: Container(
         width: GameConstant.cellSize,
         height: GameConstant.cellSize,
-        decoration: BoxDecoration(border: Border.all(color: theme.lineColor)),
+        decoration: BoxDecoration(
+          border: Border.all(color: theme.lineColor),
+          color:
+              widget.x % 2 == widget.y % 2
+                  ? theme.boardColor.item1
+                  : theme.boardColor.item2,
+        ),
         child: child,
       ),
     );

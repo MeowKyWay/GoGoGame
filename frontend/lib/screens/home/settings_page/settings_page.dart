@@ -5,15 +5,21 @@ import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/services/config_service.dart';
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
+import 'package:gogogame_frontend/widget/general/game_theme_modal/game_theme_modal.dart';
 
-class Store extends ConsumerWidget implements AppHomePage {
+class Store extends ConsumerStatefulWidget implements AppHomePage {
   const Store({super.key});
 
   @override
   Widget get title => const Text('More');
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Store> createState() => _StoreState();
+}
+
+class _StoreState extends ConsumerState<Store> with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
     final config = ref.watch(configService);
     final configNotifier = ref.watch(configService.notifier);
 
@@ -29,6 +35,12 @@ class Store extends ConsumerWidget implements AppHomePage {
               Text(config.isMuted ? 'Sound Muted' : 'Sound On'),
             ],
           ),
+        ),
+        ListTile(
+          title: const Text('Game Theme'),
+          onTap: () {
+            GameThemeModal(context, vsync: this).show();
+          },
         ),
         Padding(
           padding: EdgeInsets.all(8),
