@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
-import 'package:gogogame_frontend/core/themes/game_theme.dart';
+import 'package:gogogame_frontend/core/services/config_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/match_type.dart';
 import 'package:gogogame_frontend/screens/game/game_cell.dart';
@@ -17,7 +17,8 @@ class GameBoard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final boardTheme = ref.watch(gameTheme);
+    final config = ref.watch(configService);
+    final gameTheme = config.gameTheme;
 
     const cellSize = GameConstant.cellSize;
     const padding = 0.0;
@@ -33,22 +34,10 @@ class GameBoard extends ConsumerWidget {
               // Ensures board scales down if needed
               child: Container(
                 padding: EdgeInsets.all(padding),
-                decoration: BoxDecoration(
-                  color:
-                      boardTheme.boardImage == null
-                          ? boardTheme.boardColor
-                          : null,
-                  image:
-                      boardTheme.boardImage != null
-                          ? DecorationImage(
-                            image: AssetImage(boardTheme.boardImage!),
-                            fit: BoxFit.cover,
-                          )
-                          : null,
-                ),
+                decoration: BoxDecoration(color: gameTheme.boardColor),
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: boardTheme.lineColor),
+                    border: Border.all(color: gameTheme.lineColor),
                   ),
                   child: SizedBox(
                     width: (size) * cellSize,
