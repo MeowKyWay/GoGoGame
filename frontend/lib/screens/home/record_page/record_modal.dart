@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
+import 'package:gogogame_frontend/core/services/config_service.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/core/types/match_record.dart';
 import 'package:gogogame_frontend/core/types/user_type.dart';
@@ -42,6 +43,9 @@ class _RecordModal extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authState);
+    final config = ref.watch(configService);
+
+    final theme = config.gameTheme;
 
     late final UserType userPlayer;
     late final DiskColor userColor;
@@ -131,6 +135,7 @@ class _RecordModal extends ConsumerWidget {
                                 opponentScore: opponentScore,
                                 opponentColor: opponentColor,
                                 opponentPlayer: opponentPlayer,
+                                theme: theme,
                               ),
 
                               Column(

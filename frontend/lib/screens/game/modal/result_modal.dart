@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
+import 'package:gogogame_frontend/core/services/config_service.dart';
 import 'package:gogogame_frontend/core/services/game/game_state.dart';
 import 'package:gogogame_frontend/core/types/match_type.dart';
 import 'package:gogogame_frontend/widget/general/disk_image.dart';
@@ -30,6 +31,10 @@ class _ResultModal extends ConsumerWidget {
   Widget build(BuildContext _, WidgetRef ref) {
     final gameState = ref.watch(gameStateProvider);
     final user = ref.watch(authState);
+    final config = ref.watch(configService);
+
+    final theme = config.gameTheme;
+
     if (gameState == null || gameState.result == null || user == null) {
       return const SizedBox.shrink();
     }
@@ -93,7 +98,10 @@ class _ResultModal extends ConsumerWidget {
                                 children: [
                                   SizedBox.square(
                                     dimension: 100,
-                                    child: DiskImage(color: gameState.color),
+                                    child: DiskImage(
+                                      color: gameState.color,
+                                      theme: theme,
+                                    ),
                                   ),
                                   Text(
                                     user.username,
@@ -129,6 +137,7 @@ class _ResultModal extends ConsumerWidget {
                                     dimension: 100,
                                     child: DiskImage(
                                       color: gameState.color.opposite(),
+                                      theme: theme,
                                     ),
                                   ),
                                   Text(

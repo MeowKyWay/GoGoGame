@@ -5,7 +5,8 @@ import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/services/config_service.dart';
 import 'package:gogogame_frontend/screens/home/home_screen.dart';
-import 'package:gogogame_frontend/widget/general/game_theme_modal/game_theme_modal.dart';
+import 'package:gogogame_frontend/widget/general/board_theme_modal/board_theme_modal.dart';
+import 'package:gogogame_frontend/widget/general/board_theme_modal/disk_theme_modal.dart';
 
 class Store extends ConsumerStatefulWidget implements AppHomePage {
   const Store({super.key});
@@ -46,6 +47,18 @@ class _StoreState extends ConsumerState<Store> with TickerProviderStateMixin {
           ),
           onTap: () {
             BoardThemeModal(context, vsync: this).show();
+          },
+        ),
+        ListTile(
+          title: Row(
+            children: [
+              Icon(Icons.circle),
+              Gap(8),
+              const Text('Customize Disk'),
+            ],
+          ),
+          onTap: () {
+            DiskThemeModal(context, vsync: this).show();
           },
         ),
         Padding(

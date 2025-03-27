@@ -36,7 +36,7 @@ class GameBoard extends ConsumerWidget {
                 padding: EdgeInsets.all(padding),
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: gameTheme.lineColor),
+                    border: Border.all(color: gameTheme.boardTheme.lineColor),
                   ),
                   child: SizedBox(
                     width: (size) * cellSize,

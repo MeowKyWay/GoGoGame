@@ -61,6 +61,7 @@ class _GameCellState extends ConsumerState<GameCell> {
     } else if (widget.userColor != null) {
       child = HintDisk(
         color: widget.userColor!,
+        theme: theme,
         shouldShow: widget.isVaildMove,
       );
     } else {
@@ -73,11 +74,11 @@ class _GameCellState extends ConsumerState<GameCell> {
         width: GameConstant.cellSize,
         height: GameConstant.cellSize,
         decoration: BoxDecoration(
-          border: Border.all(color: theme.lineColor),
+          border: Border.all(color: theme.boardTheme.lineColor),
           color:
               widget.x % 2 == widget.y % 2
-                  ? theme.boardColor.item1
-                  : theme.boardColor.item2,
+                  ? theme.boardTheme.color.item1
+                  : theme.boardTheme.color.item2,
         ),
         child: child,
       ),

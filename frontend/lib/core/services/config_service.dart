@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gogogame_frontend/core/themes/game_theme.dart';
+import 'package:gogogame_frontend/core/themes/game_theme/game_theme.dart';
 
 final configService = StateNotifierProvider<ConfigService, AppConfig>((ref) {
   return ConfigService()..loadConfig();
@@ -46,7 +46,7 @@ class ConfigService extends StateNotifier<AppConfig> {
     updateConfig(state.copyWith(isDarkMode: !state.isDarkMode));
   }
 
-  void changeGameTheme(BoardTheme newTheme) {
+  void changeGameTheme(GameTheme newTheme) {
     updateConfig(state.copyWith(gameTheme: newTheme));
   }
 }
@@ -54,7 +54,7 @@ class ConfigService extends StateNotifier<AppConfig> {
 class AppConfig {
   bool isMuted;
   bool isDarkMode;
-  BoardTheme gameTheme;
+  GameTheme gameTheme;
 
   AppConfig({
     required this.isMuted,
@@ -66,11 +66,11 @@ class AppConfig {
     return AppConfig(
       isMuted: false,
       isDarkMode: false,
-      gameTheme: defaultGameTheme,
+      gameTheme: GameTheme.defaultTheme,
     );
   }
 
-  AppConfig copyWith({bool? isMuted, bool? isDarkMode, BoardTheme? gameTheme}) {
+  AppConfig copyWith({bool? isMuted, bool? isDarkMode, GameTheme? gameTheme}) {
     return AppConfig(
       isMuted: isMuted ?? this.isMuted,
       isDarkMode: isDarkMode ?? this.isDarkMode,
@@ -90,7 +90,7 @@ class AppConfig {
     return AppConfig(
       isMuted: data['isMuted'],
       isDarkMode: data['isDarkMode'],
-      gameTheme: BoardTheme.fromJson(data['gameTheme']),
+      gameTheme: GameTheme.fromJson(data['gameTheme']),
     );
   }
 }

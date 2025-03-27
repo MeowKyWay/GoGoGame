@@ -4,9 +4,6 @@ export class CreateMatchDto {
   initialTime: number;
   incrementTime: number;
 
-  blackPlayerId: number;
-  whitePlayerId: number;
-
   winner: Winner;
   endReason: string;
 
@@ -15,4 +12,15 @@ export class CreateMatchDto {
 
   timeLeftBlack: number;
   timeLeftWhite: number;
+
+  blackPlayer: {
+    connect: {
+      id: number;
+    };
+  };
+  whitePlayer: {
+    connect: {
+      id: number;
+    };
+  };
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gogogame_frontend/core/services/config_service.dart';
 import 'package:gogogame_frontend/core/services/game/game_sound_effect_service.dart';
 import 'dart:math';
 
@@ -105,6 +106,9 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
 
   @override
   Widget build(BuildContext context) {
+    final config = ref.watch(configService);
+    final theme = config.gameTheme;
+
     return AnimatedBuilder(
       animation: Listenable.merge([_flipController, _initialScaleController]),
       builder: (context, child) {
@@ -122,7 +126,7 @@ class _AnimatedDiskState extends ConsumerState<AnimatedDisk>
                 ..rotateY(angle)
                 ..scale(showNewColor ? -1.0 : 1.0, 1.0),
           alignment: Alignment.center,
-          child: Disk(color: _previousColor),
+          child: Disk(color: _previousColor, theme: theme),
         );
       },
     );

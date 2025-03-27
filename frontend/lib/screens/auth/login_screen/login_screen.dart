@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
+import 'package:gogogame_frontend/core/services/config_service.dart';
 import 'package:gogogame_frontend/screens/auth/login_screen/login_form.dart';
 import 'package:gogogame_frontend/screens/auth/register_screens/register_step_1.dart';
-import 'package:gogogame_frontend/widget/general/logo.dart';
+import 'package:gogogame_frontend/widget/general/board_theme_modal/example_board.dart';
 import 'package:gogogame_frontend/widget/input/text_divider.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -18,6 +19,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ref.watch(configService).gameTheme;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -36,11 +39,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           mainAxisSize: MainAxisSize.max,
           children: [
             if (!_isTyping) ...[
-              Flexible(
-                flex: 1,
+              Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 32),
-                  child: Hero(tag: 'logo', child: Center(child: Logo())),
+                  child: FittedBox(child: ExampleBoard(theme: theme)),
                 ),
               ),
               TextDivider(text: 'log in'),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
-import 'package:gogogame_frontend/core/themes/game_theme.dart';
+import 'package:gogogame_frontend/core/themes/game_theme/board_theme.dart';
 
 class BoardPainter extends CustomPainter {
   final int size;

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
+import 'package:gogogame_frontend/core/themes/game_theme/game_theme.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/widget/general/disk.dart';
 
 class DiskImage extends StatelessWidget {
   final DiskColor? color;
+  final GameTheme theme;
 
-  const DiskImage({super.key, required this.color});
+  const DiskImage({super.key, required this.color, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class DiskImage extends StatelessWidget {
               color: GameConstant.imageBackgroundColor,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: color != null ? Disk(color: color!) : null,
+            child: color != null ? Disk(color: color!, theme: theme) : null,
           ),
         );
       },

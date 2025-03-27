@@ -121,15 +121,19 @@ export class MatchService {
       initialTime: data.match.initialTime,
       incrementTime: data.match.incrementTime,
 
-      blackPlayerId: data.match.blackPlayer.user.id,
-      whitePlayerId: data.match.whitePlayer.user.id,
-
       winner: data.winner,
       endReason: data.message,
       blackScore: score.black,
       whiteScore: score.white,
       timeLeftBlack: data.match.timeLeft.black,
       timeLeftWhite: data.match.timeLeft.white,
+
+      blackPlayer: {
+        connect: { id: data.match.blackPlayer.user.id },
+      },
+      whitePlayer: {
+        connect: { id: data.match.whitePlayer.user.id },
+      },
     });
     // Notify both players about the game over
     const players = [data.match.whitePlayer, data.match.blackPlayer];

@@ -1,13 +1,20 @@
 import 'package:flutter/widgets.dart';
 import 'package:gogogame_frontend/core/constants/game_constant.dart';
+import 'package:gogogame_frontend/core/themes/game_theme/game_theme.dart';
 import 'package:gogogame_frontend/core/types/game_type.dart';
 import 'package:gogogame_frontend/widget/general/disk.dart';
 
 class HintDisk extends StatefulWidget {
   final DiskColor color;
   final bool shouldShow;
+  final GameTheme theme;
 
-  const HintDisk({super.key, required this.color, this.shouldShow = true});
+  const HintDisk({
+    super.key,
+    required this.color,
+    this.shouldShow = true,
+    required this.theme,
+  });
 
   @override
   State<HintDisk> createState() => _HintDiskState();
@@ -63,7 +70,7 @@ class _HintDiskState extends State<HintDisk>
         dimension: GameConstant.cellSize * 0.4,
         child: ScaleTransition(
           scale: _scaleAnimation,
-          child: Disk(color: widget.color),
+          child: Disk(color: widget.color, theme: widget.theme),
         ),
       ),
     );

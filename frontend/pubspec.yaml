@@ -72,6 +72,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/disks/
+    - assets/images/disks/glossy/
+    - assets/images/disks/matte/
+    - assets/images/disks/solid/
+    - assets/images/disks/translucent/
     - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
