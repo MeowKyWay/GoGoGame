@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/constants/time_control.dart';
-import 'package:gogogame_frontend/core/extensions/build_context_extension.dart';
 import 'package:gogogame_frontend/core/services/auth/auth_service_provider.dart';
 import 'package:gogogame_frontend/core/services/game/game_service.dart';
 import 'package:gogogame_frontend/core/services/game/game_state.dart';
@@ -11,7 +10,6 @@ import 'package:gogogame_frontend/screens/game/game_board.dart';
 import 'package:gogogame_frontend/screens/game/game_play_tile/game_player_tile.dart';
 import 'package:gogogame_frontend/screens/game/modal/queue_modal.dart';
 import 'package:gogogame_frontend/screens/game/modal/result_modal.dart';
-import 'package:gogogame_frontend/screens/game/modal/settings_modal.dart';
 import 'package:gogogame_frontend/widget/modal/app_modal.dart';
 import 'package:gogogame_frontend/widget/modal/confirm_modal.dart';
 
