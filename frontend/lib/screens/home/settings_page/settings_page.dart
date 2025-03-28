@@ -24,8 +24,19 @@ class _StoreState extends ConsumerState<Store> with TickerProviderStateMixin {
     final config = ref.watch(configService);
     final configNotifier = ref.watch(configService.notifier);
 
+    final user = ref.watch(authState);
+
     return ListView(
       children: [
+        ListTile(
+          title: Row(
+            children: [
+              Icon(Icons.person),
+              Gap(8),
+              Text(user?.username ?? 'Guest'),
+            ],
+          ),
+        ),
         SwitchListTile(
           value: config.isMuted,
           onChanged: (value) => configNotifier.toggleMute(),

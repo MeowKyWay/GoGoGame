@@ -11,6 +11,7 @@ import 'package:gogogame_frontend/screens/game/game_board.dart';
 import 'package:gogogame_frontend/screens/game/game_play_tile/game_player_tile.dart';
 import 'package:gogogame_frontend/screens/game/modal/queue_modal.dart';
 import 'package:gogogame_frontend/screens/game/modal/result_modal.dart';
+import 'package:gogogame_frontend/screens/game/modal/settings_modal.dart';
 import 'package:gogogame_frontend/widget/modal/app_modal.dart';
 import 'package:gogogame_frontend/widget/modal/confirm_modal.dart';
 
@@ -58,6 +59,15 @@ class _GamePageState extends ConsumerState<GameScreen>
       appBar: AppBar(
         title: const Text('Game'),
         automaticallyImplyLeading: match?.isOver ?? false,
+        leading:
+            match?.isOver == false
+                ? IconButton(
+                  icon: const Icon(Icons.exit_to_app_rounded),
+                  onPressed: () async {
+                    await _resignModal().show();
+                  },
+                )
+                : null,
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
@@ -77,32 +87,6 @@ class _GamePageState extends ConsumerState<GameScreen>
               color: match.color,
               isPlayerTurn: !match.isOver && match.turn == match.color,
             ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: context.colorScheme.outline,
-        onTap: (index) async {
-          switch (index) {
-            case 0:
-              if (match?.isOver ?? false) {
-                showResultModal();
-              } else {
-                _resignModal().show();
-              }
-              break;
-          }
-        },
-        items: [
-          match?.isOver ?? false
-              ? BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Result')
-              : BottomNavigationBarItem(
-                icon: Icon(Icons.arrow_back),
-                label: 'Resign',
-              ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
         ],
       ),
     );

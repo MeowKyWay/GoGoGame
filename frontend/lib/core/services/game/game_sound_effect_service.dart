@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:developer' as dev;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gogogame_frontend/core/services/audio_service.dart';
@@ -12,6 +11,8 @@ final gameSoundEffectService = Provider(
 class GameSoundEffectService {
   final AppConfig config;
   int _currentPlayingSounds = 0; // Keep track of how many sounds are playing.
+
+  final AudioService audioService = AudioService();
 
   GameSoundEffectService({required this.config});
 
@@ -27,12 +28,10 @@ class GameSoundEffectService {
     }
 
     _currentPlayingSounds++; // Increment count of playing sounds.
-
-    dev.log(config.isMuted.toString());
     Random random = Random();
     int soundIndex = random.nextInt(4) + 1;
 
-    AudioService()
+    audioService
         .playLocalAudio('sounds/disk_$soundIndex.mp3')
         .then((_) {
           _currentPlayingSounds--; // Decrement count once the sound finishes playing.
