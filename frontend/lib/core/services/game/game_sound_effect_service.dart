@@ -31,7 +31,7 @@ class GameSoundEffectService {
     Random random = Random();
     int soundIndex = random.nextInt(4) + 1;
 
-    audioService
+    AudioService()
         .playLocalAudio('sounds/disk_$soundIndex.mp3')
         .then((_) {
           _currentPlayingSounds--; // Decrement count once the sound finishes playing.

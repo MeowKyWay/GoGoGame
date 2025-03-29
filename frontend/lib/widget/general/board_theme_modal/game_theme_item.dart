@@ -30,6 +30,7 @@ class GameThemeItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
+              flex: 3,
               child: Row(
                 children: [
                   Text(
@@ -42,7 +43,10 @@ class GameThemeItem extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(child: FittedBox(child: ExampleBoard(theme: theme))),
+            Expanded(
+              flex: 2,
+              child: FittedBox(child: ExampleBoard(theme: theme)),
+            ),
           ],
         ),
       ),
